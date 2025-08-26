@@ -1,0 +1,145 @@
+2025-08-26 18:38:05,367 - __main__ - INFO - 日志文件: logs/workflow_20250826_183805.log
+2025-08-26 18:38:05,367 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 18:38:05,367 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 18:38:05,368 - __main__ - INFO -    ✅ 工作流管理器初始化完成 - 模式: 图生视频工作流
+2025-08-26 18:38:05,368 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 18:38:05,368 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 18:38:05,368 - feishu_client - INFO -            📋 获取工作表信息...
+2025-08-26 18:38:05,596 - feishu_client - INFO - Token获取成功
+2025-08-26 18:38:05,995 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 18:38:05,996 - feishu_client - INFO -            ✅ 工作表信息获取成功: prd_model_sheet
+2025-08-26 18:38:05,996 - feishu_client - INFO -            🔗 构建数据请求...
+2025-08-26 18:38:05,996 - feishu_client - INFO -            - 请求范围: A2:I1000
+2025-08-26 18:38:05,996 - feishu_client - INFO -            🌐 发送API请求...
+2025-08-26 18:38:06,355 - feishu_client - INFO -            ✅ API请求成功 (状态码: 0)
+2025-08-26 18:38:06,355 - feishu_client - INFO -            📊 解析响应数据...
+2025-08-26 18:38:06,355 - feishu_client - INFO -            - 原始数据行数: 999
+2025-08-26 18:38:06,355 - feishu_client - INFO -            🔍 解析表格数据...
+2025-08-26 18:38:06,356 - feishu_client - INFO - 使用默认列索引映射
+2025-08-26 18:38:06,357 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 18:38:06,357 - feishu_client - INFO - 解析行 1: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,357 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 18:38:06,357 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 18:38:06,357 - feishu_client - INFO - 解析行 2: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,357 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析行 3: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,358 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析行 4: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,358 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析行 5: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,358 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 18:38:06,358 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析行 6: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,359 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析行 7: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,359 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析行 8: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,359 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 18:38:06,359 - feishu_client - INFO - 解析行 9: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,360 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 18:38:06,360 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 18:38:06,360 - feishu_client - INFO - 解析行 10: 原始数据长度=9, product_name_idx=5
+2025-08-26 18:38:06,360 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 18:38:06,360 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 18:38:06,361 - feishu_client - INFO - 处理了 10 行有效数据
+2025-08-26 18:38:06,361 - feishu_client - INFO -            ✅ 数据解析完成
+2025-08-26 18:38:06,362 - feishu_client - INFO -            - 有效数据行数: 10
+2025-08-26 18:38:06,362 - __main__ - INFO -    ✅ 获取到 10 行数据
+2025-08-26 18:38:06,363 - __main__ - INFO - 🚀 步骤3: 执行 图生视频工作流
+2025-08-26 18:38:06,363 - WorkflowManager - INFO - 🚀 开始执行 图生视频工作流
+2025-08-26 18:38:06,363 - WorkflowManager - INFO - 📊 总共需要处理 10 行数据
+2025-08-26 18:38:06,363 - WorkflowManager - INFO - 📝 处理进度: 1/10 - 第 2 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 18:38:06,363 - ImageToVideoWorkflow - INFO -       🔍 第 2 行判断条件:
+2025-08-26 18:38:06,363 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 18:38:06,363 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 18:38:06,363 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'DIwqbFt9eoIXuXxNMkocq57Qn9d'}
+2025-08-26 18:38:06,364 - ImageToVideoWorkflow - INFO -          - has_composite_image: DIwqbFt9eoIXuXxNMkocq57Qn9d
+2025-08-26 18:38:06,364 - ImageToVideoWorkflow - INFO -          - 最终判断结果: DIwqbFt9eoIXuXxNMkocq57Qn9d
+2025-08-26 18:38:06,364 - ImageToVideoWorkflow - INFO -      🎬 开始处理图生视频 - 第 2 行
+2025-08-26 18:38:06,569 - feishu_client - INFO - Token获取成功
+2025-08-26 18:38:07,547 - ImageToVideoWorkflow - INFO -         🔄 执行ComfyUI图生视频工作流
+2025-08-26 18:38:07,548 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 18:38:09,218 - comfyui_client - INFO - 图片上传成功: api/b51def3fa8e0f6170856f12166514693038cd4e25cd2b1fde99fc7deeb40f34d.png
+2025-08-26 18:38:09,219 - comfyui_client - INFO - 图片上传成功: api/b51def3fa8e0f6170856f12166514693038cd4e25cd2b1fde99fc7deeb40f34d.png
+2025-08-26 18:38:09,219 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 18:38:09,529 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960290664560865281
+2025-08-26 18:38:09,531 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960290664560865281
+2025-08-26 18:38:14,532 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960290664560865281
+2025-08-26 18:38:14,532 - comfyui_client - INFO -            - 开始等待任务完成，任务ID: 1960290664560865281
+2025-08-26 18:38:14,532 - comfyui_client - INFO -            - 最大等待时间: 600秒，检查间隔: 30秒
+2025-08-26 18:38:14,534 - comfyui_client - INFO -            - 检查任务状态... (已等待 0.0秒)
+2025-08-26 18:38:14,661 - comfyui_client - INFO -            - 当前状态: RUNNING
+2025-08-26 18:38:14,662 - comfyui_client - INFO -            - 任务进行中，等待 30 秒后再次检查...
+2025-08-26 18:38:44,663 - comfyui_client - INFO -            - 检查任务状态... (已等待 30.1秒)
+2025-08-26 18:38:44,777 - comfyui_client - INFO -            - 当前状态: RUNNING
+2025-08-26 18:38:44,777 - comfyui_client - INFO -            - 任务进行中，等待 30 秒后再次检查...
+2025-08-26 18:39:14,779 - comfyui_client - INFO -            - 检查任务状态... (已等待 60.2秒)
+2025-08-26 18:39:14,905 - comfyui_client - INFO -            - 当前状态: RUNNING
+2025-08-26 18:39:14,905 - comfyui_client - INFO -            - 任务进行中，等待 30 秒后再次检查...
+2025-08-26 18:39:44,907 - comfyui_client - INFO -            - 检查任务状态... (已等待 90.4秒)
+2025-08-26 18:39:45,014 - comfyui_client - INFO -            - 当前状态: RUNNING
+2025-08-26 18:39:45,015 - comfyui_client - INFO -            - 任务进行中，等待 30 秒后再次检查...
+2025-08-26 18:40:15,017 - comfyui_client - INFO -            - 检查任务状态... (已等待 120.5秒)
+2025-08-26 18:40:15,405 - comfyui_client - INFO -            - 当前状态: RUNNING
+2025-08-26 18:40:15,405 - comfyui_client - INFO -            - 任务进行中，等待 30 秒后再次检查...
+2025-08-26 18:40:45,407 - comfyui_client - INFO -            - 检查任务状态... (已等待 150.9秒)
+2025-08-26 18:40:45,744 - comfyui_client - INFO -            - 当前状态: SUCCESS
+2025-08-26 18:40:45,744 - comfyui_client - INFO -            ✅ 任务执行成功，获取输出文件...
+2025-08-26 18:40:46,069 - comfyui_client - ERROR - 获取任务输出异常: 'list' object has no attribute 'get'
+2025-08-26 18:40:46,070 - comfyui_client - ERROR -            ❌ 获取输出文件失败: 获取任务输出异常: 'list' object has no attribute 'get'
+2025-08-26 18:40:46,073 - WorkflowManager - ERROR -      ❌ 第 2 行处理失败 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小... | 错误: 获取输出失败: 获取任务输出异常: 'list' object has no attribute 'get'
+2025-08-26 18:40:46,073 - WorkflowManager - INFO - 📝 处理进度: 2/10 - 第 3 行 | 产品: 0826-freaks | 提示词: 镜头绕模特环形移动，穿过背景人群桌椅，模特走路时俏皮挑眉，偶...
+2025-08-26 18:40:46,074 - WorkflowManager - INFO -      ⏭️  跳过第 3 行（不需要处理） | 产品: 0826-freaks
+2025-08-26 18:40:46,074 - WorkflowManager - INFO - 📝 处理进度: 3/10 - 第 4 行 | 产品: 0826-beautifully broken | 提示词: 镜头从远慢推至 T 恤特写，模特走路中逐渐灿烂大笑，双手随步...
+2025-08-26 18:40:46,074 - WorkflowManager - INFO -      ⏭️  跳过第 4 行（不需要处理） | 产品: 0826-beautifully broken
+2025-08-26 18:40:46,074 - WorkflowManager - INFO - 📝 处理进度: 4/10 - 第 5 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头动态追焦 T 恤印花，模特走路时侧头向背景朋友招呼，嘴角...
+2025-08-26 18:40:46,074 - WorkflowManager - INFO -      ⏭️  跳过第 5 行（不需要处理） | 产品: 0826-HIPPIE SOUL
+2025-08-26 18:40:46,074 - WorkflowManager - INFO - 📝 处理进度: 5/10 - 第 6 行 | 产品: 0826-life is better | 提示词: [{'segmentStyle': {'bold': Fal...
+2025-08-26 18:40:46,075 - WorkflowManager - INFO -      ⏭️  跳过第 6 行（不需要处理） | 产品: 0826-life is better
+2025-08-26 18:40:46,075 - WorkflowManager - INFO - 📝 处理进度: 6/10 - 第 7 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 18:40:46,075 - WorkflowManager - INFO -      ⏭️  跳过第 7 行（不需要处理） | 产品: 0826-Abvela
+2025-08-26 18:40:46,075 - WorkflowManager - INFO - 📝 处理进度: 7/10 - 第 8 行 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 18:40:46,076 - WorkflowManager - INFO -      ⏭️  跳过第 8 行（不需要处理） | 产品: 0826-freaks
+2025-08-26 18:40:46,076 - WorkflowManager - INFO - 📝 处理进度: 8/10 - 第 9 行 | 产品: 0826-beautifully broken | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 18:40:46,076 - WorkflowManager - INFO -      ⏭️  跳过第 9 行（不需要处理） | 产品: 0826-beautifully broken
+2025-08-26 18:40:46,076 - WorkflowManager - INFO - 📝 处理进度: 9/10 - 第 10 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 18:40:46,076 - WorkflowManager - INFO -      ⏭️  跳过第 10 行（不需要处理） | 产品: 0826-HIPPIE SOUL
+2025-08-26 18:40:46,077 - WorkflowManager - INFO - 📝 处理进度: 10/10 - 第 11 行 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 18:40:46,077 - WorkflowManager - INFO -      ⏭️  跳过第 11 行（不需要处理） | 产品: 0826-life is better
+2025-08-26 18:40:46,077 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-26 18:40:46,077 - __main__ - INFO - 
+============================================================
+📊 图生视频工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 10
+   - 成功: 9
+   - 失败: 1
+   - 成功率: 90.0% (如果总行数 > 0)
+   - 总耗时: 0.00 秒
+   - 平均耗时: 0.00 秒/行
+
+❌ 失败详情:
+   - 第 2 行: 获取输出失败: 获取任务输出异常: 'list' object has no attribute 'get'
+
+✅ 成功处理的行:
+   - 第 3 行
+   - 第 4 行
+   - 第 5 行
+   - 第 6 行
+   - 第 7 行
+   - 第 8 行
+   - 第 9 行
+   - 第 10 行
+   - 第 11 行
+
+============================================================
+
+2025-08-26 18:40:46,078 - __main__ - INFO - 处理报告已保存到: reports/report_20250826_184046.txt
+2025-08-26 18:40:46,078 - __main__ - WARNING - 部分数据处理失败: 9/10

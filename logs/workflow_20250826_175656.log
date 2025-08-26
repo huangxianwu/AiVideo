@@ -1,0 +1,105 @@
+2025-08-26 17:56:56,842 - __main__ - INFO - 日志文件: logs/workflow_20250826_175656.log
+2025-08-26 17:56:56,842 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 17:56:56,842 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 17:56:56,842 - __main__ - INFO -    ✅ 工作流管理器初始化完成 - 模式: 图生视频工作流
+2025-08-26 17:56:56,843 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 17:56:56,843 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 17:56:56,843 - feishu_client - INFO -            📋 获取工作表信息...
+2025-08-26 17:56:57,088 - feishu_client - INFO - Token获取成功
+2025-08-26 17:56:57,589 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 17:56:57,589 - feishu_client - INFO -            ✅ 工作表信息获取成功: prd_model_sheet
+2025-08-26 17:56:57,590 - feishu_client - INFO -            🔗 构建数据请求...
+2025-08-26 17:56:57,590 - feishu_client - INFO -            - 请求范围: A2:I1000
+2025-08-26 17:56:57,590 - feishu_client - INFO -            🌐 发送API请求...
+2025-08-26 17:56:58,397 - feishu_client - INFO -            ✅ API请求成功 (状态码: 0)
+2025-08-26 17:56:58,397 - feishu_client - INFO -            📊 解析响应数据...
+2025-08-26 17:56:58,397 - feishu_client - INFO -            - 原始数据行数: 999
+2025-08-26 17:56:58,397 - feishu_client - INFO -            🔍 解析表格数据...
+2025-08-26 17:56:58,399 - feishu_client - INFO - 使用默认列索引映射
+2025-08-26 17:56:58,399 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 17:56:58,399 - feishu_client - INFO - 解析行 1: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,399 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析行 2: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,400 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析行 3: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,400 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析行 4: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,400 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 17:56:58,400 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 17:56:58,401 - feishu_client - INFO - 解析行 5: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,401 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 17:56:58,401 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 17:56:58,401 - feishu_client - INFO - 解析行 6: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,401 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 17:56:58,401 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 17:56:58,401 - feishu_client - INFO - 解析行 7: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,401 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析行 8: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,402 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析行 9: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,402 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析行 10: 原始数据长度=9, product_name_idx=5
+2025-08-26 17:56:58,402 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 17:56:58,402 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 17:56:58,403 - feishu_client - INFO - 处理了 10 行有效数据
+2025-08-26 17:56:58,403 - feishu_client - INFO -            ✅ 数据解析完成
+2025-08-26 17:56:58,404 - feishu_client - INFO -            - 有效数据行数: 10
+2025-08-26 17:56:58,405 - __main__ - INFO -    ✅ 获取到 10 行数据
+2025-08-26 17:56:58,405 - __main__ - INFO - 🚀 步骤3: 执行 图生视频工作流
+2025-08-26 17:56:58,405 - WorkflowManager - INFO - 🚀 开始执行 图生视频工作流
+2025-08-26 17:56:58,405 - WorkflowManager - INFO - 📊 总共需要处理 10 行数据
+2025-08-26 17:56:58,405 - WorkflowManager - INFO - 📝 处理进度: 1/10 - 第 2 行
+2025-08-26 17:56:58,405 - WorkflowManager - INFO -      ⏭️  跳过第 2 行（不需要处理）
+2025-08-26 17:56:58,405 - WorkflowManager - INFO - 📝 处理进度: 2/10 - 第 3 行
+2025-08-26 17:56:58,405 - WorkflowManager - INFO -      ⏭️  跳过第 3 行（不需要处理）
+2025-08-26 17:56:58,405 - WorkflowManager - INFO - 📝 处理进度: 3/10 - 第 4 行
+2025-08-26 17:56:58,405 - WorkflowManager - INFO -      ⏭️  跳过第 4 行（不需要处理）
+2025-08-26 17:56:58,406 - WorkflowManager - INFO - 📝 处理进度: 4/10 - 第 5 行
+2025-08-26 17:56:58,406 - WorkflowManager - INFO -      ⏭️  跳过第 5 行（不需要处理）
+2025-08-26 17:56:58,406 - WorkflowManager - INFO - 📝 处理进度: 5/10 - 第 6 行
+2025-08-26 17:56:58,406 - WorkflowManager - INFO -      ⏭️  跳过第 6 行（不需要处理）
+2025-08-26 17:56:58,406 - WorkflowManager - INFO - 📝 处理进度: 6/10 - 第 7 行
+2025-08-26 17:56:58,406 - WorkflowManager - INFO -      ⏭️  跳过第 7 行（不需要处理）
+2025-08-26 17:56:58,406 - WorkflowManager - INFO - 📝 处理进度: 7/10 - 第 8 行
+2025-08-26 17:56:58,406 - WorkflowManager - INFO -      ⏭️  跳过第 8 行（不需要处理）
+2025-08-26 17:56:58,406 - WorkflowManager - INFO - 📝 处理进度: 8/10 - 第 9 行
+2025-08-26 17:56:58,406 - WorkflowManager - INFO -      ⏭️  跳过第 9 行（不需要处理）
+2025-08-26 17:56:58,406 - WorkflowManager - INFO - 📝 处理进度: 9/10 - 第 10 行
+2025-08-26 17:56:58,406 - WorkflowManager - INFO -      ⏭️  跳过第 10 行（不需要处理）
+2025-08-26 17:56:58,407 - WorkflowManager - INFO - 📝 处理进度: 10/10 - 第 11 行
+2025-08-26 17:56:58,407 - WorkflowManager - INFO -      ⏭️  跳过第 11 行（不需要处理）
+2025-08-26 17:56:58,407 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-26 17:56:58,407 - __main__ - INFO - 
+============================================================
+📊 图生视频工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 10
+   - 成功: 10
+   - 失败: 0
+   - 成功率: 100.0% (如果总行数 > 0)
+   - 总耗时: 0.00 秒
+   - 平均耗时: 0.00 秒/行
+
+✅ 成功处理的行:
+   - 第 2 行
+   - 第 3 行
+   - 第 4 行
+   - 第 5 行
+   - 第 6 行
+   - 第 7 行
+   - 第 8 行
+   - 第 9 行
+   - 第 10 行
+   - 第 11 行
+
+============================================================
+
+2025-08-26 17:56:58,408 - __main__ - INFO - 处理报告已保存到: reports/report_20250826_175658.txt
+2025-08-26 17:56:58,408 - __main__ - INFO - 所有数据处理成功

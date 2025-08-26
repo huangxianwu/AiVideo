@@ -1,0 +1,108 @@
+2025-08-26 12:08:53,427 - __main__ - INFO - 日志文件: logs/workflow_20250826_120853.log
+2025-08-26 12:08:53,427 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 12:08:53,427 - __main__ - INFO - 🔧 步骤2: 初始化客户端连接
+2025-08-26 12:08:53,427 - __main__ - INFO -    - 正在初始化飞书客户端...
+2025-08-26 12:08:53,427 - __main__ - INFO -    ✅ 飞书客户端初始化完成
+2025-08-26 12:08:53,427 - __main__ - INFO -    - 正在初始化ComfyUI客户端...
+2025-08-26 12:08:53,427 - __main__ - INFO -    ✅ ComfyUI客户端初始化完成
+2025-08-26 12:08:53,427 - __main__ - INFO -    - 正在初始化工作流处理器...
+2025-08-26 12:08:53,427 - workflow_processor - INFO - 创建目录: ./temp, ./output
+2025-08-26 12:08:53,427 - __main__ - INFO -    ✅ 工作流处理器初始化完成
+2025-08-26 12:08:53,427 - __main__ - INFO - ✅ 所有客户端初始化完成
+2025-08-26 12:08:53,427 - __main__ - INFO - 📊 步骤3: 获取飞书表格数据
+2025-08-26 12:08:53,427 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 12:08:53,427 - __main__ - INFO - ▶️ 执行正常处理模式
+2025-08-26 12:08:53,427 - workflow_processor - INFO - 🚀 开始工作流处理...
+2025-08-26 12:08:53,428 - workflow_processor - INFO - ==================================================
+2025-08-26 12:08:53,428 - workflow_processor - INFO - 📊 步骤1: 获取飞书表格数据
+2025-08-26 12:08:53,428 - workflow_processor - INFO -    - 正在连接飞书API...
+2025-08-26 12:08:53,428 - feishu_client - INFO -            📋 获取工作表信息...
+2025-08-26 12:08:53,636 - feishu_client - INFO - Token获取成功
+2025-08-26 12:08:53,989 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 12:08:53,990 - feishu_client - INFO -            ✅ 工作表信息获取成功: prd_model_sheet
+2025-08-26 12:08:53,990 - feishu_client - INFO -            🔗 构建数据请求...
+2025-08-26 12:08:53,990 - feishu_client - INFO -            - 请求范围: A2:D100
+2025-08-26 12:08:53,990 - feishu_client - INFO -            🌐 发送API请求...
+2025-08-26 12:08:54,325 - feishu_client - INFO -            ✅ API请求成功 (状态码: 0)
+2025-08-26 12:08:54,325 - feishu_client - INFO -            📊 解析响应数据...
+2025-08-26 12:08:54,325 - feishu_client - INFO -            - 原始数据行数: 99
+2025-08-26 12:08:54,325 - feishu_client - INFO -            🔍 解析表格数据...
+2025-08-26 12:08:54,325 - feishu_client - INFO - 使用默认列索引映射
+2025-08-26 12:08:54,325 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3}
+2025-08-26 12:08:54,325 - feishu_client - INFO - 处理了 1 行有效数据
+2025-08-26 12:08:54,325 - feishu_client - INFO -            ✅ 数据解析完成
+2025-08-26 12:08:54,325 - feishu_client - INFO -            - 有效数据行数: 1
+2025-08-26 12:08:54,326 - workflow_processor - INFO -    ✅ 成功获取 1 行数据
+2025-08-26 12:08:54,326 - workflow_processor - INFO - 🔍 步骤2: 数据预处理和筛选
+2025-08-26 12:08:54,326 - workflow_processor - INFO -    - 总行数: 1
+2025-08-26 12:08:54,326 - workflow_processor - INFO -    - 需要处理: 1 行
+2025-08-26 12:08:54,326 - workflow_processor - INFO -    - 跳过行数: 0 行
+2025-08-26 12:08:54,327 - workflow_processor - INFO - ⚙️  步骤3: 开始逐行处理数据
+2025-08-26 12:08:54,327 - workflow_processor - INFO -    🔄 队列管理已启用 - 检查间隔: 120秒
+2025-08-26 12:08:54,327 - workflow_processor - INFO -    📝 处理进度: 1/1 - 行 1
+2025-08-26 12:08:54,327 - workflow_processor - INFO -      🔄 开始处理第 1 行数据
+2025-08-26 12:08:54,327 - workflow_processor - INFO -      🔍 子步骤1: 验证数据完整性
+2025-08-26 12:08:54,327 - workflow_processor - INFO -         ✅ 数据验证通过
+2025-08-26 12:08:54,327 - workflow_processor - INFO -      📥 子步骤2: 下载产品图片
+2025-08-26 12:08:54,327 - workflow_processor - INFO -         - 图片信息: {'type': 'embed-image', 'fileToken': 'KKA6bFoR7oaJPDx4xMTcJHfVnAc'}...
+2025-08-26 12:08:54,971 - workflow_processor - INFO -         ✅ 产品图片下载完成，大小: 156727 bytes
+2025-08-26 12:08:54,971 - workflow_processor - INFO -      📥 子步骤3: 下载模特图片
+2025-08-26 12:08:54,971 - workflow_processor - INFO -         - 图片信息: {'type': 'embed-image', 'fileToken': 'TkQFbjmPioocwQxz2vTcLuCfnbe'}...
+2025-08-26 12:08:55,764 - workflow_processor - INFO -         ✅ 模特图片下载完成，大小: 781330 bytes
+2025-08-26 12:08:55,764 - workflow_processor - INFO -      🎨 子步骤4: 执行ComfyUI工作流
+2025-08-26 12:08:55,765 - workflow_processor - INFO -         - 产品图片大小: 156727 bytes
+2025-08-26 12:08:55,765 - workflow_processor - INFO -         - 模特图片大小: 781330 bytes
+2025-08-26 12:08:55,765 - comfyui_client - INFO -         🔸 子步骤1: 上传产品图片到ComfyUI
+2025-08-26 12:08:55,765 - comfyui_client - INFO -            - 图片大小: 156727 bytes
+2025-08-26 12:08:56,202 - comfyui_client - INFO - 图片上传成功: api/e41f5a4927ddf93f0eb98d242edb794bb998d3a49a2a7114e6ca60192038672c.png
+2025-08-26 12:08:56,204 - comfyui_client - INFO -            ✅ 产品图片上传成功: api/e41f5a4927ddf93f0eb98d242edb794bb998d3a49a2a7114e6ca60192038672c.png
+2025-08-26 12:08:56,204 - comfyui_client - INFO -         🔸 子步骤2: 上传模特图片到ComfyUI
+2025-08-26 12:08:56,204 - comfyui_client - INFO -            - 图片大小: 781330 bytes
+2025-08-26 12:08:57,116 - comfyui_client - INFO - 图片上传成功: api/87cacb5a7d31a83f8e4dc1b3629d8539b17a74182e56ce85e0282c891f478836.png
+2025-08-26 12:08:57,117 - comfyui_client - INFO -            ✅ 模特图片上传成功: api/87cacb5a7d31a83f8e4dc1b3629d8539b17a74182e56ce85e0282c891f478836.png
+2025-08-26 12:08:57,117 - comfyui_client - INFO -         🔸 子步骤3: 创建ComfyUI工作流
+2025-08-26 12:08:57,118 - comfyui_client - INFO -            - 产品图片: api/e41f5a4927ddf93f0eb98d242edb794bb998d3a49a2a7114e6ca60192038672c.png
+2025-08-26 12:08:57,118 - comfyui_client - INFO -            - 模特图片: api/87cacb5a7d31a83f8e4dc1b3629d8539b17a74182e56ce85e0282c891f478836.png
+2025-08-26 12:08:57,571 - comfyui_client - INFO - 工作流创建成功，任务ID: 1960192719241039874
+2025-08-26 12:08:57,573 - comfyui_client - INFO -            ✅ 工作流创建成功，任务ID: 1960192719241039874
+2025-08-26 12:08:57,573 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-26 12:08:57,573 - comfyui_client - INFO -            - 任务ID: 1960192719241039874
+2025-08-26 12:08:57,573 - comfyui_client - INFO -            - 开始监控任务状态，最大等待时间: 300秒
+2025-08-26 12:08:57,574 - comfyui_client - INFO -            - 状态检查 #1 (已等待 0.0s)
+2025-08-26 12:08:57,957 - comfyui_client - INFO -            ⏳ 任务状态: RUNNING，等待 30 秒后重新检查...
+2025-08-26 12:09:27,959 - comfyui_client - INFO -            - 状态检查 #2 (已等待 30.4s)
+2025-08-26 12:09:28,247 - comfyui_client - INFO -            ⏳ 任务状态: RUNNING，等待 30 秒后重新检查...
+2025-08-26 12:09:58,248 - comfyui_client - INFO -            - 状态检查 #3 (已等待 60.7s)
+2025-08-26 12:09:58,533 - comfyui_client - INFO -            ⏳ 任务状态: RUNNING，等待 30 秒后重新检查...
+2025-08-26 12:10:28,535 - comfyui_client - INFO -            - 状态检查 #4 (已等待 91.0s)
+2025-08-26 12:10:28,722 - comfyui_client - INFO -            ⏳ 任务状态: RUNNING，等待 30 秒后重新检查...
+2025-08-26 12:10:58,725 - comfyui_client - INFO -            - 状态检查 #5 (已等待 121.1s)
+2025-08-26 12:10:59,038 - comfyui_client - INFO -            ✅ 任务执行成功 (总耗时 121.1s)
+2025-08-26 12:10:59,449 - comfyui_client - INFO - 任务 1960192719241039874 获取到 2 个输出文件
+2025-08-26 12:10:59,450 - comfyui_client - INFO -            - 找到 2 个输出文件
+2025-08-26 12:10:59,451 - comfyui_client - INFO -            - 输出文件1: https://rh-images.xiaoyaoyou.com/bfb38141e9ed61152...
+2025-08-26 12:10:59,451 - comfyui_client - INFO -            - 输出文件2: https://rh-images.xiaoyaoyou.com/bfb38141e9ed61152...
+2025-08-26 12:10:59,451 - comfyui_client - INFO -            ✅ 工作流执行完成
+2025-08-26 12:10:59,451 - comfyui_client - INFO -            - 输出文件数量: 2
+2025-08-26 12:10:59,451 - comfyui_client - INFO -            - 输出文件1: https://rh-images.xiaoyaoyou.com/bfb38141e9ed61152...
+2025-08-26 12:10:59,451 - comfyui_client - INFO -            - 输出文件2: https://rh-images.xiaoyaoyou.com/bfb38141e9ed61152...
+2025-08-26 12:10:59,451 - workflow_processor - INFO -         ✅ 工作流执行成功，任务ID: 1960192719241039874
+2025-08-26 12:10:59,452 - workflow_processor - INFO -      💾 子步骤5: 下载并保存结果文件
+2025-08-26 12:10:59,452 - workflow_processor - INFO -         - 找到 2 个输出文件
+2025-08-26 12:10:59,452 - workflow_processor - INFO -         - 下载文件 1/2: https://rh-images.xiaoyaoyou.com/bfb38141e9ed61152...
+2025-08-26 12:10:59,836 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00002_viqcn_1756181426.png
+2025-08-26 12:11:00,597 - workflow_processor - INFO -         ✅ 文件保存成功: ./output/row_1_output_1_20250826_121100.mp4 (1728818 bytes)
+2025-08-26 12:11:00,597 - workflow_processor - INFO -         - 下载文件 2/2: https://rh-images.xiaoyaoyou.com/bfb38141e9ed61152...
+2025-08-26 12:11:01,074 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00001_xuvri_1756181408.png
+2025-08-26 12:11:02,255 - workflow_processor - INFO -         ✅ 文件保存成功: ./output/row_1_output_2_20250826_121102.mp4 (1604820 bytes)
+2025-08-26 12:11:02,256 - workflow_processor - INFO -      ✅ 第 1 行处理成功，耗时 127.93 秒
+2025-08-26 12:11:02,256 - workflow_processor - INFO -    ✅ 行 1 处理成功
+2025-08-26 12:11:02,691 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 12:11:02,848 - feishu_client - ERROR - 更新状态时发生错误: 404, message='Attempt to decode JSON with unexpected mimetype: text/plain', url='https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/Og4isDZNPhhXQcteLJRcmdMPnjc/values/35d2b7!D1'
+2025-08-26 12:11:02,848 - workflow_processor - INFO -    🏁 等待最后一个任务完成...
+2025-08-26 12:11:02,848 - workflow_processor - INFO -    ⏳ 等待前一个任务完成 (ID: 1960192719241039874) - 当前处理: 最后任务
+2025-08-26 12:11:03,177 - workflow_processor - WARNING -    ⚠️  检查任务状态时出错: 'WorkflowResult' object has no attribute 'get'，120秒后重试
+2025-08-26 12:13:03,435 - workflow_processor - WARNING -    ⚠️  检查任务状态时出错: 'WorkflowResult' object has no attribute 'get'，120秒后重试
+2025-08-26 12:15:03,685 - workflow_processor - WARNING -    ⚠️  检查任务状态时出错: 'WorkflowResult' object has no attribute 'get'，120秒后重试
+2025-08-26 12:17:04,012 - workflow_processor - WARNING -    ⚠️  检查任务状态时出错: 'WorkflowResult' object has no attribute 'get'，120秒后重试
+2025-08-26 12:19:04,355 - workflow_processor - WARNING -    ⚠️  检查任务状态时出错: 'WorkflowResult' object has no attribute 'get'，120秒后重试

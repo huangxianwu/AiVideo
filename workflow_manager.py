@@ -1,0 +1,454 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+工作流管理器 - 实现工作流模式选择和解耦设计
+"""
+
+import asyncio
+import logging
+from abc import ABC, abstractmethod
+from enum import Enum
+from typing import List, Optional
+from dataclasses import dataclass
+
+from config import AppConfig
+from feishu_client import FeishuClient, RowData
+from comfyui_client import ComfyUIClient
+
+
+class WorkflowMode(Enum):
+    """工作流模式枚举"""
+    IMAGE_COMPOSITION = "image_composition"  # 图片合成工作流
+    IMAGE_TO_VIDEO = "image_to_video"        # 图生视频工作流
+
+
+@dataclass
+class WorkflowResult:
+    """工作流执行结果"""
+    success: bool
+    row_number: int
+    task_id: Optional[str] = None
+    output_files: List[str] = None
+    error: Optional[str] = None
+    processing_time: Optional[float] = None
+
+
+class BaseWorkflow(ABC):
+    """工作流基类"""
+    
+    def __init__(self, config: AppConfig, feishu_client: FeishuClient, comfyui_client: ComfyUIClient):
+        self.config = config
+        self.feishu_client = feishu_client
+        self.comfyui_client = comfyui_client
+        self.logger = logging.getLogger(self.__class__.__name__)
+    
+    @abstractmethod
+    async def process_row(self, row_data: RowData) -> WorkflowResult:
+        """处理单行数据"""
+        pass
+    
+    @abstractmethod
+    def get_workflow_name(self) -> str:
+        """获取工作流名称"""
+        pass
+    
+    @abstractmethod
+    def should_process_row(self, row_data: RowData) -> bool:
+        """判断是否应该处理该行数据"""
+        pass
+
+
+class ImageCompositionWorkflow(BaseWorkflow):
+    """图片合成工作流"""
+    
+    def get_workflow_name(self) -> str:
+        return "图片合成工作流"
+    
+    def should_process_row(self, row_data: RowData) -> bool:
+        """检查是否需要处理图片合成"""
+        # 检查列D（status）是否为"否"，如果是则需要处理
+        return row_data.status == "否"
+    
+    async def process_row(self, row_data: RowData) -> WorkflowResult:
+        """处理图片合成"""
+        start_time = asyncio.get_event_loop().time()
+        
+        try:
+            self.logger.info(f"     🎨 开始处理图片合成 - 第 {row_data.row_number} 行")
+            
+            # 验证数据
+            validation_error = self._validate_row_data(row_data)
+            if validation_error:
+                return WorkflowResult(
+                    success=False,
+                    row_number=row_data.row_number,
+                    error=validation_error
+                )
+            
+            # 下载图片
+            self.logger.info(f"        📥 下载产品图片和模特图片")
+            product_image_data = await self._download_image(row_data.product_image)
+            model_image_data = await self._download_image(row_data.model_image)
+            
+            # 执行ComfyUI工作流
+            self.logger.info(f"        🔄 执行ComfyUI图片合成工作流")
+            workflow_result = await self.comfyui_client.process_workflow(
+                product_image_data,
+                model_image_data
+            )
+            
+            if not workflow_result.success:
+                return WorkflowResult(
+                    success=False,
+                    row_number=row_data.row_number,
+                    error=workflow_result.error
+                )
+            
+            # 下载并保存结果
+            output_files = await self._save_result_files(row_data, workflow_result)
+            
+            # 更新表格状态
+            await self._update_table_status(row_data, output_files)
+            
+            processing_time = asyncio.get_event_loop().time() - start_time
+            
+            return WorkflowResult(
+                success=True,
+                row_number=row_data.row_number,
+                task_id=workflow_result.task_id,
+                output_files=output_files,
+                processing_time=processing_time
+            )
+            
+        except Exception as e:
+            processing_time = asyncio.get_event_loop().time() - start_time
+            error_msg = f"图片合成处理异常: {str(e)}"
+            self.logger.error(f"        ❌ {error_msg}")
+            
+            return WorkflowResult(
+                success=False,
+                row_number=row_data.row_number,
+                error=error_msg,
+                processing_time=processing_time
+            )
+    
+    def _validate_row_data(self, row_data: RowData) -> Optional[str]:
+        """验证行数据完整性"""
+        if not row_data.prompt or not row_data.prompt.strip():
+            return "提示词为空"
+        
+        if not self._is_valid_image_data(row_data.product_image):
+            return "产品图片数据无效"
+        
+        if not self._is_valid_image_data(row_data.model_image):
+            return "模特图片数据无效"
+        
+        return None
+    
+    def _is_valid_image_data(self, image_data) -> bool:
+        """检查图片数据是否有效"""
+        if isinstance(image_data, dict):
+            return image_data.get("type") == "embed-image" and image_data.get("fileToken")
+        elif isinstance(image_data, str):
+            return bool(image_data.strip())
+        return False
+    
+    async def _download_image(self, image_data) -> bytes:
+        """下载图片数据"""
+        if isinstance(image_data, dict) and image_data.get("type") == "embed-image":
+            file_token = image_data.get("fileToken")
+            return await self.feishu_client.download_image(file_token)
+        elif isinstance(image_data, str) and image_data.strip():
+            if image_data.startswith("http"):
+                import aiohttp
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(image_data) as response:
+                        if response.status == 200:
+                            return await response.read()
+                        else:
+                            raise Exception(f"下载图片失败: HTTP {response.status}")
+            else:
+                raise Exception(f"不支持的图片数据格式: {image_data}")
+        else:
+            raise Exception("无效的图片数据")
+    
+    async def _save_result_files(self, row_data: RowData, workflow_result) -> List[str]:
+        """保存结果文件"""
+        import os
+        from datetime import datetime
+        
+        output_files = []
+        if workflow_result.output_urls:
+            # 只保存最后一个文件
+            url = workflow_result.output_urls[-1] if len(workflow_result.output_urls) >= 2 else workflow_result.output_urls[0]
+            
+            file_data = await self.comfyui_client.download_result(url)
+            
+            # 生成文件名
+            product_name = row_data.product_name or f"row_{row_data.row_number}"
+            model_name = row_data.model_name or "unknown_model"
+            safe_product_name = "".join(c for c in product_name if c.isalnum() or c in (' ', '-', '_')).strip()
+            safe_model_name = "".join(c for c in model_name if c.isalnum() or c in (' ', '-', '_')).strip()
+            timestamp = datetime.now().strftime('%m/%d/%H:%M')
+            filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.png".replace('/', '-').replace(':', '-')
+            filepath = os.path.join(self.config.output_dir, filename)
+            
+            with open(filepath, 'wb') as f:
+                f.write(file_data)
+            
+            output_files.append(filepath)
+            self.logger.info(f"        ✅ 文件保存成功: {filepath}")
+        
+        return output_files
+    
+    async def _update_table_status(self, row_data: RowData, output_files: List[str]):
+        """更新表格状态"""
+        if output_files:
+            # 写入图片到表格
+            write_success = await self.feishu_client.write_image_to_cell(row_data.row_number, output_files[0])
+            if write_success:
+                # 更新状态为已完成
+                await self.feishu_client.update_cell_status(row_data.row_number, "已完成")
+
+
+class ImageToVideoWorkflow(BaseWorkflow):
+    """图生视频工作流"""
+    
+    def get_workflow_name(self) -> str:
+        return "图生视频工作流"
+    
+    def should_process_row(self, row_data: RowData) -> bool:
+        """检查是否需要处理图生视频"""
+        # 检查视频工作流是否启用
+        if not self.config.comfyui.video_workflow_enabled:
+            return False
+        
+        # 检查视频状态是否为"否"
+        if row_data.video_status != "否":
+            return False
+        
+        # 只检查列E（产品模特合成图）是否为空
+        has_composite_image = (
+            hasattr(row_data, 'composite_image') and 
+            row_data.composite_image and 
+            (
+                (isinstance(row_data.composite_image, str) and row_data.composite_image.strip()) or
+                (isinstance(row_data.composite_image, dict) and row_data.composite_image.get('fileToken'))
+            )
+        )
+        
+        # 添加调试信息
+        self.logger.info(f"      🔍 第 {row_data.row_number} 行判断条件:")
+        self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
+        self.logger.info(f"         - video_status: '{row_data.video_status}'")
+        self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
+        self.logger.info(f"         - has_composite_image: {has_composite_image}")
+        self.logger.info(f"         - 最终判断结果: {has_composite_image}")
+        
+        return has_composite_image
+    
+    async def process_row(self, row_data: RowData) -> WorkflowResult:
+        """处理图生视频"""
+        start_time = asyncio.get_event_loop().time()
+        
+        try:
+            self.logger.info(f"     🎬 开始处理图生视频 - 第 {row_data.row_number} 行")
+            
+            # 检查是否有合成图片（从E列获取）
+            if not row_data.composite_image:
+                return WorkflowResult(
+                    success=False,
+                    row_number=row_data.row_number,
+                    error="没有找到合成图片，请先完成图片合成"
+                )
+            
+            # 下载合成图片
+            composite_image_data = await self._download_image(row_data.composite_image)
+            
+            # 保存为临时文件
+            import tempfile
+            import os
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as temp_file:
+                temp_file.write(composite_image_data)
+                temp_image_path = temp_file.name
+            
+            try:
+                # 获取提示词
+                prompt = row_data.prompt or "生成视频"
+                
+                # 调用图生视频工作流
+                self.logger.info(f"        🔄 执行ComfyUI图生视频工作流")
+                video_result = await self.comfyui_client.process_video_workflow(
+                    temp_image_path, 
+                    prompt
+                )
+            finally:
+                # 清理临时文件
+                if os.path.exists(temp_image_path):
+                    os.unlink(temp_image_path)
+            
+            if not video_result.success:
+                return WorkflowResult(
+                    success=False,
+                    row_number=row_data.row_number,
+                    error=video_result.error
+                )
+            
+            # 下载并保存视频文件
+            output_files = await self._save_video_files(row_data, video_result)
+            
+            # 更新视频状态
+            await self._update_video_status(row_data)
+            
+            processing_time = asyncio.get_event_loop().time() - start_time
+            
+            return WorkflowResult(
+                success=True,
+                row_number=row_data.row_number,
+                task_id=video_result.task_id,
+                output_files=output_files,
+                processing_time=processing_time
+            )
+            
+        except Exception as e:
+            processing_time = asyncio.get_event_loop().time() - start_time
+            error_msg = f"图生视频处理异常: {str(e)}"
+            self.logger.error(f"        ❌ {error_msg}")
+            
+            return WorkflowResult(
+                success=False,
+                row_number=row_data.row_number,
+                error=error_msg,
+                processing_time=processing_time
+            )
+    
+    async def _download_image(self, image_data) -> bytes:
+        """下载图片数据"""
+        if isinstance(image_data, dict) and image_data.get("type") == "embed-image":
+            file_token = image_data.get("fileToken")
+            return await self.feishu_client.download_image(file_token)
+        elif isinstance(image_data, str) and image_data.startswith("http"):
+            # 如果是URL，直接下载
+            import aiohttp
+            async with aiohttp.ClientSession() as session:
+                async with session.get(image_data) as response:
+                    if response.status == 200:
+                        return await response.read()
+                    else:
+                        raise Exception(f"下载图片失败: HTTP {response.status}")
+        else:
+            raise Exception(f"无效的图片数据: {type(image_data)} - {image_data}")
+    
+    async def _save_video_files(self, row_data: RowData, video_result) -> List[str]:
+        """保存视频文件"""
+        import os
+        from datetime import datetime
+        from pathlib import Path
+        
+        output_files = []
+        if video_result.output_urls:
+            for url in video_result.output_urls:
+                video_data = await self.comfyui_client.download_result(url)
+                
+                # 生成视频文件名
+                product_name = row_data.product_name or f"row_{row_data.row_number}"
+                model_name = row_data.model_name or "unknown_model"
+                safe_product_name = "".join(c for c in product_name if c.isalnum() or c in (' ', '-', '_')).strip()
+                safe_model_name = "".join(c for c in model_name if c.isalnum() or c in (' ', '-', '_')).strip()
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                video_filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.mp4"
+                
+                # 创建video子目录
+                video_dir = Path(self.config.output_dir) / "video"
+                video_dir.mkdir(parents=True, exist_ok=True)
+                video_filepath = video_dir / video_filename
+                
+                with open(video_filepath, 'wb') as f:
+                    f.write(video_data)
+                
+                output_files.append(str(video_filepath))
+                self.logger.info(f"        ✅ 视频文件保存成功: {video_filepath}")
+                break  # 只处理第一个视频文件
+        
+        return output_files
+    
+    async def _update_video_status(self, row_data: RowData):
+        """更新视频状态"""
+        await self.feishu_client.update_video_status(row_data.row_number, "是")
+
+
+class WorkflowManager:
+    """工作流管理器 - 负责协调不同的工作流"""
+    
+    def __init__(self, config: AppConfig):
+        self.config = config
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.workflows = {}
+        self._initialize_workflows()
+    
+    def _initialize_workflows(self):
+        """初始化工作流"""
+        from feishu_client import FeishuClient
+        from comfyui_client import ComfyUIClient
+        
+        feishu_client = FeishuClient(self.config.feishu)
+        comfyui_client = ComfyUIClient(self.config.comfyui)
+        
+        self.workflows[WorkflowMode.IMAGE_COMPOSITION] = ImageCompositionWorkflow(
+            self.config, feishu_client, comfyui_client
+        )
+        self.workflows[WorkflowMode.IMAGE_TO_VIDEO] = ImageToVideoWorkflow(
+            self.config, feishu_client, comfyui_client
+        )
+    
+    def get_workflow(self, mode: WorkflowMode) -> BaseWorkflow:
+        """获取指定模式的工作流"""
+        return self.workflows[mode]
+    
+    def get_available_workflows(self) -> List[WorkflowMode]:
+        """获取可用的工作流模式"""
+        return list(self.workflows.keys())
+    
+    def get_workflow_name(self, mode: WorkflowMode) -> str:
+        """获取工作流名称"""
+        return self.workflows[mode].get_workflow_name()
+    
+    async def process_with_workflow(self, mode: WorkflowMode, rows_data: List[RowData]) -> List[WorkflowResult]:
+        """使用指定工作流处理数据"""
+        workflow = self.workflows[mode]
+        results = []
+        
+        self.logger.info(f"🚀 开始执行 {workflow.get_workflow_name()}")
+        self.logger.info(f"📊 总共需要处理 {len(rows_data)} 行数据")
+        
+        for i, row_data in enumerate(rows_data, 1):
+            # 获取产品名和提示词用于日志显示
+            product_name = row_data.product_name or "未知产品"
+            prompt_preview = (row_data.prompt[:30] + "...") if row_data.prompt and len(row_data.prompt) > 30 else (row_data.prompt or "无提示词")
+            
+            self.logger.info(f"📝 处理进度: {i}/{len(rows_data)} - 第 {row_data.row_number} 行 | 产品: {product_name} | 提示词: {prompt_preview}")
+            
+            # 检查是否需要处理该行
+            if not workflow.should_process_row(row_data):
+                self.logger.info(f"     ⏭️  跳过第 {row_data.row_number} 行（不需要处理） | 产品: {product_name}")
+                # 跳过不需要处理的行
+                results.append(WorkflowResult(
+                    success=True,
+                    row_number=row_data.row_number,
+                    task_id=None,
+                    output_files=[],
+                    error="跳过 - 不满足处理条件",
+                    processing_time=0.0
+                ))
+                continue
+            
+            # 处理该行数据
+            result = await workflow.process_row(row_data)
+            results.append(result)
+            
+            if result.success:
+                self.logger.info(f"     ✅ 第 {row_data.row_number} 行处理成功 | 产品: {product_name} | 提示词: {prompt_preview}")
+            else:
+                self.logger.error(f"     ❌ 第 {row_data.row_number} 行处理失败 | 产品: {product_name} | 提示词: {prompt_preview} | 错误: {result.error}")
+        
+        return results
