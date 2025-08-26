@@ -31,9 +31,9 @@ async def test_get_task_outputs():
         if result.success:
             print(f"✅ 成功获取到 {len(result.output_urls)} 个输出文件")
             
-            # 确保output目录存在
-            output_dir = "./output"
-            os.makedirs(output_dir, exist_ok=True)
+            # 确保output/img目录存在
+            img_dir = "./output/img"
+            os.makedirs(img_dir, exist_ok=True)
             
             # 下载并保存每个文件
             for i, url in enumerate(result.output_urls):
@@ -46,7 +46,7 @@ async def test_get_task_outputs():
                     # 生成文件名
                     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                     filename = f"task_{task_id}_output_{i+1}_{timestamp}.png"
-                    filepath = os.path.join(output_dir, filename)
+                    filepath = os.path.join(img_dir, filename)
                     
                     # 保存文件
                     with open(filepath, 'wb') as f:

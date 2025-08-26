@@ -191,7 +191,10 @@ class ImageCompositionWorkflow(BaseWorkflow):
             safe_model_name = "".join(c for c in model_name if c.isalnum() or c in (' ', '-', '_')).strip()
             timestamp = datetime.now().strftime('%m/%d/%H:%M')
             filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.png".replace('/', '-').replace(':', '-')
-            filepath = os.path.join(self.config.output_dir, filename)
+            # 保存到img子目录
+            img_dir = os.path.join(self.config.output_dir, "img")
+            os.makedirs(img_dir, exist_ok=True)
+            filepath = os.path.join(img_dir, filename)
             
             with open(filepath, 'wb') as f:
                 f.write(file_data)

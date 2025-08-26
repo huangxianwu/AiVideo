@@ -48,10 +48,13 @@ class WorkflowProcessor:
         """创建必要的目录"""
         Path(self.config.temp_dir).mkdir(parents=True, exist_ok=True)
         Path(self.config.output_dir).mkdir(parents=True, exist_ok=True)
+        # 创建img子目录
+        img_dir = Path(self.config.output_dir) / "img"
+        img_dir.mkdir(parents=True, exist_ok=True)
         # 创建video子目录
         video_dir = Path(self.config.output_dir) / "video"
         video_dir.mkdir(parents=True, exist_ok=True)
-        self.logger.info(f"创建目录: {self.config.temp_dir}, {self.config.output_dir}, {video_dir}")
+        self.logger.info(f"创建目录: {self.config.temp_dir}, {self.config.output_dir}, {img_dir}, {video_dir}")
     
     async def process_all_rows(self) -> List[ProcessResult]:
         """处理所有行数据"""
@@ -266,7 +269,9 @@ class WorkflowProcessor:
                     timestamp = datetime.now().strftime('%m/%d/%H:%M')
                     filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.png".replace('/', '-').replace(':', '-')
                     self.logger.info(f"        - 生成的文件名: '{filename}'")
-                    filepath = os.path.join(self.config.output_dir, filename)
+                    # 保存到img子目录
+                    img_dir = os.path.join(self.config.output_dir, "img")
+                    filepath = os.path.join(img_dir, filename)
                     
                     with open(filepath, 'wb') as f:
                         f.write(file_data)
