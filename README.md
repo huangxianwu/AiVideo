@@ -141,7 +141,49 @@ python test/test_full_workflow.py
 
 # 测试图片写入功能
 python test/test_image_write.py
+
+# 快速调试模式测试
+python test_debug_mode.py
 ```
+
+### 🐛 调试模式
+
+调试模式是专为开发和测试设计的特殊运行模式，可以显著加快测试速度：
+
+#### 功能特点
+
+- **跳过ComfyUI API调用**：使用模拟数据代替实际的AI处理
+- **快速执行**：整个工作流在几十秒内完成，而非数小时
+- **完整流程测试**：保留所有业务逻辑，只跳过耗时的API调用
+- **模拟结果生成**：创建模拟的输出文件和报告
+
+#### 使用场景
+
+- **功能开发**：快速验证新功能的逻辑正确性
+- **代码调试**：定位和修复业务逻辑问题
+- **集成测试**：验证各模块间的协作
+- **性能测试**：测试除AI处理外的系统性能
+
+#### 使用方法
+
+```bash
+# 启动调试模式，选择工作流类型
+python main.py --debug
+
+# 运行自动化测试脚本
+python test_debug_mode.py
+```
+
+#### 调试模式 vs 正常模式
+
+| 特性 | 正常模式 | 调试模式 |
+|------|----------|----------|
+| ComfyUI API调用 | ✅ 实际调用 | ❌ 跳过（模拟） |
+| 执行时间 | 数小时 | 几十秒 |
+| 业务逻辑 | ✅ 完整执行 | ✅ 完整执行 |
+| 文件操作 | ✅ 真实文件 | ✅ 模拟文件 |
+| 报告生成 | ✅ 真实数据 | ✅ 模拟数据 |
+| 适用场景 | 生产环境 | 开发测试 |
 
 ## 使用方法
 
@@ -160,6 +202,9 @@ python main.py --retry --max-retries 5
 # 干运行模式（只检查数据，不实际执行）
 python main.py --dry-run
 
+# 调试模式（跳过ComfyUI API调用，快速测试）
+python main.py --debug
+
 # 设置日志级别
 python main.py --log-level DEBUG
 ```
@@ -169,6 +214,7 @@ python main.py --log-level DEBUG
 - `--retry`：重试失败的行
 - `--max-retries N`：设置最大重试次数（默认3次）
 - `--dry-run`：干运行模式，只检查数据完整性
+- `--debug`：调试模式，跳过ComfyUI API调用，使用模拟数据快速测试
 - `--log-level LEVEL`：设置日志级别（DEBUG/INFO/WARNING/ERROR）
 
 ## 数据格式要求

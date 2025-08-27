@@ -1,0 +1,89 @@
+2025-08-26 23:12:26,773 - __main__ - INFO - 日志文件: logs/workflow_20250826_231226.log
+2025-08-26 23:12:26,773 - __main__ - INFO - === 干运行模式 - 数据检查 ===
+2025-08-26 23:12:26,773 - __main__ - INFO - 获取飞书表格数据...
+2025-08-26 23:12:26,976 - feishu_client - INFO - Token获取成功
+2025-08-26 23:12:27,410 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 23:12:27,696 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 23:12:27,696 - feishu_client - INFO - 解析行 1: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,696 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析行 2: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,697 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析行 3: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,697 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析行 4: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,697 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 23:12:27,697 - feishu_client - INFO - 解析行 5: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,697 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 23:12:27,698 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 23:12:27,698 - feishu_client - INFO - 解析行 6: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,698 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 23:12:27,698 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 23:12:27,698 - feishu_client - INFO - 解析行 7: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,698 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 23:12:27,698 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 23:12:27,698 - feishu_client - INFO - 解析行 8: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,698 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析行 9: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,699 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析行 10: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,699 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析行 11: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,699 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 23:12:27,699 - feishu_client - INFO - 解析行 12: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,700 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析行 13: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,700 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析行 14: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,700 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析行 15: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,700 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析行 16: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,700 - feishu_client - INFO - F列原始数据: '0826-Mothman'
+2025-08-26 23:12:27,700 - feishu_client - INFO - 解析后的产品名: '0826-Mothman'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析行 17: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,701 - feishu_client - INFO - F列原始数据: '0826-This is Bull shit'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析后的产品名: '0826-This is Bull shit'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析行 18: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,701 - feishu_client - INFO - F列原始数据: '0826-UFO'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析后的产品名: '0826-UFO'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析行 19: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,701 - feishu_client - INFO - F列原始数据: '0826-vision'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析后的产品名: '0826-vision'
+2025-08-26 23:12:27,701 - feishu_client - INFO - 解析行 20: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:12:27,701 - feishu_client - INFO - F列原始数据: '0826-Yahweh'
+2025-08-26 23:12:27,702 - feishu_client - INFO - 解析后的产品名: '0826-Yahweh'
+2025-08-26 23:12:27,702 - feishu_client - INFO - 处理了 20 行有效数据
+2025-08-26 23:12:27,703 - __main__ - INFO - 找到 20 行数据
+2025-08-26 23:12:27,703 - __main__ - INFO - 行 2 数据完整
+2025-08-26 23:12:27,703 - __main__ - INFO - 行 3 数据完整
+2025-08-26 23:12:27,703 - __main__ - INFO - 行 4 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 5 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 6 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 7 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 8 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 9 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 10 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 11 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 12 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 13 数据完整
+2025-08-26 23:12:27,704 - __main__ - INFO - 行 14 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 15 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 16 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 17 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 18 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 19 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 20 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 行 21 数据完整
+2025-08-26 23:12:27,705 - __main__ - INFO - 数据检查完成: 20 行有效, 0 行无效

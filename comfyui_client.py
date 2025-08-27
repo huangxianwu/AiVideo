@@ -33,12 +33,22 @@ class WorkflowResult:
 class ComfyUIClient:
     """ComfyUI API客户端"""
     
-    def __init__(self, config: ComfyUIConfig):
+    def __init__(self, config: ComfyUIConfig, debug_mode: bool = False):
         self.config = config
         self.logger = logging.getLogger(__name__)
+        self.debug_mode = debug_mode
+        if debug_mode:
+            self.logger.info("🔧 ComfyUI客户端运行在调试模式，将跳过实际API调用")
         
     async def upload_image(self, image_data: bytes, filename: str = "image.png") -> UploadResult:
         """上传图片到ComfyUI"""
+        if self.debug_mode:
+            # 调试模式：模拟上传成功
+            mock_filename = f"debug_{filename}"
+            self.logger.info(f"🔧 [调试模式] 模拟上传图片: {mock_filename}")
+            await asyncio.sleep(0.1)  # 模拟短暂延迟
+            return UploadResult(success=True, file_name=mock_filename)
+        
         url = f"{self.config.base_url}/task/openapi/upload"
         
         headers = {
@@ -57,7 +67,6 @@ class ComfyUIClient:
                         result = await response.json()
                         if result.get('code') == 0:
                             file_name = result.get('data', {}).get('fileName')
-                            self.logger.info(f"图片上传成功: {file_name}")
                             return UploadResult(
                                 success=True,
                                 file_name=file_name
@@ -78,6 +87,13 @@ class ComfyUIClient:
     
     async def create_workflow(self, product_image_name: str, model_image_name: str) -> WorkflowResult:
         """创建工作流"""
+        if self.debug_mode:
+            # 调试模式：模拟工作流创建成功
+            mock_task_id = f"debug_task_{asyncio.get_event_loop().time():.0f}"
+            self.logger.info(f"🔧 [调试模式] 模拟创建工作流，任务ID: {mock_task_id}")
+            await asyncio.sleep(0.1)  # 模拟短暂延迟
+            return WorkflowResult(success=True, task_id=mock_task_id)
+        
         url = f"{self.config.base_url}/task/openapi/create"
         
         headers = {
@@ -110,11 +126,8 @@ class ComfyUIClient:
                 async with session.post(url, json=payload, headers=headers) as response:
                     try:
                         result = await response.json()
-                        self.logger.debug(f"工作流创建响应: {result}")
                     except Exception as json_error:
                         self.logger.error(f"解析响应JSON失败: {json_error}")
-                        response_text = await response.text()
-                        self.logger.error(f"响应内容: {response_text[:200]}...")
                         return WorkflowResult(success=False, error=f"响应解析失败: {json_error}")
                     
                     # 检查响应是否为空
@@ -134,23 +147,19 @@ class ComfyUIClient:
                             result.get("task_id")
                         )
                         if task_id:
-                            self.logger.info(f"工作流创建成功，任务ID: {task_id}")
                             return WorkflowResult(success=True, task_id=task_id)
                         else:
                             error_msg = "响应中未找到任务ID"
                             self.logger.error(f"创建工作流失败: {error_msg}")
-                            self.logger.error(f"完整响应: {result}")
                             return WorkflowResult(success=False, error=error_msg)
                     elif api_code == 421:
                         # 任务队列已满
                         error_msg = "ComfyUI任务队列已满，请稍后重试"
-                        self.logger.warning(f"创建工作流失败: {error_msg}")
                         return WorkflowResult(success=False, error=error_msg)
                     else:
                         # 其他API错误
                         error_msg = result.get("message", f"API错误，代码: {api_code}")
                         self.logger.error(f"创建工作流失败: {error_msg}")
-                        self.logger.error(f"完整响应: {result}")
                         return WorkflowResult(success=False, error=error_msg)
                         
         except Exception as e:
@@ -160,6 +169,13 @@ class ComfyUIClient:
     
     async def create_video_workflow(self, image_file_name: str, prompt: str) -> WorkflowResult:
         """创建图生视频工作流"""
+        if self.debug_mode:
+            # 调试模式：模拟视频工作流创建成功
+            mock_task_id = f"debug_video_task_{asyncio.get_event_loop().time():.0f}"
+            self.logger.info(f"🔧 [调试模式] 模拟创建视频工作流，任务ID: {mock_task_id}")
+            await asyncio.sleep(0.1)  # 模拟短暂延迟
+            return WorkflowResult(success=True, task_id=mock_task_id)
+        
         url = f"{self.config.base_url}/task/openapi/create"
         
         headers = {
@@ -212,6 +228,19 @@ class ComfyUIClient:
     
     async def process_video_workflow(self, image_file_path: str, prompt: str) -> WorkflowResult:
         """处理图生视频完整工作流"""
+        if self.debug_mode:
+            # 调试模式：模拟完整视频工作流处理
+            self.logger.info(f"🔧 [调试模式] 模拟处理视频工作流: {image_file_path}")
+            await asyncio.sleep(1)  # 模拟处理时间
+            mock_task_id = f"debug_video_complete_{asyncio.get_event_loop().time():.0f}"
+            mock_output_urls = [f"https://mock-video-url.com/{mock_task_id}_result.mp4"]
+            return WorkflowResult(
+                success=True,
+                task_id=mock_task_id,
+                status="SUCCESS",
+                output_urls=mock_output_urls
+            )
+        
         try:
             # 1. 上传图片
             self.logger.info("开始上传图片用于视频生成...")
@@ -231,11 +260,11 @@ class ComfyUIClient:
                 return workflow_result
             
             # 3. 等待5秒后开始检查状态
-            self.logger.info(f"等待5秒后开始检查任务状态，任务ID: {workflow_result.task_id}")
+            self.logger.info("等待5秒后开始检查任务状态")
             await asyncio.sleep(5)
             
             # 4. 等待完成
-            self.logger.info(f"开始检查视频生成状态，任务ID: {workflow_result.task_id}")
+            self.logger.info("开始检查视频生成状态")
             final_result = await self.wait_for_completion(workflow_result.task_id, max_wait_time=600, check_interval=30)
             
             return final_result
@@ -264,7 +293,6 @@ class ComfyUIClient:
                 async with session.post(url, headers=headers, json=payload) as response:
                     if response.status == 200:
                         result = await response.json()
-                        self.logger.debug(f"API响应: {result}")
                         if result.get('code') == 0:
                             data = result.get('data')
                             # data可能是字符串（直接的状态值）或对象（包含status字段）
@@ -274,7 +302,6 @@ class ComfyUIClient:
                                 status = data.get('status')
                             else:
                                 status = None
-                            self.logger.debug(f"任务 {task_id} 状态: {status}")
                             return WorkflowResult(success=True, task_id=task_id, status=status)
                         else:
                             # 处理API返回的错误信息，优先使用msg字段
@@ -310,7 +337,6 @@ class ComfyUIClient:
                 async with session.post(url, headers=headers, json=payload) as response:
                     if response.status == 200:
                         result = await response.json()
-                        self.logger.debug(f"API响应: {result}")
                         if result.get('code') == 0:
                             data = result.get('data', {})
                             # 处理data可能是字典或列表的情况
@@ -332,7 +358,6 @@ class ComfyUIClient:
                                 elif isinstance(output, str):
                                     output_urls.append(output)
                             
-                            self.logger.info(f"任务 {task_id} 输出获取成功，共 {len(output_urls)} 个文件")
                             return WorkflowResult(success=True, task_id=task_id, output_urls=output_urls)
                         else:
                             # 处理API返回的错误信息，优先使用msg字段
@@ -356,7 +381,7 @@ class ComfyUIClient:
                 async with session.get(file_url) as response:
                     if response.status == 200:
                         file_data = await response.read()
-                        self.logger.info(f"结果文件下载成功: {file_url}")
+                        # 结果文件下载成功
                         return file_data
                     else:
                         raise Exception(f"下载失败，HTTP状态码: {response.status}")
@@ -366,13 +391,24 @@ class ComfyUIClient:
     
     async def wait_for_completion(self, task_id: str, max_wait_time: int = 300, check_interval: int = 30) -> WorkflowResult:
         """等待任务完成"""
+        if self.debug_mode:
+            # 调试模式：模拟任务完成
+            self.logger.info(f"🔧 [调试模式] 模拟等待任务完成: {task_id}")
+            await asyncio.sleep(1)  # 模拟短暂处理时间
+            mock_output_urls = [f"https://mock-output-url.com/{task_id}_result.png"]
+            return WorkflowResult(
+                success=True,
+                task_id=task_id,
+                status="SUCCESS",
+                output_urls=mock_output_urls
+            )
+        
         start_time = asyncio.get_event_loop().time()
         consecutive_failures = 0
         max_consecutive_failures = 3
         retry_interval = 10
         
-        self.logger.info(f"           - 开始等待任务完成，任务ID: {task_id}")
-        self.logger.info(f"           - 最大等待时间: {max_wait_time}秒，检查间隔: {check_interval}秒")
+
         
         while True:
             current_time = asyncio.get_event_loop().time()
@@ -385,22 +421,19 @@ class ComfyUIClient:
                 return WorkflowResult(success=False, task_id=task_id, error=error_msg)
             
             # 检查任务状态
-            self.logger.info(f"           - 检查任务状态... (已等待 {elapsed_time:.1f}秒)")
             status_result = await self.check_task_status(task_id)
             
             # 如果状态检查失败，记录连续失败次数
             if not status_result.success:
                 consecutive_failures += 1
-                self.logger.warning(f"           ⚠️  状态检查失败 ({consecutive_failures}/{max_consecutive_failures}): {status_result.error}")
                 
                 # 如果连续失败次数达到上限，返回错误
                 if consecutive_failures >= max_consecutive_failures:
                     error_msg = f"状态检查连续失败 {max_consecutive_failures} 次: {status_result.error}"
-                    self.logger.error(f"           ❌ {error_msg}")
+                    self.logger.error(f"❌ {error_msg}")
                     return WorkflowResult(success=False, task_id=task_id, error=error_msg)
                 
                 # 等待重试间隔后继续
-                self.logger.info(f"           - 等待 {retry_interval} 秒后重试状态检查...")
                 await asyncio.sleep(retry_interval)
                 continue
             
@@ -408,14 +441,11 @@ class ComfyUIClient:
             consecutive_failures = 0
             
             status = status_result.status
-            self.logger.info(f"           - 当前状态: {status}")
             
             if status == "SUCCESS":
                 # 任务成功完成，获取输出
-                self.logger.info(f"           ✅ 任务执行成功，获取输出文件...")
                 output_result = await self.get_task_outputs(task_id)
                 if output_result.success:
-                    self.logger.info(f"           ✅ 输出文件获取成功，共 {len(output_result.output_urls)} 个文件")
                     return WorkflowResult(
                         success=True,
                         task_id=task_id,
@@ -423,23 +453,24 @@ class ComfyUIClient:
                         output_urls=output_result.output_urls
                     )
                 else:
-                    self.logger.error(f"           ❌ 获取输出文件失败: {output_result.error}")
+                    self.logger.error(f"❌ 获取输出文件失败: {output_result.error}")
                     return WorkflowResult(success=False, task_id=task_id, error=f"获取输出失败: {output_result.error}")
                     
             elif status == "FAILED":
                 error_msg = "任务执行失败"
-                self.logger.error(f"           ❌ {error_msg}")
+                self.logger.error(f"❌ {error_msg}")
                 return WorkflowResult(success=False, task_id=task_id, error=error_msg)
                 
             elif status in ["QUEUED", "RUNNING"]:
-                # 任务仍在进行中，继续等待
-                self.logger.info(f"           - 任务进行中，等待 {check_interval} 秒后再次检查...")
+                # 任务仍在进行中，显示已等待时间并继续等待
+                elapsed_minutes = int(elapsed_time // 60)
+                elapsed_seconds = int(elapsed_time % 60)
+                self.logger.info(f"        🔸 子步骤4: 等待工作流执行完成 (已等待 {elapsed_minutes}分{elapsed_seconds}秒)")
                 await asyncio.sleep(check_interval)
                 continue
                 
             else:
                 # 未知状态
-                self.logger.warning(f"           ⚠️  未知任务状态: {status}，继续等待...")
                 await asyncio.sleep(check_interval)
                 continue
     
@@ -452,7 +483,7 @@ class ComfyUIClient:
             if not product_upload.success:
                 return WorkflowResult(success=False, error=f"产品图片上传失败: {product_upload.error}")
             
-            self.logger.info(f"        ✅ 产品图片上传成功: {product_upload.file_name}")
+            self.logger.info("        ✅ 产品图片上传成功")
             
             # 2. 上传模特图片
             self.logger.info("        - 上传模特图片...")
@@ -460,7 +491,7 @@ class ComfyUIClient:
             if not model_upload.success:
                 return WorkflowResult(success=False, error=f"模特图片上传失败: {model_upload.error}")
             
-            self.logger.info(f"        ✅ 模特图片上传成功: {model_upload.file_name}")
+            self.logger.info("        ✅ 模特图片上传成功")
             
             # 3. 创建工作流
             self.logger.info("        - 创建ComfyUI工作流...")
@@ -471,7 +502,7 @@ class ComfyUIClient:
             self.logger.info(f"        ✅ 工作流创建成功，任务ID: {workflow_result.task_id}")
             
             # 4. 等待完成
-            self.logger.info("        - 等待工作流执行完成...")
+            self.logger.info("        🔸 子步骤4: 等待工作流执行完成")
             final_result = await self.wait_for_completion(workflow_result.task_id, 
                                                          max_wait_time=self.config.task_check_interval * 5,
                                                          check_interval=self.config.task_check_interval)

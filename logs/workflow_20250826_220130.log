@@ -1,0 +1,262 @@
+2025-08-26 22:01:30,185 - __main__ - INFO - 日志文件: logs/workflow_20250826_220130.log
+2025-08-26 22:01:30,185 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 22:01:30,185 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 22:01:30,185 - __main__ - INFO -    ✅ 工作流管理器初始化完成 - 模式: 图生视频工作流
+2025-08-26 22:01:30,185 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 22:01:30,186 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 22:01:30,948 - feishu_client - INFO - Token获取成功
+2025-08-26 22:01:31,471 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 22:01:32,151 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 22:01:32,151 - feishu_client - INFO - 解析行 1: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,151 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,151 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,151 - feishu_client - INFO - 解析行 2: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,152 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,152 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,152 - feishu_client - INFO - 解析行 3: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,152 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,152 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,152 - feishu_client - INFO - 解析行 4: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,153 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 22:01:32,153 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 22:01:32,153 - feishu_client - INFO - 解析行 5: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,153 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 22:01:32,153 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 22:01:32,153 - feishu_client - INFO - 解析行 6: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,153 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 22:01:32,153 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 22:01:32,153 - feishu_client - INFO - 解析行 7: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,154 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 22:01:32,154 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 22:01:32,154 - feishu_client - INFO - 解析行 8: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,154 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 22:01:32,154 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 22:01:32,154 - feishu_client - INFO - 解析行 9: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,154 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 22:01:32,154 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 22:01:32,154 - feishu_client - INFO - 解析行 10: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,154 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 22:01:32,155 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 22:01:32,155 - feishu_client - INFO - 解析行 11: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,155 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 22:01:32,155 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 22:01:32,155 - feishu_client - INFO - 解析行 12: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,155 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 22:01:32,155 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 22:01:32,155 - feishu_client - INFO - 解析行 13: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,155 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 22:01:32,156 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 22:01:32,156 - feishu_client - INFO - 解析行 14: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,156 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,156 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,156 - feishu_client - INFO - 解析行 15: 原始数据长度=9, product_name_idx=5
+2025-08-26 22:01:32,156 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,156 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 22:01:32,157 - feishu_client - INFO - 处理了 15 行有效数据
+2025-08-26 22:01:32,158 - __main__ - INFO -    ✅ 获取到 15 行数据
+2025-08-26 22:01:32,158 - __main__ - INFO - 🚀 步骤3: 执行 图生视频工作流
+2025-08-26 22:01:32,159 - WorkflowManager - INFO - 🚀 开始执行 图生视频工作流
+2025-08-26 22:01:32,159 - WorkflowManager - INFO - 📊 总共需要处理 15 行数据
+2025-08-26 22:01:32,159 - WorkflowManager - INFO - 📝 处理进度: 1/15 - 第 2 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:01:32,159 - WorkflowManager - INFO -      ⏭️  跳过第 2 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 22:01:32,159 - WorkflowManager - INFO - 📝 处理进度: 2/15 - 第 3 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:01:32,159 - WorkflowManager - INFO -      ⏭️  跳过第 3 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 22:01:32,159 - WorkflowManager - INFO - 📝 处理进度: 3/15 - 第 4 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，甜笑注视镜头，清晰...
+2025-08-26 22:01:32,159 - ImageToVideoWorkflow - INFO -       🔍 第 4 行判断条件:
+2025-08-26 22:01:32,159 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:01:32,159 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:01:32,159 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'PBUabg4rwoOno5xmhylcE6NjnDc'}
+2025-08-26 22:01:32,159 - ImageToVideoWorkflow - INFO -          - has_composite_image: PBUabg4rwoOno5xmhylcE6NjnDc
+2025-08-26 22:01:32,159 - ImageToVideoWorkflow - INFO -          - 最终判断结果: PBUabg4rwoOno5xmhylcE6NjnDc
+2025-08-26 22:01:32,160 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 4 行，产品名：0826-Yes, I Can Drive a Stick，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 22:01:32,425 - feishu_client - INFO - Token获取成功
+2025-08-26 22:01:34,497 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:01:35,504 - comfyui_client - INFO - 图片上传成功: api/097d9aed8939cb7c781f68f26f37c42b2f2c04f4c3e00a4abbb562c84091c5e0.png
+2025-08-26 22:01:35,506 - comfyui_client - INFO - 图片上传成功: api/097d9aed8939cb7c781f68f26f37c42b2f2c04f4c3e00a4abbb562c84091c5e0.png
+2025-08-26 22:01:35,506 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:01:35,991 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960341862190125057
+2025-08-26 22:01:35,992 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960341862190125057
+2025-08-26 22:01:40,993 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960341862190125057
+2025-08-26 22:04:24,790 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00001_dbrvd_1756217003.mp4
+2025-08-26 22:04:24,792 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-Yes I Can Drive a Stick_latin-女-25-长发_20250826_220424.mp4
+2025-08-26 22:04:25,024 - feishu_client - INFO - Token获取成功
+2025-08-26 22:04:25,025 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:04:25,025 - WorkflowManager - INFO -      ✅ 第 4 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，甜笑注视镜头，清晰...
+2025-08-26 22:04:25,025 - WorkflowManager - INFO - 📝 处理进度: 4/15 - 第 5 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:04:25,025 - WorkflowManager - INFO -      ⏭️  跳过第 5 行（不需要处理） | 产品: 0826-Abvela
+2025-08-26 22:04:25,025 - WorkflowManager - INFO - 📝 处理进度: 5/15 - 第 6 行 | 产品: 0826-freaks | 提示词: 镜头绕模特环形移动，穿过背景人群桌椅，模特走路时俏皮挑眉，偶...
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO -       🔍 第 6 行判断条件:
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'YJ15bWfHloI7gNxaacRcArPqnVg'}
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO -          - has_composite_image: YJ15bWfHloI7gNxaacRcArPqnVg
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO -          - 最终判断结果: YJ15bWfHloI7gNxaacRcArPqnVg
+2025-08-26 22:04:25,025 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 6 行，产品名：0826-freaks，提示词：镜头绕模特环形移动，穿过背景人群桌椅，模特走路时俏皮挑眉，偶尔轻拍 T 恤印花位置，强调图案活力。
+2025-08-26 22:04:27,805 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:04:29,722 - comfyui_client - INFO - 图片上传成功: api/a9b6ac818a55e8be8ac63f14e0ee2b6a84cb65d8604ed60c4aa6e9ae61385e19.png
+2025-08-26 22:04:29,724 - comfyui_client - INFO - 图片上传成功: api/a9b6ac818a55e8be8ac63f14e0ee2b6a84cb65d8604ed60c4aa6e9ae61385e19.png
+2025-08-26 22:04:29,724 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:04:30,393 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960342593165033473
+2025-08-26 22:04:30,393 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960342593165033473
+2025-08-26 22:04:35,394 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960342593165033473
+2025-08-26 22:06:41,496 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00002_utcyp_1756217161.mp4
+2025-08-26 22:06:41,498 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-freaks_latin-女-20-长发_20250826_220641.mp4
+2025-08-26 22:06:42,085 - feishu_client - INFO - Token获取成功
+2025-08-26 22:06:42,085 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:06:42,086 - WorkflowManager - INFO -      ✅ 第 6 行处理成功 | 产品: 0826-freaks | 提示词: 镜头绕模特环形移动，穿过背景人群桌椅，模特走路时俏皮挑眉，偶...
+2025-08-26 22:06:42,086 - WorkflowManager - INFO - 📝 处理进度: 6/15 - 第 7 行 | 产品: 0826-beautifully broken | 提示词: 镜头从远慢推至 T 恤特写，模特走路中逐渐灿烂大笑，双手随步...
+2025-08-26 22:06:42,086 - WorkflowManager - INFO -      ⏭️  跳过第 7 行（不需要处理） | 产品: 0826-beautifully broken
+2025-08-26 22:06:42,086 - WorkflowManager - INFO - 📝 处理进度: 7/15 - 第 8 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头动态追焦 T 恤印花，模特走路时侧头向背景朋友招呼，嘴角...
+2025-08-26 22:06:42,086 - ImageToVideoWorkflow - INFO -       🔍 第 8 行判断条件:
+2025-08-26 22:06:42,086 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:06:42,086 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:06:42,086 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'USXkbqzHQopqovxtgyJcW2LgnQe'}
+2025-08-26 22:06:42,087 - ImageToVideoWorkflow - INFO -          - has_composite_image: USXkbqzHQopqovxtgyJcW2LgnQe
+2025-08-26 22:06:42,087 - ImageToVideoWorkflow - INFO -          - 最终判断结果: USXkbqzHQopqovxtgyJcW2LgnQe
+2025-08-26 22:06:42,087 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 8 行，产品名：0826-HIPPIE SOUL，提示词：镜头动态追焦 T 恤印花，模特走路时侧头向背景朋友招呼，嘴角带笑，双手小幅摆动，展示印花清晰度。
+2025-08-26 22:06:52,053 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:06:55,748 - comfyui_client - INFO - 图片上传成功: api/149003278c8e25df83a26d3183ef3966a694766c2f95a80a7c9e764635db099f.png
+2025-08-26 22:06:55,750 - comfyui_client - INFO - 图片上传成功: api/149003278c8e25df83a26d3183ef3966a694766c2f95a80a7c9e764635db099f.png
+2025-08-26 22:06:55,750 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:06:56,073 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960343204421931009
+2025-08-26 22:06:56,075 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960343204421931009
+2025-08-26 22:07:01,076 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960343204421931009
+2025-08-26 22:08:41,501 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00003_ykkaa_1756217307.mp4
+2025-08-26 22:08:41,507 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-HIPPIE SOUL_latin-女-20-长发_20250826_220841.mp4
+2025-08-26 22:08:42,749 - feishu_client - INFO - Token获取成功
+2025-08-26 22:08:42,750 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:08:42,750 - WorkflowManager - INFO -      ✅ 第 8 行处理成功 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头动态追焦 T 恤印花，模特走路时侧头向背景朋友招呼，嘴角...
+2025-08-26 22:08:42,750 - WorkflowManager - INFO - 📝 处理进度: 8/15 - 第 9 行 | 产品: 0826-life is better | 提示词: [{'segmentStyle': {'bold': Fal...
+2025-08-26 22:08:42,750 - WorkflowManager - INFO -      ⏭️  跳过第 9 行（不需要处理） | 产品: 0826-life is better
+2025-08-26 22:08:42,750 - WorkflowManager - INFO - 📝 处理进度: 9/15 - 第 10 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:08:42,750 - WorkflowManager - INFO -      ⏭️  跳过第 10 行（不需要处理） | 产品: 0826-Abvela
+2025-08-26 22:08:42,750 - WorkflowManager - INFO - 📝 处理进度: 10/15 - 第 11 行 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO -       🔍 第 11 行判断条件:
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'KYINbjVARoA31Vxe4eAclmrynsb'}
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO -          - has_composite_image: KYINbjVARoA31Vxe4eAclmrynsb
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO -          - 最终判断结果: KYINbjVARoA31Vxe4eAclmrynsb
+2025-08-26 22:08:42,751 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 11 行，产品名：0826-freaks，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 22:08:48,078 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:08:52,028 - comfyui_client - INFO - 图片上传成功: api/efdfe7a3d61d818938844c0b44499dbcf7ae66c45876bc0799775bebb2a831b7.png
+2025-08-26 22:08:52,031 - comfyui_client - INFO - 图片上传成功: api/efdfe7a3d61d818938844c0b44499dbcf7ae66c45876bc0799775bebb2a831b7.png
+2025-08-26 22:08:52,031 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:08:52,257 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960343692076875778
+2025-08-26 22:08:52,259 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960343692076875778
+2025-08-26 22:08:57,261 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960343692076875778
+2025-08-26 22:11:02,443 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00004_vhqpt_1756217424.mp4
+2025-08-26 22:11:02,451 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-freaks_latin-女-18-马尾长发_20250826_221102.mp4
+2025-08-26 22:11:02,692 - feishu_client - INFO - Token获取成功
+2025-08-26 22:11:02,692 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:11:02,693 - WorkflowManager - INFO -      ✅ 第 11 行处理成功 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:11:02,693 - WorkflowManager - INFO - 📝 处理进度: 11/15 - 第 12 行 | 产品: 0826-beautifully broken | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO -       🔍 第 12 行判断条件:
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'Fo0dbsxGwoBdSOxmGp5c0g76nrd'}
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO -          - has_composite_image: Fo0dbsxGwoBdSOxmGp5c0g76nrd
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO -          - 最终判断结果: Fo0dbsxGwoBdSOxmGp5c0g76nrd
+2025-08-26 22:11:02,693 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 12 行，产品名：0826-beautifully broken，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 22:11:05,166 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:11:06,858 - comfyui_client - INFO - 图片上传成功: api/73ef0e26d61638583f480a1943c42efaf095f4141b036058976355f870fa39ca.png
+2025-08-26 22:11:06,859 - comfyui_client - INFO - 图片上传成功: api/73ef0e26d61638583f480a1943c42efaf095f4141b036058976355f870fa39ca.png
+2025-08-26 22:11:06,859 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:11:07,282 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960344258526019585
+2025-08-26 22:11:07,284 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960344258526019585
+2025-08-26 22:11:12,285 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960344258526019585
+2025-08-26 22:12:47,251 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00005_ybgut_1756217556.mp4
+2025-08-26 22:12:47,259 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-beautifully broken_latin-女-18-马尾长发_20250826_221247.mp4
+2025-08-26 22:12:47,825 - feishu_client - INFO - Token获取成功
+2025-08-26 22:12:47,826 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:12:47,826 - WorkflowManager - INFO -      ✅ 第 12 行处理成功 | 产品: 0826-beautifully broken | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:12:47,826 - WorkflowManager - INFO - 📝 处理进度: 12/15 - 第 13 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:12:47,826 - ImageToVideoWorkflow - INFO -       🔍 第 13 行判断条件:
+2025-08-26 22:12:47,826 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:12:47,826 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:12:47,826 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'DNv4buBWPopKaOx3YcDcabTZnzh'}
+2025-08-26 22:12:47,826 - ImageToVideoWorkflow - INFO -          - has_composite_image: DNv4buBWPopKaOx3YcDcabTZnzh
+2025-08-26 22:12:47,826 - ImageToVideoWorkflow - INFO -          - 最终判断结果: DNv4buBWPopKaOx3YcDcabTZnzh
+2025-08-26 22:12:47,827 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 13 行，产品名：0826-HIPPIE SOUL，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 22:12:54,591 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:12:59,995 - comfyui_client - INFO - 图片上传成功: api/a3d5c9a028abd53177b17021f34ae565c9e20923ddfa98a3eed34733075269b6.png
+2025-08-26 22:12:59,997 - comfyui_client - INFO - 图片上传成功: api/a3d5c9a028abd53177b17021f34ae565c9e20923ddfa98a3eed34733075269b6.png
+2025-08-26 22:12:59,997 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:13:00,852 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960344734575333377
+2025-08-26 22:13:00,854 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960344734575333377
+2025-08-26 22:13:05,854 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960344734575333377
+2025-08-26 22:14:40,913 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00006_ktfsz_1756217671.mp4
+2025-08-26 22:14:40,916 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-HIPPIE SOUL_latin-女-18-马尾长发_20250826_221440.mp4
+2025-08-26 22:14:41,541 - feishu_client - INFO - Token获取成功
+2025-08-26 22:14:41,542 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:14:41,542 - WorkflowManager - INFO -      ✅ 第 13 行处理成功 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:14:41,543 - WorkflowManager - INFO - 📝 处理进度: 13/15 - 第 14 行 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:14:41,543 - ImageToVideoWorkflow - INFO -       🔍 第 14 行判断条件:
+2025-08-26 22:14:41,543 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:14:41,543 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:14:41,543 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'T8hYbS8b2ovXMUxP4zLcpq6QnUf'}
+2025-08-26 22:14:41,543 - ImageToVideoWorkflow - INFO -          - has_composite_image: T8hYbS8b2ovXMUxP4zLcpq6QnUf
+2025-08-26 22:14:41,544 - ImageToVideoWorkflow - INFO -          - 最终判断结果: T8hYbS8b2ovXMUxP4zLcpq6QnUf
+2025-08-26 22:14:41,544 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 14 行，产品名：0826-life is better，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 22:14:47,172 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 22:14:51,791 - comfyui_client - INFO - 图片上传成功: api/ad33378a5ee88e1bb5b1887c2aee428b700fec8c5c578e4e0108b4eb7769654b.png
+2025-08-26 22:14:51,792 - comfyui_client - INFO - 图片上传成功: api/ad33378a5ee88e1bb5b1887c2aee428b700fec8c5c578e4e0108b4eb7769654b.png
+2025-08-26 22:14:51,792 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 22:14:52,678 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960345203896979457
+2025-08-26 22:14:52,679 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960345203896979457
+2025-08-26 22:14:57,681 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960345203896979457
+2025-08-26 22:16:38,725 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/Video-wan2.2_00007_hjgni_1756217783.mp4
+2025-08-26 22:16:38,728 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-life is better_latin-女-18-马尾长发_20250826_221638.mp4
+2025-08-26 22:16:38,941 - feishu_client - INFO - Token获取成功
+2025-08-26 22:16:38,942 - feishu_client - ERROR - 更新视频状态异常: 'FeishuConfig' object has no attribute 'sheet_id'
+2025-08-26 22:16:38,943 - WorkflowManager - INFO -      ✅ 第 14 行处理成功 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 22:16:38,943 - WorkflowManager - INFO - 📝 处理进度: 14/15 - 第 15 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 22:16:38,943 - ImageToVideoWorkflow - INFO -       🔍 第 15 行判断条件:
+2025-08-26 22:16:38,943 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:16:38,943 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:16:38,943 - ImageToVideoWorkflow - INFO -          - composite_image: 
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -          - has_composite_image: 
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -          - 最终判断结果: 
+2025-08-26 22:16:38,944 - WorkflowManager - INFO -      ⏭️  跳过第 15 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 22:16:38,944 - WorkflowManager - INFO - 📝 处理进度: 15/15 - 第 16 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -       🔍 第 16 行判断条件:
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -          - composite_image: 
+2025-08-26 22:16:38,944 - ImageToVideoWorkflow - INFO -          - has_composite_image: 
+2025-08-26 22:16:38,945 - ImageToVideoWorkflow - INFO -          - 最终判断结果: 
+2025-08-26 22:16:38,945 - WorkflowManager - INFO -      ⏭️  跳过第 16 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 22:16:38,945 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-26 22:16:38,947 - __main__ - INFO - 
+============================================================
+📊 图生视频工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 15
+   - 成功: 15
+   - 失败: 0
+   - 成功率: 100.0% (如果总行数 > 0)
+   - 总耗时: 906.77 秒
+   - 平均耗时: 60.45 秒/行
+
+✅ 成功处理的行:
+   - 第 2 行
+   - 第 3 行
+   - 第 4 行 (172.86s) - 1 个文件
+   - 第 5 行
+   - 第 6 行 (137.06s) - 1 个文件
+   - 第 7 行
+   - 第 8 行 (120.66s) - 1 个文件
+   - 第 9 行
+   - 第 10 行
+   - 第 11 行 (139.94s) - 1 个文件
+   - 第 12 行 (105.13s) - 1 个文件
+   - 第 13 行 (113.71s) - 1 个文件
+   - 第 14 行 (117.40s) - 1 个文件
+   - 第 15 行
+   - 第 16 行
+
+============================================================
+
+2025-08-26 22:16:38,949 - __main__ - INFO - 处理报告已保存到: reports/report_20250826_221638.txt
+2025-08-26 22:16:38,949 - __main__ - INFO - 所有数据处理成功

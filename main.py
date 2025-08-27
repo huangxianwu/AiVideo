@@ -16,26 +16,30 @@ from workflow_processor import WorkflowProcessor
 from workflow_manager import WorkflowManager, WorkflowMode
 
 
-def select_workflow_mode() -> WorkflowMode:
+def select_workflow_mode():
     """让用户选择工作流模式"""
     print("\n" + "="*60)
     print("🔧 请选择工作流模式:")
     print("="*60)
     print("1. 图片合成工作流 - 合成产品图和模特图")
     print("2. 图生视频工作流 - 基于合成图生成视频")
+    print("3. 完整工作流 - 先完成所有图片合成，再完成所有图生视频")
     print("="*60)
     
     while True:
         try:
-            choice = input("请输入选择 (1 或 2): ").strip()
+            choice = input("请输入选择 (1、2 或 3): ").strip()
             if choice == "1":
                 print("✅ 已选择: 图片合成工作流")
                 return WorkflowMode.IMAGE_COMPOSITION
             elif choice == "2":
                 print("✅ 已选择: 图生视频工作流")
                 return WorkflowMode.IMAGE_TO_VIDEO
+            elif choice == "3":
+                print("✅ 已选择: 完整工作流")
+                return "FULL_WORKFLOW"
             else:
-                print("❌ 无效选择，请输入 1 或 2")
+                print("❌ 无效选择，请输入 1、2 或 3")
         except KeyboardInterrupt:
             print("\n❌ 用户取消选择")
             sys.exit(130)
@@ -49,6 +53,10 @@ def generate_workflow_report(results, workflow_name: str) -> str:
     successful_rows = sum(1 for r in results if r.success)
     failed_rows = total_rows - successful_rows
     
+    # 统计跳过的行（error包含"跳过"的成功结果）
+    skipped_rows = [r for r in results if r.success and r.error and "跳过" in r.error]
+    actual_processed_rows = successful_rows - len(skipped_rows)
+    
     total_time = sum(r.processing_time or 0 for r in results)
     avg_time = total_time / total_rows if total_rows > 0 else 0
     
@@ -58,8 +66,9 @@ def generate_workflow_report(results, workflow_name: str) -> str:
 {'='*60}
 📈 处理统计:
    - 总行数: {total_rows}
-   - 成功: {successful_rows}
+   - 成功: {actual_processed_rows}
    - 失败: {failed_rows}
+   - 跳过: {len(skipped_rows)}
    - 成功率: {(successful_rows/total_rows*100):.1f}% (如果总行数 > 0)
    - 总耗时: {total_time:.2f} 秒
    - 平均耗时: {avg_time:.2f} 秒/行
@@ -73,10 +82,16 @@ def generate_workflow_report(results, workflow_name: str) -> str:
                 report += f"   - 第 {result.row_number} 行: {result.error}\n"
         report += "\n"
     
-    if successful_rows > 0:
+    if len(skipped_rows) > 0:
+        report += "⏭️ 跳过的行:\n"
+        for result in skipped_rows:
+            report += f"   - 第 {result.row_number} 行：跳过\n"
+        report += "\n"
+    
+    if actual_processed_rows > 0:
         report += "✅ 成功处理的行:\n"
         for result in results:
-            if result.success:
+            if result.success and not (result.error and "跳过" in result.error):
                 time_info = f" ({result.processing_time:.2f}s)" if result.processing_time else ""
                 files_info = f" - {len(result.output_files)} 个文件" if result.output_files else ""
                 report += f"   - 第 {result.row_number} 行{time_info}{files_info}\n"
@@ -112,7 +127,7 @@ def setup_logging(config):
     return logger
 
 
-async def main_process(args, workflow_mode: WorkflowMode):
+async def main_process(args, workflow_mode):
     """主处理流程"""
     # 加载配置
     config = load_config()
@@ -124,8 +139,10 @@ async def main_process(args, workflow_mode: WorkflowMode):
     try:
         # 步骤1: 初始化工作流管理器
         logger.info("🔧 步骤1: 初始化工作流管理器")
-        workflow_manager = WorkflowManager(config)
-        logger.info(f"   ✅ 工作流管理器初始化完成 - 模式: {workflow_manager.get_workflow_name(workflow_mode)}")
+        debug_mode = getattr(args, 'debug', False)
+        if debug_mode:
+            logger.info("🔧 启用调试模式，将跳过ComfyUI API调用")
+        workflow_manager = WorkflowManager(config, debug_mode=debug_mode)
         
         # 步骤2: 获取飞书数据
         logger.info("📊 步骤2: 获取飞书表格数据")
@@ -142,20 +159,44 @@ async def main_process(args, workflow_mode: WorkflowMode):
         logger.info(f"   ✅ 获取到 {len(rows_data)} 行数据")
         
         # 步骤3: 执行工作流处理
-        logger.info(f"🚀 步骤3: 执行 {workflow_manager.get_workflow_name(workflow_mode)}")
-        
-        if args.retry:
-            # 重试模式 - 暂时使用原有逻辑
-            logger.info("🔄 执行重试模式")
-            processor = WorkflowProcessor(config)
-            results = await processor.retry_failed_rows(args.max_retries)
+        if workflow_mode == "FULL_WORKFLOW":
+            logger.info("🚀 步骤3: 执行完整工作流 (图片合成 + 图生视频)")
+            
+            # 先执行图片合成工作流
+            logger.info("🎨 阶段1: 执行图片合成工作流")
+            image_results = await workflow_manager.process_with_workflow(WorkflowMode.IMAGE_COMPOSITION, rows_data)
+            
+            # 生成图片合成报告
+            image_report = generate_workflow_report(image_results, "图片合成工作流")
+            logger.info(image_report)
+            
+            # 再执行图生视频工作流
+            logger.info("🎬 阶段2: 执行图生视频工作流")
+            # 重新获取数据以获取最新的合成图片信息
+            updated_rows_data = await feishu_client.get_sheet_data()
+            video_results = await workflow_manager.process_with_workflow(WorkflowMode.IMAGE_TO_VIDEO, updated_rows_data)
+            
+            # 合并结果
+            results = image_results + video_results
+            workflow_name = "完整工作流 (图片合成 + 图生视频)"
         else:
-            # 使用工作流管理器处理
-            results = await workflow_manager.process_with_workflow(workflow_mode, rows_data)
+            # 单一工作流模式
+            workflow_name = workflow_manager.get_workflow_name(workflow_mode)
+            logger.info(f"🚀 步骤3: 执行 {workflow_name}")
+            logger.info(f"   ✅ 工作流管理器初始化完成 - 模式: {workflow_name}")
+            
+            if args.retry:
+                # 重试模式 - 暂时使用原有逻辑
+                logger.info("🔄 执行重试模式")
+                processor = WorkflowProcessor(config)
+                results = await processor.retry_failed_rows(args.max_retries)
+            else:
+                # 使用工作流管理器处理
+                results = await workflow_manager.process_with_workflow(workflow_mode, rows_data)
         
         # 步骤4: 生成处理报告
         logger.info("📋 步骤4: 生成处理报告")
-        report = generate_workflow_report(results, workflow_manager.get_workflow_name(workflow_mode))
+        report = generate_workflow_report(results, workflow_name)
         logger.info(report)
         
         # 保存报告到文件
@@ -225,6 +266,12 @@ def parse_arguments():
         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
         default='INFO',
         help='日志级别 (默认: INFO)'
+    )
+    
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='调试模式，跳过ComfyUI API调用以加快测试'
     )
     
     return parser.parse_args()

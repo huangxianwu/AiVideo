@@ -91,7 +91,8 @@ class FeishuClient:
                     target_sheet = sheets[0]
                     self.logger.warning(f"未找到工作表 '{self.config.sheet_name}'，使用第一个工作表: {target_sheet.get('title')}")
                 else:
-                    self.logger.info(f"找到目标工作表: {target_sheet.get('title')}")
+                    # self.logger.info(f"找到目标工作表: {target_sheet.get('title')}")
+                    pass
                 
                 return {
                     "sheet_id": target_sheet.get("sheet_id"),
@@ -102,55 +103,41 @@ class FeishuClient:
     async def get_sheet_data(self) -> List[RowData]:
         """获取表格数据"""
         try:
-            # 子步骤1: 获取工作表信息
-            self.logger.info("           📋 获取工作表信息...")
+            # 获取工作表信息
             sheet_info = await self.get_sheet_info()
             sheet_id = sheet_info["sheet_id"]
-            self.logger.info(f"           ✅ 工作表信息获取成功: {sheet_info['sheet_title']}")
             
-            # 子步骤2: 构建请求
-            self.logger.info("           🔗 构建数据请求...")
+            # 构建请求
             url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values/{sheet_id}!{self.config.range}"
-            self.logger.info(f"           - 请求范围: {self.config.range}")
             
             headers = {
                 "Authorization": f"Bearer {self.access_token}"
             }
             
-            # 子步骤3: 发送API请求
-            self.logger.info("           🌐 发送API请求...")
+            # 发送API请求
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers) as response:
                     data = await response.json()
                     
                     if data.get("code") != 0:
-                        self.logger.error(f"           ❌ API请求失败: {data.get('msg')}")
+                        self.logger.error(f"❌ API请求失败: {data.get('msg')}")
                         raise Exception(f"获取单元格数据失败: {data.get('msg')}")
                     
-                    self.logger.info(f"           ✅ API请求成功 (状态码: {data.get('code')})")
-                    
-                    # 子步骤4: 解析响应数据
-                    self.logger.info("           📊 解析响应数据...")
+                    # 解析响应数据
                     value_range = data.get("data", {}).get("valueRange", {})
                     values = value_range.get("values", [])
                     
                     if not values:
-                        self.logger.warning("           ⚠️  表格数据为空")
+                        self.logger.warning("⚠️ 表格数据为空")
                         return []
                     
-                    self.logger.info(f"           - 原始数据行数: {len(values)}")
-                    
-                    # 子步骤5: 解析表格数据
-                    self.logger.info("           🔍 解析表格数据...")
+                    # 解析表格数据
                     parsed_data = self._parse_sheet_data(values)
-                    
-                    self.logger.info(f"           ✅ 数据解析完成")
-                    self.logger.info(f"           - 有效数据行数: {len(parsed_data)}")
                     
                     return parsed_data
                     
         except Exception as e:
-            self.logger.error(f"           ❌ 获取表格数据时发生错误: {str(e)}")
+            self.logger.error(f"❌ 获取表格数据时发生错误: {str(e)}")
             raise
     
     def _parse_sheet_data(self, values: List[List[Any]]) -> List[RowData]:
@@ -164,8 +151,6 @@ class FeishuClient:
         if values and self._is_header_row(values[0]):
             header_row_index = 0
             header_row = values[0]
-            self.logger.info(f"检测到表头行: {header_row}")
-            
             # 建立列名到索引的映射
             for i, cell in enumerate(header_row):
                 if cell:
@@ -197,7 +182,7 @@ class FeishuClient:
                 'model_name': 7,    # H列索引为7
                 'video_status': 8   # I列索引为8
             }
-            self.logger.info("使用默认列索引映射")
+
         
         self.logger.info(f"列映射: {column_mapping}")
         
@@ -219,12 +204,7 @@ class FeishuClient:
             model_name_idx = column_mapping.get('model_name', 7)
             video_status_idx = column_mapping.get('video_status', 8)
             
-            # 调试日志：显示原始行数据和解析结果
-            self.logger.info(f"解析行 {data_start_index + i + 1}: 原始数据长度={len(row)}, product_name_idx={product_name_idx}")
-            if len(row) > product_name_idx:
-                self.logger.info(f"F列原始数据: '{row[product_name_idx]}'")
-            else:
-                self.logger.info(f"F列数据不存在，行长度={len(row)}")
+            # 解析行数据
             
             row_data = RowData(
                 row_number=data_start_index + i + 2,  # +2 因为表格行号从1开始，且要跳过表头
@@ -239,7 +219,7 @@ class FeishuClient:
                 original_data=row
             )
             
-            self.logger.info(f"解析后的产品名: '{row_data.product_name}'")
+            # 产品名解析完成
             
             processed_data.append(row_data)
         
@@ -396,7 +376,7 @@ class FeishuClient:
             url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values_image"
             
             headers = {
-                "Authorization": f"Bearer {access_token}",
+                "Authorization": f"Bearer {self.access_token}",
                 "Content-Type": "application/json"
             }
             
@@ -424,7 +404,7 @@ class FeishuClient:
                         self.logger.error(f"写入图片失败: {data.get('msg')}")
                         return False
                     
-                    self.logger.info(f"图片写入成功到单元格: {cell_range}")
+                    self.logger.info("图片写入成功")
                     return True
                     
         except Exception as e:
@@ -434,13 +414,13 @@ class FeishuClient:
     async def update_video_status(self, row_number: int, video_status: str) -> bool:
         """更新视频状态到I列"""
         try:
-            access_token = await self.get_access_token()
-            sheet_id = self.config.sheet_id
+            sheet_info = await self.get_sheet_info()
+            sheet_id = sheet_info["sheet_id"]
             
-            url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_id}/values"
+            url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values"
             
             headers = {
-                "Authorization": f"Bearer {access_token}",
+                "Authorization": f"Bearer {self.access_token}",
                 "Content-Type": "application/json"
             }
             

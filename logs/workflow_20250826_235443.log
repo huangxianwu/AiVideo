@@ -1,0 +1,390 @@
+2025-08-26 23:54:43,444 - __main__ - INFO - 日志文件: logs/workflow_20250826_235443.log
+2025-08-26 23:54:43,444 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 23:54:43,444 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 23:54:43,444 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 23:54:43,444 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 23:54:43,676 - feishu_client - INFO - Token获取成功
+2025-08-26 23:54:44,384 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 23:54:44,387 - feishu_client - INFO - 处理了 23 行有效数据
+2025-08-26 23:54:44,388 - __main__ - INFO -    ✅ 获取到 23 行数据
+2025-08-26 23:54:44,388 - __main__ - INFO - 🚀 步骤3: 执行完整工作流 (图片合成 + 图生视频)
+2025-08-26 23:54:44,388 - __main__ - INFO - 🎨 阶段1: 执行图片合成工作流
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 🚀 开始执行 图片合成工作流
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 📊 总共需要处理 23 行数据
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 📝 处理进度: 1/23 - 第 2 行，跳过
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 📝 处理进度: 2/23 - 第 3 行，跳过
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 📝 处理进度: 3/23 - 第 4 行，跳过
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 📝 处理进度: 4/23 - 第 5 行，跳过
+2025-08-26 23:54:44,388 - WorkflowManager - INFO - 📝 处理进度: 5/23 - 第 6 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 6/23 - 第 7 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 7/23 - 第 8 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 8/23 - 第 9 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 9/23 - 第 10 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 10/23 - 第 11 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 11/23 - 第 12 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 12/23 - 第 13 行，跳过
+2025-08-26 23:54:44,389 - WorkflowManager - INFO - 📝 处理进度: 13/23 - 第 14 行，跳过
+2025-08-26 23:54:44,390 - WorkflowManager - INFO - 📝 处理进度: 14/23 - 第 15 行，跳过
+2025-08-26 23:54:44,390 - WorkflowManager - INFO - 📝 处理进度: 15/23 - 第 16 行，跳过
+2025-08-26 23:54:44,390 - WorkflowManager - INFO - 📝 处理进度: 16/23 - 第 17 行，跳过
+2025-08-26 23:54:44,390 - WorkflowManager - INFO - 📝 处理进度: 17/23 - 第 18 行，跳过
+2025-08-26 23:54:44,390 - WorkflowManager - INFO - 📝 处理进度: 18/23 - 第 19 行，跳过
+2025-08-26 23:54:44,391 - WorkflowManager - INFO - 📝 处理进度: 19/23 - 第 20 行，跳过
+2025-08-26 23:54:44,391 - WorkflowManager - INFO - 📝 处理进度: 20/23 - 第 21 行，跳过
+2025-08-26 23:54:44,391 - WorkflowManager - INFO - 📝 处理进度: 21/23 - 第 22 行，跳过
+2025-08-26 23:54:44,391 - WorkflowManager - INFO - 📝 处理进度: 22/23 - 第 23 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:54:44,600 - feishu_client - INFO - Token获取成功
+2025-08-26 23:54:46,274 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 23:54:46,845 - comfyui_client - INFO - 图片上传成功
+2025-08-26 23:54:46,846 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-26 23:54:46,846 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 23:54:48,013 - comfyui_client - INFO - 图片上传成功
+2025-08-26 23:54:48,016 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-26 23:54:48,016 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 23:54:49,285 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960370356299206657
+2025-08-26 23:54:49,285 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-26 23:54:49,534 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-26 23:56:50,943 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-Yes I Can Drive a Stick_白人-男-25-帅气_08-26-23-56.png
+2025-08-26 23:56:51,184 - feishu_client - INFO - Token获取成功
+2025-08-26 23:56:58,700 - feishu_client - INFO - 图片写入成功
+2025-08-26 23:57:00,097 - feishu_client - INFO - 行 23 状态更新为: 已完成
+2025-08-26 23:57:00,099 - WorkflowManager - INFO -      ✅ 第 23 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:57:00,100 - WorkflowManager - INFO - 📝 处理进度: 23/23 - 第 24 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:57:01,437 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 23:57:01,843 - comfyui_client - INFO - 图片上传成功
+2025-08-26 23:57:01,844 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-26 23:57:01,844 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 23:57:02,254 - comfyui_client - INFO - 图片上传成功
+2025-08-26 23:57:02,256 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-26 23:57:02,256 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 23:57:02,532 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960370915295072258
+2025-08-26 23:57:02,532 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-26 23:57:02,790 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-26 23:59:03,914 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-Yes I Can Drive a Stick_黑人-男-25-健身_08-26-23-59.png
+2025-08-26 23:59:04,104 - feishu_client - INFO - Token获取成功
+2025-08-26 23:59:07,630 - feishu_client - INFO - 图片写入成功
+2025-08-26 23:59:08,371 - feishu_client - INFO - 行 24 状态更新为: 已完成
+2025-08-26 23:59:08,374 - WorkflowManager - INFO -      ✅ 第 24 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:59:08,375 - __main__ - INFO - 
+============================================================
+📊 图片合成工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 23
+   - 成功: 2
+   - 失败: 0
+   - 跳过: 21
+   - 成功率: 100.0% (如果总行数 > 0)
+   - 总耗时: 263.98 秒
+   - 平均耗时: 11.48 秒/行
+
+⏭️ 跳过的行:
+   - 第 2 行：跳过
+   - 第 3 行：跳过
+   - 第 4 行：跳过
+   - 第 5 行：跳过
+   - 第 6 行：跳过
+   - 第 7 行：跳过
+   - 第 8 行：跳过
+   - 第 9 行：跳过
+   - 第 10 行：跳过
+   - 第 11 行：跳过
+   - 第 12 行：跳过
+   - 第 13 行：跳过
+   - 第 14 行：跳过
+   - 第 15 行：跳过
+   - 第 16 行：跳过
+   - 第 17 行：跳过
+   - 第 18 行：跳过
+   - 第 19 行：跳过
+   - 第 20 行：跳过
+   - 第 21 行：跳过
+   - 第 22 行：跳过
+
+✅ 成功处理的行:
+   - 第 23 行 (135.71s) - 1 个文件
+   - 第 24 行 (128.27s) - 1 个文件
+
+============================================================
+
+2025-08-26 23:59:08,375 - __main__ - INFO - 🎬 阶段2: 执行图生视频工作流
+2025-08-26 23:59:09,441 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 23:59:09,443 - feishu_client - INFO - 处理了 23 行有效数据
+2025-08-26 23:59:09,445 - WorkflowManager - INFO - 🚀 开始执行 图生视频工作流
+2025-08-26 23:59:09,445 - WorkflowManager - INFO - 📊 总共需要处理 23 行数据
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 1/23 - 第 2 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 2/23 - 第 3 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 3/23 - 第 4 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 4/23 - 第 5 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 5/23 - 第 6 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 6/23 - 第 7 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 7/23 - 第 8 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 8/23 - 第 9 行，跳过
+2025-08-26 23:59:09,446 - WorkflowManager - INFO - 📝 处理进度: 9/23 - 第 10 行，跳过
+2025-08-26 23:59:09,447 - WorkflowManager - INFO - 📝 处理进度: 10/23 - 第 11 行，跳过
+2025-08-26 23:59:09,447 - WorkflowManager - INFO - 📝 处理进度: 11/23 - 第 12 行，跳过
+2025-08-26 23:59:09,447 - WorkflowManager - INFO - 📝 处理进度: 12/23 - 第 13 行，跳过
+2025-08-26 23:59:09,447 - WorkflowManager - INFO - 📝 处理进度: 13/23 - 第 14 行，跳过
+2025-08-26 23:59:09,447 - ImageToVideoWorkflow - INFO -       🔍 第 15 行判断条件:
+2025-08-26 23:59:09,447 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-26 23:59:09,447 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-26 23:59:09,448 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'L59ubW1rvo1aTWxaSGZcaNe4nZb'}
+2025-08-26 23:59:09,448 - ImageToVideoWorkflow - INFO -          - has_composite_image: L59ubW1rvo1aTWxaSGZcaNe4nZb
+2025-08-26 23:59:09,448 - ImageToVideoWorkflow - INFO -          - 最终判断结果: L59ubW1rvo1aTWxaSGZcaNe4nZb
+2025-08-26 23:59:09,448 - WorkflowManager - INFO - 📝 处理进度: 14/23 - 第 15 行 | 产品: 0826-Mothman | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:59:09,448 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 15 行，产品名：0826-Mothman，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-26 23:59:10,381 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-26 23:59:11,417 - comfyui_client - INFO - 图片上传成功
+2025-08-26 23:59:11,419 - comfyui_client - INFO - 图片上传成功: api/a85b97c343a0c702140ecf8d0b8821c5d3c3179822eb7cdc9ca1954b3e7f30b8.png
+2025-08-26 23:59:11,419 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-26 23:59:11,642 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960371456913932290
+2025-08-26 23:59:11,643 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960371456913932290
+2025-08-26 23:59:16,645 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960371456913932290
+2025-08-26 23:59:16,861 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-26 23:59:47,048 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:00:17,248 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:00:47,454 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分30秒)
+2025-08-27 00:01:17,824 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 2分0秒)
+2025-08-27 00:01:48,901 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-Mothman_白人-男-25-帅气_20250827_000148.mp4
+2025-08-27 00:01:49,727 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I15:I15
+2025-08-27 00:01:49,728 - WorkflowManager - INFO -      ✅ 第 15 行处理成功 | 产品: 0826-Mothman | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:01:49,728 - ImageToVideoWorkflow - INFO -       🔍 第 16 行判断条件:
+2025-08-27 00:01:49,728 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:01:49,729 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:01:49,729 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'UnxXbkbYgo4Ot7xG69pcjTvAnBd'}
+2025-08-27 00:01:49,729 - ImageToVideoWorkflow - INFO -          - has_composite_image: UnxXbkbYgo4Ot7xG69pcjTvAnBd
+2025-08-27 00:01:49,729 - ImageToVideoWorkflow - INFO -          - 最终判断结果: UnxXbkbYgo4Ot7xG69pcjTvAnBd
+2025-08-27 00:01:49,729 - WorkflowManager - INFO - 📝 处理进度: 15/23 - 第 16 行 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:01:49,729 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 16 行，产品名：0826-This is Bull shit，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:01:50,864 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:01:52,037 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:01:52,040 - comfyui_client - INFO - 图片上传成功: api/74837a1839cad2deb941130add91b6dfc8b902cbae094cf96926a0db34b52d5d.png
+2025-08-27 00:01:52,040 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:01:52,273 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960372130586263553
+2025-08-27 00:01:52,274 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960372130586263553
+2025-08-27 00:01:57,275 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960372130586263553
+2025-08-27 00:01:57,459 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:02:27,663 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:02:57,874 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:03:28,102 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分30秒)
+2025-08-27 00:03:59,107 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-This is Bull shit_白人-男-25-帅气_20250827_000359.mp4
+2025-08-27 00:03:59,870 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I16:I16
+2025-08-27 00:03:59,872 - WorkflowManager - INFO -      ✅ 第 16 行处理成功 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:03:59,872 - ImageToVideoWorkflow - INFO -       🔍 第 17 行判断条件:
+2025-08-27 00:03:59,873 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:03:59,873 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:03:59,873 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'KXadbL4ivojol7x9KdAcOEm6nfB'}
+2025-08-27 00:03:59,873 - ImageToVideoWorkflow - INFO -          - has_composite_image: KXadbL4ivojol7x9KdAcOEm6nfB
+2025-08-27 00:03:59,873 - ImageToVideoWorkflow - INFO -          - 最终判断结果: KXadbL4ivojol7x9KdAcOEm6nfB
+2025-08-27 00:03:59,873 - WorkflowManager - INFO - 📝 处理进度: 16/23 - 第 17 行 | 产品: 0826-UFO | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:03:59,874 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 17 行，产品名：0826-UFO，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:04:00,803 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:04:01,970 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:04:01,972 - comfyui_client - INFO - 图片上传成功: api/af57fc66917cdc25cae4e36b5f0cac45ca1889ee0fff86b447463d474def4d7b.png
+2025-08-27 00:04:01,972 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:04:02,312 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960372676110024705
+2025-08-27 00:04:02,312 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960372676110024705
+2025-08-27 00:04:07,313 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960372676110024705
+2025-08-27 00:04:07,732 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:04:37,966 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:05:08,375 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:05:39,441 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-UFO_黑人-男-25-胡茬酒吧_20250827_000539.mp4
+2025-08-27 00:05:40,190 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I17:I17
+2025-08-27 00:05:40,191 - WorkflowManager - INFO -      ✅ 第 17 行处理成功 | 产品: 0826-UFO | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:05:40,191 - ImageToVideoWorkflow - INFO -       🔍 第 18 行判断条件:
+2025-08-27 00:05:40,191 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:05:40,191 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:05:40,192 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'V6pVbsXruoXoW9xozGgcPmnunDe'}
+2025-08-27 00:05:40,192 - ImageToVideoWorkflow - INFO -          - has_composite_image: V6pVbsXruoXoW9xozGgcPmnunDe
+2025-08-27 00:05:40,192 - ImageToVideoWorkflow - INFO -          - 最终判断结果: V6pVbsXruoXoW9xozGgcPmnunDe
+2025-08-27 00:05:40,192 - WorkflowManager - INFO - 📝 处理进度: 17/23 - 第 18 行 | 产品: 0826-vision | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:05:40,192 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 18 行，产品名：0826-vision，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:05:41,307 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:05:42,209 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:05:42,211 - comfyui_client - INFO - 图片上传成功: api/68f4fa46460fb2c6f651bad8913b10bd11cd5daf208980391ba3ba109b59be27.png
+2025-08-27 00:05:42,211 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:05:42,475 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960373096198930434
+2025-08-27 00:05:42,476 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960373096198930434
+2025-08-27 00:05:47,477 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960373096198930434
+2025-08-27 00:05:47,667 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:06:17,910 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:06:48,198 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:07:19,362 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-vision_黑人-男-25-健身_20250827_000719.mp4
+2025-08-27 00:07:20,816 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I18:I18
+2025-08-27 00:07:20,817 - WorkflowManager - INFO -      ✅ 第 18 行处理成功 | 产品: 0826-vision | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:07:20,817 - ImageToVideoWorkflow - INFO -       🔍 第 19 行判断条件:
+2025-08-27 00:07:20,818 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:07:20,818 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:07:20,818 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'TOa3b8VzCoA4RzxmmjHch6Mzno0'}
+2025-08-27 00:07:20,818 - ImageToVideoWorkflow - INFO -          - has_composite_image: TOa3b8VzCoA4RzxmmjHch6Mzno0
+2025-08-27 00:07:20,818 - ImageToVideoWorkflow - INFO -          - 最终判断结果: TOa3b8VzCoA4RzxmmjHch6Mzno0
+2025-08-27 00:07:20,818 - WorkflowManager - INFO - 📝 处理进度: 18/23 - 第 19 行 | 产品: 0826-Yahweh | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:07:20,818 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 19 行，产品名：0826-Yahweh，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:07:21,659 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:07:22,827 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:07:22,829 - comfyui_client - INFO - 图片上传成功: api/9c674381c6bb752c3bc9225236f13aa9b23b705868dedf6fd1b8b8c801323f75.png
+2025-08-27 00:07:22,829 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:07:23,713 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960373520788324354
+2025-08-27 00:07:23,714 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960373520788324354
+2025-08-27 00:07:28,715 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960373520788324354
+2025-08-27 00:07:28,923 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:07:59,335 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:08:29,700 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:09:16,496 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-Yahweh_黑人-男-25-胡茬酒吧_20250827_000916.mp4
+2025-08-27 00:09:19,023 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I19:I19
+2025-08-27 00:09:19,025 - WorkflowManager - INFO -      ✅ 第 19 行处理成功 | 产品: 0826-Yahweh | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:09:19,025 - ImageToVideoWorkflow - INFO -       🔍 第 20 行判断条件:
+2025-08-27 00:09:19,026 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:09:19,026 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:09:19,026 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'QnBEbAShOoubCexRmGIcdwzEnzb'}
+2025-08-27 00:09:19,026 - ImageToVideoWorkflow - INFO -          - has_composite_image: QnBEbAShOoubCexRmGIcdwzEnzb
+2025-08-27 00:09:19,026 - ImageToVideoWorkflow - INFO -          - 最终判断结果: QnBEbAShOoubCexRmGIcdwzEnzb
+2025-08-27 00:09:19,027 - WorkflowManager - INFO - 📝 处理进度: 19/23 - 第 20 行 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:09:19,027 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 20 行，产品名：0826-freaks，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:14:19,308 - ImageToVideoWorkflow - ERROR -         ❌ 图生视频处理异常: 
+2025-08-27 00:14:19,311 - WorkflowManager - ERROR -      ❌ 第 20 行处理失败 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图生视频处理异常: 
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO -       🔍 第 21 行判断条件:
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'ERKrbXaUUoRtGlxorHWcioqqnoH'}
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO -          - has_composite_image: ERKrbXaUUoRtGlxorHWcioqqnoH
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO -          - 最终判断结果: ERKrbXaUUoRtGlxorHWcioqqnoH
+2025-08-27 00:14:19,312 - WorkflowManager - INFO - 📝 处理进度: 20/23 - 第 21 行 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:14:19,312 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 21 行，产品名：0826-This is Bull shit，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:14:20,132 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:14:21,422 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:14:21,423 - comfyui_client - INFO - 图片上传成功: api/c5ac7764281d20f3c1012cf126366beb88b115ad772a8bf4eddc6fb731949ae7.png
+2025-08-27 00:14:21,424 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:14:21,621 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960375273722187777
+2025-08-27 00:14:21,623 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960375273722187777
+2025-08-27 00:14:26,624 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960375273722187777
+2025-08-27 00:14:26,904 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:14:57,072 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:15:27,261 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:15:58,046 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-This is Bull shit_黑人-男-25-胡茬酒吧_20250827_001558.mp4
+2025-08-27 00:15:58,697 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I21:I21
+2025-08-27 00:15:58,698 - WorkflowManager - INFO -      ✅ 第 21 行处理成功 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO -       🔍 第 22 行判断条件:
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'Myw1bx6IWoOZDIxm4HscO7CunGh'}
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO -          - has_composite_image: Myw1bx6IWoOZDIxm4HscO7CunGh
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO -          - 最终判断结果: Myw1bx6IWoOZDIxm4HscO7CunGh
+2025-08-27 00:15:58,698 - WorkflowManager - INFO - 📝 处理进度: 21/23 - 第 22 行 | 产品: 0826-UFO | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:15:58,698 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 22 行，产品名：0826-UFO，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:15:59,315 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:16:04,536 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:16:04,538 - comfyui_client - INFO - 图片上传成功: api/df3018f9e2b80127b0382c15c68fc68fd4a207d6d2a5ac92552a5b49e27cb457.png
+2025-08-27 00:16:04,539 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:16:04,765 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960375706280755202
+2025-08-27 00:16:04,766 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960375706280755202
+2025-08-27 00:16:09,767 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960375706280755202
+2025-08-27 00:16:09,985 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:16:40,144 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:17:10,347 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:35:07,401 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-UFO_黑人-男-25-胡茬酒吧_20250827_003507.mp4
+2025-08-27 00:35:08,023 - feishu_client - INFO - 视频状态更新成功到单元格: 35d2b7!I22:I22
+2025-08-27 00:35:08,024 - WorkflowManager - INFO -      ✅ 第 22 行处理成功 | 产品: 0826-UFO | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:35:08,024 - ImageToVideoWorkflow - INFO -       🔍 第 23 行判断条件:
+2025-08-27 00:35:08,025 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 00:35:08,025 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 00:35:08,025 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'NFyxb5gILo7w7CxqmqccQe7gnsb'}
+2025-08-27 00:35:08,025 - ImageToVideoWorkflow - INFO -          - has_composite_image: NFyxb5gILo7w7CxqmqccQe7gnsb
+2025-08-27 00:35:08,025 - ImageToVideoWorkflow - INFO -          - 最终判断结果: NFyxb5gILo7w7CxqmqccQe7gnsb
+2025-08-27 00:35:08,025 - WorkflowManager - INFO - 📝 处理进度: 22/23 - 第 23 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 00:35:08,025 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 23 行，产品名：0826-Yes, I Can Drive a Stick，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 00:35:08,717 - comfyui_client - INFO - 开始上传图片用于视频生成...
+2025-08-27 00:35:09,590 - comfyui_client - INFO - 图片上传成功
+2025-08-27 00:35:09,591 - comfyui_client - INFO - 图片上传成功: api/7363e820f54aaa3882984a91a97513d50b078bf561f89e2c2b19dc3932b618b1.png
+2025-08-27 00:35:09,591 - comfyui_client - INFO - 创建图生视频工作流...
+2025-08-27 00:35:10,301 - comfyui_client - INFO - 图生视频工作流创建成功，任务ID: 1960380509983571970
+2025-08-27 00:35:10,315 - comfyui_client - INFO - 等待5秒后开始检查任务状态，任务ID: 1960380509983571970
+2025-08-27 00:35:15,336 - comfyui_client - INFO - 开始检查视频生成状态，任务ID: 1960380509983571970
+2025-08-27 00:35:15,697 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 00:35:45,844 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分30秒)
+2025-08-27 00:36:16,090 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分0秒)
+2025-08-27 00:36:46,284 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 1分30秒)
+2025-08-27 00:37:16,520 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 2分0秒)
+2025-08-27 02:37:24,390 - ImageToVideoWorkflow - INFO -         ✅ 视频文件保存成功: output/video/0826-Yes I Can Drive a Stick_白人-男-25-帅气_20250827_023724.mp4
+2025-08-27 02:37:24,486 - feishu_client - ERROR - 更新视频状态异常: 获取工作表信息失败: Invalid access token for authorization. Please make a request with token attached.
+2025-08-27 02:37:24,486 - WorkflowManager - INFO -      ✅ 第 23 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 02:37:24,487 - ImageToVideoWorkflow - INFO -       🔍 第 24 行判断条件:
+2025-08-27 02:37:24,487 - ImageToVideoWorkflow - INFO -          - video_workflow_enabled: True
+2025-08-27 02:37:24,488 - ImageToVideoWorkflow - INFO -          - video_status: '否'
+2025-08-27 02:37:24,488 - ImageToVideoWorkflow - INFO -          - composite_image: {'type': 'embed-image', 'fileToken': 'Co32bxNfKoPraNxFxnTcweppnsg'}
+2025-08-27 02:37:24,488 - ImageToVideoWorkflow - INFO -          - has_composite_image: Co32bxNfKoPraNxFxnTcweppnsg
+2025-08-27 02:37:24,488 - ImageToVideoWorkflow - INFO -          - 最终判断结果: Co32bxNfKoPraNxFxnTcweppnsg
+2025-08-27 02:37:24,488 - WorkflowManager - INFO - 📝 处理进度: 23/23 - 第 24 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 02:37:24,488 - ImageToVideoWorkflow - INFO - 🎬 开始处理图生视频 - 第 24 行，产品名：0826-Yes, I Can Drive a Stick，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。
+2025-08-27 02:37:24,576 - ImageToVideoWorkflow - ERROR -         ❌ 图生视频处理异常: 下载图片失败: HTTP 400
+2025-08-27 02:37:24,576 - WorkflowManager - ERROR -      ❌ 第 24 行处理失败 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图生视频处理异常: 下载图片失败: HTTP 400
+2025-08-27 02:37:24,576 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-27 02:37:24,580 - __main__ - INFO - 
+============================================================
+📊 完整工作流 (图片合成 + 图生视频) 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 46
+   - 成功: 10
+   - 失败: 2
+   - 跳过: 34
+   - 成功率: 95.7% (如果总行数 > 0)
+   - 总耗时: 1536.11 秒
+   - 平均耗时: 33.39 秒/行
+
+❌ 失败详情:
+   - 第 20 行: 图生视频处理异常: 
+   - 第 24 行: 图生视频处理异常: 下载图片失败: HTTP 400
+
+⏭️ 跳过的行:
+   - 第 2 行：跳过
+   - 第 3 行：跳过
+   - 第 4 行：跳过
+   - 第 5 行：跳过
+   - 第 6 行：跳过
+   - 第 7 行：跳过
+   - 第 8 行：跳过
+   - 第 9 行：跳过
+   - 第 10 行：跳过
+   - 第 11 行：跳过
+   - 第 12 行：跳过
+   - 第 13 行：跳过
+   - 第 14 行：跳过
+   - 第 15 行：跳过
+   - 第 16 行：跳过
+   - 第 17 行：跳过
+   - 第 18 行：跳过
+   - 第 19 行：跳过
+   - 第 20 行：跳过
+   - 第 21 行：跳过
+   - 第 22 行：跳过
+   - 第 2 行：跳过
+   - 第 3 行：跳过
+   - 第 4 行：跳过
+   - 第 5 行：跳过
+   - 第 6 行：跳过
+   - 第 7 行：跳过
+   - 第 8 行：跳过
+   - 第 9 行：跳过
+   - 第 10 行：跳过
+   - 第 11 行：跳过
+   - 第 12 行：跳过
+   - 第 13 行：跳过
+   - 第 14 行：跳过
+
+✅ 成功处理的行:
+   - 第 23 行 (135.71s) - 1 个文件
+   - 第 24 行 (128.27s) - 1 个文件
+   - 第 15 行 (160.28s) - 1 个文件
+   - 第 16 行 (130.14s) - 1 个文件
+   - 第 17 行 (100.31s) - 1 个文件
+   - 第 18 行 (100.63s) - 1 个文件
+   - 第 19 行 (118.21s) - 1 个文件
+   - 第 21 行 (99.39s) - 1 个文件
+   - 第 22 行 (103.55s) - 1 个文件
+   - 第 23 行 (159.26s) - 1 个文件
+
+============================================================
+
+2025-08-27 02:37:24,581 - __main__ - INFO - 处理报告已保存到: reports/report_20250827_023724.txt
+2025-08-27 02:37:24,582 - __main__ - WARNING - 部分数据处理失败: 44/46

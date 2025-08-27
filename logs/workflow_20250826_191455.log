@@ -1,0 +1,179 @@
+2025-08-26 19:14:55,651 - __main__ - INFO - 日志文件: logs/workflow_20250826_191455.log
+2025-08-26 19:14:55,651 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 19:14:55,652 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 19:14:55,652 - __main__ - INFO -    ✅ 工作流管理器初始化完成 - 模式: 图片合成工作流
+2025-08-26 19:14:55,652 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 19:14:55,652 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 19:14:55,933 - feishu_client - INFO - Token获取成功
+2025-08-26 19:14:56,365 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:14:56,798 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 19:14:56,799 - feishu_client - INFO - 解析行 1: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,799 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 19:14:56,799 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 19:14:56,799 - feishu_client - INFO - 解析行 2: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,799 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 19:14:56,799 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 19:14:56,800 - feishu_client - INFO - 解析行 3: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,800 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 19:14:56,800 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 19:14:56,800 - feishu_client - INFO - 解析行 4: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,800 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 19:14:56,800 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 19:14:56,801 - feishu_client - INFO - 解析行 5: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,801 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 19:14:56,801 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 19:14:56,801 - feishu_client - INFO - 解析行 6: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,802 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 19:14:56,802 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 19:14:56,802 - feishu_client - INFO - 解析行 7: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,802 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 19:14:56,802 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 19:14:56,802 - feishu_client - INFO - 解析行 8: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,802 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 19:14:56,802 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 19:14:56,802 - feishu_client - INFO - 解析行 9: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,803 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 19:14:56,803 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 19:14:56,803 - feishu_client - INFO - 解析行 10: 原始数据长度=9, product_name_idx=5
+2025-08-26 19:14:56,803 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 19:14:56,803 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 19:14:56,804 - feishu_client - INFO - 处理了 10 行有效数据
+2025-08-26 19:14:56,805 - __main__ - INFO -    ✅ 获取到 10 行数据
+2025-08-26 19:14:56,805 - __main__ - INFO - 🚀 步骤3: 执行 图片合成工作流
+2025-08-26 19:14:56,806 - WorkflowManager - INFO - 🚀 开始执行 图片合成工作流
+2025-08-26 19:14:56,806 - WorkflowManager - INFO - 📊 总共需要处理 10 行数据
+2025-08-26 19:14:56,806 - WorkflowManager - INFO - 📝 处理进度: 1/10 - 第 2 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:14:56,806 - WorkflowManager - INFO -      ⏭️  跳过第 2 行（不需要处理） | 产品: 0826-Abvela
+2025-08-26 19:14:56,806 - WorkflowManager - INFO - 📝 处理进度: 2/10 - 第 3 行 | 产品: 0826-freaks | 提示词: 镜头绕模特环形移动，穿过背景人群桌椅，模特走路时俏皮挑眉，偶...
+2025-08-26 19:14:56,807 - WorkflowManager - INFO -      ⏭️  跳过第 3 行（不需要处理） | 产品: 0826-freaks
+2025-08-26 19:14:56,807 - WorkflowManager - INFO - 📝 处理进度: 3/10 - 第 4 行 | 产品: 0826-beautifully broken | 提示词: 镜头从远慢推至 T 恤特写，模特走路中逐渐灿烂大笑，双手随步...
+2025-08-26 19:14:56,808 - WorkflowManager - INFO -      ⏭️  跳过第 4 行（不需要处理） | 产品: 0826-beautifully broken
+2025-08-26 19:14:56,808 - WorkflowManager - INFO - 📝 处理进度: 4/10 - 第 5 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头动态追焦 T 恤印花，模特走路时侧头向背景朋友招呼，嘴角...
+2025-08-26 19:14:56,808 - WorkflowManager - INFO -      ⏭️  跳过第 5 行（不需要处理） | 产品: 0826-HIPPIE SOUL
+2025-08-26 19:14:56,808 - WorkflowManager - INFO - 📝 处理进度: 5/10 - 第 6 行 | 产品: 0826-life is better | 提示词: [{'segmentStyle': {'bold': Fal...
+2025-08-26 19:14:56,808 - WorkflowManager - INFO -      ⏭️  跳过第 6 行（不需要处理） | 产品: 0826-life is better
+2025-08-26 19:14:56,808 - WorkflowManager - INFO - 📝 处理进度: 6/10 - 第 7 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:14:56,809 - ImageCompositionWorkflow - INFO - 🎨 开始处理图片合成 - 第 7 行，产品名：0826-Abvela，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 19:14:57,021 - feishu_client - INFO - Token获取成功
+2025-08-26 19:14:58,274 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 19:14:58,658 - comfyui_client - INFO - 图片上传成功: api/6249d4cff2e335356b21910f866bfb580c0374763d16852128add124fbe95e03.png
+2025-08-26 19:14:58,659 - comfyui_client - INFO -         ✅ 产品图片上传成功: api/6249d4cff2e335356b21910f866bfb580c0374763d16852128add124fbe95e03.png
+2025-08-26 19:14:58,659 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 19:15:00,160 - comfyui_client - INFO - 图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:15:00,161 - comfyui_client - INFO -         ✅ 模特图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:15:00,162 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 19:15:00,586 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960299938745823233
+2025-08-26 19:15:00,586 - comfyui_client - INFO -         - 等待工作流执行完成...
+2025-08-26 19:17:02,416 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00001_kgner_1756206976.png
+2025-08-26 19:17:02,421 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-Abvela_latin-女-18-马尾长发_08-26-19-17.png
+2025-08-26 19:17:02,639 - feishu_client - INFO - Token获取成功
+2025-08-26 19:17:02,965 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:17:10,477 - feishu_client - INFO - 图片写入成功到单元格: 35d2b7!E7:E7
+2025-08-26 19:17:10,879 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:17:11,284 - feishu_client - INFO - 行 7 状态更新为: 已完成
+2025-08-26 19:17:11,286 - WorkflowManager - INFO -      ✅ 第 7 行处理成功 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:17:11,286 - WorkflowManager - INFO - 📝 处理进度: 7/10 - 第 8 行 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:17:11,286 - ImageCompositionWorkflow - INFO - 🎨 开始处理图片合成 - 第 8 行，产品名：0826-freaks，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 19:17:12,460 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 19:17:12,977 - comfyui_client - INFO - 图片上传成功: api/0ccfe6be91e2cc2413b363bc17e85e2d9ddeed3ebfa1ee1340e9b2276e87df07.png
+2025-08-26 19:17:12,978 - comfyui_client - INFO -         ✅ 产品图片上传成功: api/0ccfe6be91e2cc2413b363bc17e85e2d9ddeed3ebfa1ee1340e9b2276e87df07.png
+2025-08-26 19:17:12,978 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 19:17:14,365 - comfyui_client - INFO - 图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:17:14,367 - comfyui_client - INFO -         ✅ 模特图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:17:14,367 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 19:17:14,701 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960300501654974465
+2025-08-26 19:17:14,701 - comfyui_client - INFO -         - 等待工作流执行完成...
+2025-08-26 19:21:16,792 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00001_vecri_1756207146.png
+2025-08-26 19:21:16,794 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-freaks_latin-女-18-马尾长发_08-26-19-21.png
+2025-08-26 19:21:17,000 - feishu_client - INFO - Token获取成功
+2025-08-26 19:21:17,400 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:21:26,084 - feishu_client - INFO - 图片写入成功到单元格: 35d2b7!E8:E8
+2025-08-26 19:21:26,579 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:21:26,986 - feishu_client - INFO - 行 8 状态更新为: 已完成
+2025-08-26 19:21:27,001 - WorkflowManager - INFO -      ✅ 第 8 行处理成功 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:21:27,001 - WorkflowManager - INFO - 📝 处理进度: 8/10 - 第 9 行 | 产品: 0826-beautifully broken | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:21:27,001 - ImageCompositionWorkflow - INFO - 🎨 开始处理图片合成 - 第 9 行，产品名：0826-beautifully broken，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 19:21:29,069 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 19:21:29,737 - comfyui_client - INFO - 图片上传成功: api/88d2e00059f8d9b2321b5ea708cd5ea23b28216c0845789f2bc148ae41d8e5f1.png
+2025-08-26 19:21:29,738 - comfyui_client - INFO -         ✅ 产品图片上传成功: api/88d2e00059f8d9b2321b5ea708cd5ea23b28216c0845789f2bc148ae41d8e5f1.png
+2025-08-26 19:21:29,738 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 19:21:30,704 - comfyui_client - INFO - 图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:21:30,705 - comfyui_client - INFO -         ✅ 模特图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:21:30,705 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 19:21:31,845 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960301580128067585
+2025-08-26 19:21:31,845 - comfyui_client - INFO -         - 等待工作流执行完成...
+2025-08-26 19:25:34,014 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00001_ylmuq_1756207390.png
+2025-08-26 19:25:34,019 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-beautifully broken_latin-女-18-马尾长发_08-26-19-25.png
+2025-08-26 19:25:34,222 - feishu_client - INFO - Token获取成功
+2025-08-26 19:25:34,629 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:25:42,917 - feishu_client - INFO - 图片写入成功到单元格: 35d2b7!E9:E9
+2025-08-26 19:25:43,434 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:25:43,845 - feishu_client - INFO - 行 9 状态更新为: 已完成
+2025-08-26 19:25:43,848 - WorkflowManager - INFO -      ✅ 第 9 行处理成功 | 产品: 0826-beautifully broken | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:25:43,849 - WorkflowManager - INFO - 📝 处理进度: 9/10 - 第 10 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:25:43,849 - ImageCompositionWorkflow - INFO - 🎨 开始处理图片合成 - 第 10 行，产品名：0826-HIPPIE SOUL，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 19:25:45,170 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 19:25:45,593 - comfyui_client - INFO - 图片上传成功: api/02586aa45ea970071eda97f61f374edc85a21aaa8636cf76ac09a7c4a0e0d7ed.png
+2025-08-26 19:25:45,594 - comfyui_client - INFO -         ✅ 产品图片上传成功: api/02586aa45ea970071eda97f61f374edc85a21aaa8636cf76ac09a7c4a0e0d7ed.png
+2025-08-26 19:25:45,594 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 19:25:46,818 - comfyui_client - INFO - 图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:25:46,830 - comfyui_client - INFO -         ✅ 模特图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:25:46,830 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 19:25:47,325 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960302651495821314
+2025-08-26 19:25:47,325 - comfyui_client - INFO -         - 等待工作流执行完成...
+2025-08-26 19:27:48,871 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00002_pzzgq_1756207650.png
+2025-08-26 19:27:48,883 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-HIPPIE SOUL_latin-女-18-马尾长发_08-26-19-27.png
+2025-08-26 19:27:49,079 - feishu_client - INFO - Token获取成功
+2025-08-26 19:27:49,380 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:27:58,182 - feishu_client - INFO - 图片写入成功到单元格: 35d2b7!E10:E10
+2025-08-26 19:27:58,581 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:27:58,972 - feishu_client - INFO - 行 10 状态更新为: 已完成
+2025-08-26 19:27:58,973 - WorkflowManager - INFO -      ✅ 第 10 行处理成功 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:27:58,974 - WorkflowManager - INFO - 📝 处理进度: 10/10 - 第 11 行 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:27:58,974 - ImageCompositionWorkflow - INFO - 🎨 开始处理图片合成 - 第 11 行，产品名：0826-life is better，提示词：镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小爱心，甜笑注视镜头，清晰呈现 T 恤彩色印花 。
+2025-08-26 19:28:00,341 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 19:28:00,887 - comfyui_client - INFO - 图片上传成功: api/84736c6dff387fd008826fc804d305faae280335416668792b8a03bea4fd4365.png
+2025-08-26 19:28:00,890 - comfyui_client - INFO -         ✅ 产品图片上传成功: api/84736c6dff387fd008826fc804d305faae280335416668792b8a03bea4fd4365.png
+2025-08-26 19:28:00,890 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 19:28:02,318 - comfyui_client - INFO - 图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:28:02,320 - comfyui_client - INFO -         ✅ 模特图片上传成功: api/f221a5b2af83d2f4d6fda771bde0491cf8efbf2b72c87d88d9468f203117bfc4.png
+2025-08-26 19:28:02,320 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 19:28:02,877 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960303220218372097
+2025-08-26 19:28:02,877 - comfyui_client - INFO -         - 等待工作流执行完成...
+2025-08-26 19:30:04,441 - comfyui_client - INFO - 结果文件下载成功: https://rh-images.xiaoyaoyou.com/bfb38141e9ed611522001c22675bd3e6/output/ComfyUI_00004_fkulq_1756207754.png
+2025-08-26 19:30:04,444 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-life is better_latin-女-18-马尾长发_08-26-19-30.png
+2025-08-26 19:30:04,656 - feishu_client - INFO - Token获取成功
+2025-08-26 19:30:04,966 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:30:13,555 - feishu_client - INFO - 图片写入成功到单元格: 35d2b7!E11:E11
+2025-08-26 19:30:14,007 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 19:30:14,416 - feishu_client - INFO - 行 11 状态更新为: 已完成
+2025-08-26 19:30:14,418 - WorkflowManager - INFO -      ✅ 第 11 行处理成功 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 19:30:14,419 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-26 19:30:14,420 - __main__ - INFO - 
+============================================================
+📊 图片合成工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 10
+   - 成功: 10
+   - 失败: 0
+   - 成功率: 100.0% (如果总行数 > 0)
+   - 总耗时: 917.60 秒
+   - 平均耗时: 91.76 秒/行
+
+✅ 成功处理的行:
+   - 第 2 行
+   - 第 3 行
+   - 第 4 行
+   - 第 5 行
+   - 第 6 行
+   - 第 7 行 (134.48s) - 1 个文件
+   - 第 8 行 (255.71s) - 1 个文件
+   - 第 9 行 (256.85s) - 1 个文件
+   - 第 10 行 (135.12s) - 1 个文件
+   - 第 11 行 (135.44s) - 1 个文件
+
+============================================================
+
+2025-08-26 19:30:14,427 - __main__ - INFO - 处理报告已保存到: reports/report_20250826_193014.txt
+2025-08-26 19:30:14,427 - __main__ - INFO - 所有数据处理成功

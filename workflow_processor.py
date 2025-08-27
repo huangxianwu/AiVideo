@@ -173,37 +173,24 @@ class WorkflowProcessor:
         product_name = row_data.product_name or "未知产品"
         prompt_preview = (row_data.prompt[:30] + "...") if row_data.prompt and len(row_data.prompt) > 30 else (row_data.prompt or "无提示词")
         
-        self.logger.info(f"     🔄 开始处理第 {row_data.row_number} 行数据 | 产品: {product_name} | 提示词: {prompt_preview}")
+        self.logger.info(f"🔄 处理第 {row_data.row_number} 行 | 产品: {product_name} | 提示词: {prompt_preview}")
         
         try:
             # 验证数据完整性
-            self.logger.info(f"     🔍 子步骤1: 验证数据完整性")
             validation_error = self._validate_row_data(row_data)
             if validation_error:
-                self.logger.error(f"        ❌ 数据验证失败: {validation_error}")
+                self.logger.error(f"❌ 第 {row_data.row_number} 行数据验证失败: {validation_error}")
                 return ProcessResult(
                     success=False,
                     row_number=row_data.row_number,
                     error=validation_error
                 )
-            self.logger.info(f"        ✅ 数据验证通过")
             
-            # 下载产品图片
-            self.logger.info(f"     📥 子步骤2: 下载产品图片")
-            self.logger.info(f"        - 图片信息: {str(row_data.product_image)[:100]}...")
+            # 下载图片
             product_image_data = await self._download_image(row_data.product_image)
-            self.logger.info(f"        ✅ 产品图片下载完成，大小: {len(product_image_data)} bytes")
-            
-            # 下载模特图片
-            self.logger.info(f"     📥 子步骤3: 下载模特图片")
-            self.logger.info(f"        - 图片信息: {str(row_data.model_image)[:100]}...")
             model_image_data = await self._download_image(row_data.model_image)
-            self.logger.info(f"        ✅ 模特图片下载完成，大小: {len(model_image_data)} bytes")
             
-            # 执行ComfyUI工作流（仅使用图片，不包含提示词）
-            self.logger.info(f"     🎨 子步骤4: 执行ComfyUI工作流")
-            self.logger.info(f"        - 产品图片大小: {len(product_image_data)} bytes")
-            self.logger.info(f"        - 模特图片大小: {len(model_image_data)} bytes")
+            # 执行ComfyUI工作流
             
             # 处理队列满的情况，最多重试3次
             max_retries = 3
@@ -222,53 +209,38 @@ class WorkflowProcessor:
                 if "ComfyUI任务队列已满" in str(workflow_result.error):
                     retry_count += 1
                     if retry_count <= max_retries:
-                        self.logger.warning(f"        ⚠️  队列已满，等待30秒后重试 ({retry_count}/{max_retries})")
+                        self.logger.warning(f"⚠️ 队列已满，等待重试 ({retry_count}/{max_retries})")
                         await asyncio.sleep(30)
                         continue
                     else:
-                         error_msg = f"队列已满，重试{max_retries}次后仍然失败，程序终止"
-                         self.logger.error(f"        ❌ {error_msg}")
+                         error_msg = f"队列已满，重试{max_retries}次后仍然失败"
+                         self.logger.error(f"❌ {error_msg}")
                          raise Exception(error_msg)
                 else:
                     # 其他类型的错误，直接返回失败
-                    self.logger.error(f"        ❌ 工作流执行失败: {workflow_result.error}")
+                    self.logger.error(f"❌ 工作流执行失败: {workflow_result.error}")
                     return ProcessResult(
                         success=False,
                         row_number=row_data.row_number,
                         error=workflow_result.error
                     )
             
-            self.logger.info(f"        ✅ 工作流执行成功，任务ID: {workflow_result.task_id}")
-            
             # 下载并保存结果文件
-            self.logger.info(f"     💾 子步骤5: 下载并保存结果文件")
             output_files = []
             if workflow_result.output_urls:
-                self.logger.info(f"        - 找到 {len(workflow_result.output_urls)} 个输出文件")
-                
                 # 只保存最后一个文件（如果有多个文件的话）
-                if len(workflow_result.output_urls) >= 2:
-                    url = workflow_result.output_urls[-1]  # 取最后一个文件
-                    self.logger.info(f"        - 保存最后一个文件: {url[:50]}...")
-                else:
-                    url = workflow_result.output_urls[0]  # 只有一个文件时保存该文件
-                    self.logger.info(f"        - 保存文件: {url[:50]}...")
+                url = workflow_result.output_urls[-1] if len(workflow_result.output_urls) >= 2 else workflow_result.output_urls[0]
                 
                 try:
                     file_data = await self.comfyui_client.download_result(url)
-                    # 使用产品名+模特名+时间戳（MM/DD/HH:MM）格式
-                    self.logger.info(f"        - 原始产品名: '{row_data.product_name}'")
-                    self.logger.info(f"        - 原始模特名: '{row_data.model_name}'")
+                    # 使用产品名+模特名+时间戳格式
                     product_name = row_data.product_name or f"row_{row_data.row_number}"
                     model_name = row_data.model_name or "unknown_model"
-                    self.logger.info(f"        - 使用的产品名: '{product_name}'")
-                    self.logger.info(f"        - 使用的模特名: '{model_name}'")
                     # 清理产品名和模特名中的特殊字符
                     safe_product_name = "".join(c for c in product_name if c.isalnum() or c in (' ', '-', '_')).strip()
                     safe_model_name = "".join(c for c in model_name if c.isalnum() or c in (' ', '-', '_')).strip()
                     timestamp = datetime.now().strftime('%m/%d/%H:%M')
                     filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.png".replace('/', '-').replace(':', '-')
-                    self.logger.info(f"        - 生成的文件名: '{filename}'")
                     # 保存到img子目录
                     img_dir = os.path.join(self.config.output_dir, "img")
                     filepath = os.path.join(img_dir, filename)
@@ -277,45 +249,38 @@ class WorkflowProcessor:
                         f.write(file_data)
                     
                     output_files.append(filepath)
-                    self.logger.info(f"        ✅ 文件保存成功: {filepath} ({len(file_data)} bytes)")
                     
                     # 写入图片到表格
                     try:
-                        self.logger.info(f"        📝 开始写入图片到表格E列...")
                         write_success = await self.feishu_client.write_image_to_cell(row_data.row_number, filepath)
                         
                         if write_success:
-                            self.logger.info(f"        ✅ 图片已成功写入表格E列")
-                            
                             # 更新状态为已完成
                             try:
-                                self.logger.info(f"        📝 更新状态为已完成...")
                                 status_success = await self.feishu_client.update_cell_status(row_data.row_number, "已完成")
-                                if status_success:
-                                    self.logger.info(f"        ✅ 状态已更新为已完成")
-                                else:
-                                    self.logger.error(f"        ❌ 状态更新失败")
+                                if not status_success:
+                                    self.logger.error(f"❌ 状态更新失败")
                             except Exception as e:
-                                self.logger.error(f"        ❌ 状态更新异常: {str(e)}")
+                                self.logger.error(f"❌ 状态更新异常: {str(e)}")
                         else:
-                            self.logger.error(f"        ❌ 图片写入表格失败")
+                            self.logger.error(f"❌ 图片写入表格失败")
                             
                     except Exception as e:
-                        self.logger.error(f"        ❌ 写入图片到表格异常: {str(e)}")
+                        self.logger.error(f"❌ 写入图片到表格异常: {str(e)}")
                     
                 except Exception as e:
-                    self.logger.error(f"        ❌ 保存输出文件失败: {str(e)}")
+                    self.logger.error(f"❌ 保存输出文件失败: {str(e)}")
             else:
-                self.logger.warning(f"        ⚠️  没有找到输出文件")
+                self.logger.warning(f"⚠️ 没有找到输出文件")
             
             # 检查是否需要生成视频
             if self.config.comfyui.video_workflow_enabled and row_data.video_status == "否":
-                self.logger.info(f"     🎬 子步骤6: 开始图生视频处理")
+                self.logger.info(f"🎬 开始图生视频处理")
                 await self._process_video_generation(row_data, output_files)
             
             processing_time = asyncio.get_event_loop().time() - start_time
             
-            self.logger.info(f"     ✅ 第 {row_data.row_number} 行处理成功 | 产品: {product_name} | 提示词: {prompt_preview} | 耗时 {processing_time:.2f} 秒")
+            self.logger.info(f"✅ 第 {row_data.row_number} 行处理成功 | 产品: {product_name} | 耗时 {processing_time:.2f}s")
             
             return ProcessResult(
                 success=True,
@@ -328,7 +293,7 @@ class WorkflowProcessor:
         except Exception as e:
             processing_time = asyncio.get_event_loop().time() - start_time
             error_msg = f"处理第 {row_data.row_number} 行时发生异常: {str(e)}"
-            self.logger.error(f"     ❌ 第 {row_data.row_number} 行处理失败 | 产品: {product_name} | 提示词: {prompt_preview} | 错误: {str(e)}")
+            self.logger.error(f"❌ 第 {row_data.row_number} 行处理失败 | 产品: {product_name} | 错误: {str(e)}")
             
             return ProcessResult(
                 success=False,
@@ -342,30 +307,22 @@ class WorkflowProcessor:
         try:
             # 检查是否有合成图片文件
             if not output_files:
-                self.logger.warning(f"        ⚠️  没有找到合成图片，跳过视频生成")
+                self.logger.warning(f"⚠️ 没有找到合成图片，跳过视频生成")
                 return
             
             # 使用最新生成的合成图片
             composite_image_path = output_files[-1]
-            self.logger.info(f"        - 使用合成图片: {composite_image_path}")
-            
-            # 获取提示词
             prompt = row_data.prompt or "生成视频"
-            self.logger.info(f"        - 使用提示词: {prompt[:50]}...")
             
             # 调用图生视频工作流
-            self.logger.info(f"        - 开始调用图生视频工作流...")
             video_result = await self.comfyui_client.process_video_workflow(
                 composite_image_path, 
                 prompt
             )
             
             if video_result.success:
-                self.logger.info(f"        ✅ 视频生成成功，任务ID: {video_result.task_id}")
-                
                 # 下载并保存视频文件
                 if video_result.output_urls:
-                    self.logger.info(f"        - 下载视频文件...")
                     for url in video_result.output_urls:
                         try:
                             video_data = await self.comfyui_client.download_result(url)
@@ -386,30 +343,25 @@ class WorkflowProcessor:
                             with open(video_filepath, 'wb') as f:
                                 f.write(video_data)
                             
-                            self.logger.info(f"        ✅ 视频文件保存成功: {video_filepath} ({len(video_data)} bytes)")
-                            
                             # 更新视频状态为"是"
                             try:
-                                self.logger.info(f"        📝 更新视频状态为已实现...")
                                 video_status_success = await self.feishu_client.update_video_status(row_data.row_number, "是")
-                                if video_status_success:
-                                    self.logger.info(f"        ✅ 视频状态已更新为已实现")
-                                else:
-                                    self.logger.error(f"        ❌ 视频状态更新失败")
+                                if not video_status_success:
+                                    self.logger.error(f"❌ 视频状态更新失败")
                             except Exception as e:
-                                self.logger.error(f"        ❌ 视频状态更新异常: {str(e)}")
+                                self.logger.error(f"❌ 视频状态更新异常: {str(e)}")
                             
                             break  # 只处理第一个视频文件
                             
                         except Exception as e:
-                            self.logger.error(f"        ❌ 视频文件下载失败: {str(e)}")
+                            self.logger.error(f"❌ 视频文件下载失败: {str(e)}")
                 else:
-                    self.logger.warning(f"        ⚠️  没有找到视频输出文件")
+                    self.logger.warning(f"⚠️ 没有找到视频输出文件")
             else:
-                self.logger.error(f"        ❌ 视频生成失败: {video_result.error}")
+                self.logger.error(f"❌ 视频生成失败: {video_result.error}")
                 
         except Exception as e:
-            self.logger.error(f"        ❌ 图生视频处理异常: {str(e)}")
+            self.logger.error(f"❌ 图生视频处理异常: {str(e)}")
     
     def _validate_row_data(self, row_data: RowData) -> Optional[str]:
         """验证行数据完整性"""

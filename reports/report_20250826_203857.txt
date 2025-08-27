@@ -1,0 +1,32 @@
+
+============================================================
+📊 图生视频工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 15
+   - 成功: 8
+   - 失败: 7
+   - 成功率: 53.3% (如果总行数 > 0)
+   - 总耗时: 787.55 秒
+   - 平均耗时: 52.50 秒/行
+
+❌ 失败详情:
+   - 第 4 行: 图片上传失败: HTTP错误: 504
+   - 第 10 行: 图片上传失败: HTTP错误: 504
+   - 第 12 行: 状态检查连续失败 3 次: 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 13 行: 图生视频处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 14 行: 图生视频处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 15 行: 图生视频处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 16 行: 图生视频处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+
+✅ 成功处理的行:
+   - 第 2 行 (191.49s) - 1 个文件
+   - 第 3 行 (162.06s) - 1 个文件
+   - 第 5 行
+   - 第 6 行
+   - 第 7 行
+   - 第 8 行 (138.27s) - 1 个文件
+   - 第 9 行 (162.95s) - 1 个文件
+   - 第 11 行 (132.78s) - 1 个文件
+
+============================================================

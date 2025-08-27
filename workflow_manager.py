@@ -74,7 +74,7 @@ class ImageCompositionWorkflow(BaseWorkflow):
         start_time = asyncio.get_event_loop().time()
         
         try:
-            self.logger.info(f"     🎨 开始处理图片合成 - 第 {row_data.row_number} 行")
+            # self.logger.info(f"🎨 开始处理图片合成 - 第 {row_data.row_number} 行，产品名：{getattr(row_data, 'product_name', '未知')}，提示词：{row_data.prompt}")
             
             # 验证数据
             validation_error = self._validate_row_data(row_data)
@@ -86,12 +86,10 @@ class ImageCompositionWorkflow(BaseWorkflow):
                 )
             
             # 下载图片
-            self.logger.info(f"        📥 下载产品图片和模特图片")
             product_image_data = await self._download_image(row_data.product_image)
             model_image_data = await self._download_image(row_data.model_image)
             
             # 执行ComfyUI工作流
-            self.logger.info(f"        🔄 执行ComfyUI图片合成工作流")
             workflow_result = await self.comfyui_client.process_workflow(
                 product_image_data,
                 model_image_data
@@ -182,7 +180,13 @@ class ImageCompositionWorkflow(BaseWorkflow):
             # 只保存最后一个文件
             url = workflow_result.output_urls[-1] if len(workflow_result.output_urls) >= 2 else workflow_result.output_urls[0]
             
-            file_data = await self.comfyui_client.download_result(url)
+            # 在调试模式下跳过实际下载
+            if self.comfyui_client.debug_mode:
+                # 创建模拟文件数据
+                file_data = b"debug_image_data"
+                self.logger.info(f"🔧 [调试模式] 跳过文件下载，使用模拟数据: {url}")
+            else:
+                file_data = await self.comfyui_client.download_result(url)
             
             # 生成文件名
             product_name = row_data.product_name or f"row_{row_data.row_number}"
@@ -241,12 +245,12 @@ class ImageToVideoWorkflow(BaseWorkflow):
         )
         
         # 添加调试信息
-        self.logger.info(f"      🔍 第 {row_data.row_number} 行判断条件:")
-        self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
-        self.logger.info(f"         - video_status: '{row_data.video_status}'")
-        self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
-        self.logger.info(f"         - has_composite_image: {has_composite_image}")
-        self.logger.info(f"         - 最终判断结果: {has_composite_image}")
+        # self.logger.info(f"      🔍 第 {row_data.row_number} 行判断条件:")
+        # self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
+        # self.logger.info(f"         - video_status: '{row_data.video_status}'")
+        # self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
+        # self.logger.info(f"         - has_composite_image: {has_composite_image}")
+        # self.logger.info(f"         - 最终判断结果: {has_composite_image}")
         
         return has_composite_image
     
@@ -255,7 +259,7 @@ class ImageToVideoWorkflow(BaseWorkflow):
         start_time = asyncio.get_event_loop().time()
         
         try:
-            self.logger.info(f"     🎬 开始处理图生视频 - 第 {row_data.row_number} 行")
+            self.logger.info(f"🎬 开始处理图生视频 - 第 {row_data.row_number} 行")
             
             # 检查是否有合成图片（从E列获取）
             if not row_data.composite_image:
@@ -280,7 +284,6 @@ class ImageToVideoWorkflow(BaseWorkflow):
                 prompt = row_data.prompt or "生成视频"
                 
                 # 调用图生视频工作流
-                self.logger.info(f"        🔄 执行ComfyUI图生视频工作流")
                 video_result = await self.comfyui_client.process_video_workflow(
                     temp_image_path, 
                     prompt
@@ -351,7 +354,13 @@ class ImageToVideoWorkflow(BaseWorkflow):
         output_files = []
         if video_result.output_urls:
             for url in video_result.output_urls:
-                video_data = await self.comfyui_client.download_result(url)
+                # 在调试模式下跳过实际下载
+                if self.comfyui_client.debug_mode:
+                    # 创建模拟视频文件数据
+                    video_data = b"debug_video_data"
+                    self.logger.info(f"🔧 [调试模式] 跳过视频文件下载，使用模拟数据: {url}")
+                else:
+                    video_data = await self.comfyui_client.download_result(url)
                 
                 # 生成视频文件名
                 product_name = row_data.product_name or f"row_{row_data.row_number}"
@@ -377,16 +386,19 @@ class ImageToVideoWorkflow(BaseWorkflow):
     
     async def _update_video_status(self, row_data: RowData):
         """更新视频状态"""
-        await self.feishu_client.update_video_status(row_data.row_number, "是")
+        await self.feishu_client.update_video_status(row_data.row_number, "已完成")
 
 
 class WorkflowManager:
     """工作流管理器 - 负责协调不同的工作流"""
     
-    def __init__(self, config: AppConfig):
+    def __init__(self, config: AppConfig, debug_mode: bool = False):
         self.config = config
+        self.debug_mode = debug_mode
         self.logger = logging.getLogger(self.__class__.__name__)
         self.workflows = {}
+        if debug_mode:
+            self.logger.info("🔧 工作流管理器运行在调试模式")
         self._initialize_workflows()
     
     def _initialize_workflows(self):
@@ -395,7 +407,7 @@ class WorkflowManager:
         from comfyui_client import ComfyUIClient
         
         feishu_client = FeishuClient(self.config.feishu)
-        comfyui_client = ComfyUIClient(self.config.comfyui)
+        comfyui_client = ComfyUIClient(self.config.comfyui, debug_mode=self.debug_mode)
         
         self.workflows[WorkflowMode.IMAGE_COMPOSITION] = ImageCompositionWorkflow(
             self.config, feishu_client, comfyui_client
@@ -429,11 +441,9 @@ class WorkflowManager:
             product_name = row_data.product_name or "未知产品"
             prompt_preview = (row_data.prompt[:30] + "...") if row_data.prompt and len(row_data.prompt) > 30 else (row_data.prompt or "无提示词")
             
-            self.logger.info(f"📝 处理进度: {i}/{len(rows_data)} - 第 {row_data.row_number} 行 | 产品: {product_name} | 提示词: {prompt_preview}")
-            
             # 检查是否需要处理该行
             if not workflow.should_process_row(row_data):
-                self.logger.info(f"     ⏭️  跳过第 {row_data.row_number} 行（不需要处理） | 产品: {product_name}")
+                self.logger.info(f"📝 处理进度: {i}/{len(rows_data)} - 第 {row_data.row_number} 行，跳过")
                 # 跳过不需要处理的行
                 results.append(WorkflowResult(
                     success=True,
@@ -444,6 +454,8 @@ class WorkflowManager:
                     processing_time=0.0
                 ))
                 continue
+            
+            self.logger.info(f"📝 处理进度: {i:>2}/{len(rows_data):<2} - 第 {row_data.row_number:>2} 行 | 产品: {product_name:<15} | 提示词: {prompt_preview}")
             
             # 处理该行数据
             result = await workflow.process_row(row_data)

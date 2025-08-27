@@ -1,0 +1,117 @@
+2025-08-26 23:54:00,297 - __main__ - INFO - 日志文件: logs/workflow_20250826_235400.log
+2025-08-26 23:54:00,297 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 23:54:00,298 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 23:54:00,298 - __main__ - INFO - 🔧 启用调试模式，将跳过ComfyUI API调用
+2025-08-26 23:54:00,298 - WorkflowManager - INFO - 🔧 工作流管理器运行在调试模式
+2025-08-26 23:54:00,298 - comfyui_client - INFO - 🔧 ComfyUI客户端运行在调试模式，将跳过实际API调用
+2025-08-26 23:54:00,298 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 23:54:00,298 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 23:54:00,498 - feishu_client - INFO - Token获取成功
+2025-08-26 23:54:01,252 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 23:54:01,255 - feishu_client - INFO - 处理了 23 行有效数据
+2025-08-26 23:54:01,256 - __main__ - INFO -    ✅ 获取到 23 行数据
+2025-08-26 23:54:01,256 - __main__ - INFO - 🚀 步骤3: 执行 图片合成工作流
+2025-08-26 23:54:01,256 - __main__ - INFO -    ✅ 工作流管理器初始化完成 - 模式: 图片合成工作流
+2025-08-26 23:54:01,256 - WorkflowManager - INFO - 🚀 开始执行 图片合成工作流
+2025-08-26 23:54:01,256 - WorkflowManager - INFO - 📊 总共需要处理 23 行数据
+2025-08-26 23:54:01,256 - WorkflowManager - INFO - 📝 处理进度: 1/23 - 第 2 行，跳过
+2025-08-26 23:54:01,256 - WorkflowManager - INFO - 📝 处理进度: 2/23 - 第 3 行，跳过
+2025-08-26 23:54:01,256 - WorkflowManager - INFO - 📝 处理进度: 3/23 - 第 4 行，跳过
+2025-08-26 23:54:01,257 - WorkflowManager - INFO - 📝 处理进度: 4/23 - 第 5 行，跳过
+2025-08-26 23:54:01,257 - WorkflowManager - INFO - 📝 处理进度: 5/23 - 第 6 行，跳过
+2025-08-26 23:54:01,257 - WorkflowManager - INFO - 📝 处理进度: 6/23 - 第 7 行，跳过
+2025-08-26 23:54:01,257 - WorkflowManager - INFO - 📝 处理进度: 7/23 - 第 8 行，跳过
+2025-08-26 23:54:01,257 - WorkflowManager - INFO - 📝 处理进度: 8/23 - 第 9 行，跳过
+2025-08-26 23:54:01,257 - WorkflowManager - INFO - 📝 处理进度: 9/23 - 第 10 行，跳过
+2025-08-26 23:54:01,258 - WorkflowManager - INFO - 📝 处理进度: 10/23 - 第 11 行，跳过
+2025-08-26 23:54:01,258 - WorkflowManager - INFO - 📝 处理进度: 11/23 - 第 12 行，跳过
+2025-08-26 23:54:01,258 - WorkflowManager - INFO - 📝 处理进度: 12/23 - 第 13 行，跳过
+2025-08-26 23:54:01,258 - WorkflowManager - INFO - 📝 处理进度: 13/23 - 第 14 行，跳过
+2025-08-26 23:54:01,258 - WorkflowManager - INFO - 📝 处理进度: 14/23 - 第 15 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 15/23 - 第 16 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 16/23 - 第 17 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 17/23 - 第 18 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 18/23 - 第 19 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 19/23 - 第 20 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 20/23 - 第 21 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 21/23 - 第 22 行，跳过
+2025-08-26 23:54:01,259 - WorkflowManager - INFO - 📝 处理进度: 22/23 - 第 23 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:54:01,496 - feishu_client - INFO - Token获取成功
+2025-08-26 23:54:03,225 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 23:54:03,225 - comfyui_client - INFO - 🔧 [调试模式] 模拟上传图片: debug_product.png
+2025-08-26 23:54:03,326 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-26 23:54:03,326 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 23:54:03,326 - comfyui_client - INFO - 🔧 [调试模式] 模拟上传图片: debug_model.png
+2025-08-26 23:54:03,427 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-26 23:54:03,427 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 23:54:03,428 - comfyui_client - INFO - 🔧 [调试模式] 模拟创建工作流，任务ID: debug_task_188856
+2025-08-26 23:54:03,529 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: debug_task_188856
+2025-08-26 23:54:03,529 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-26 23:54:03,529 - comfyui_client - INFO - 🔧 [调试模式] 模拟等待任务完成: debug_task_188856
+2025-08-26 23:54:04,531 - ImageCompositionWorkflow - INFO - 🔧 [调试模式] 跳过文件下载，使用模拟数据: https://mock-output-url.com/debug_task_188856_result.png
+2025-08-26 23:54:04,532 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-Yes I Can Drive a Stick_白人-男-25-帅气_08-26-23-54.png
+2025-08-26 23:54:04,783 - feishu_client - INFO - Token获取成功
+2025-08-26 23:54:06,157 - feishu_client - ERROR - 写入图片失败: server error
+2025-08-26 23:54:06,159 - WorkflowManager - INFO -      ✅ 第 23 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:54:06,159 - WorkflowManager - INFO - 📝 处理进度: 23/23 - 第 24 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:54:07,407 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-26 23:54:07,407 - comfyui_client - INFO - 🔧 [调试模式] 模拟上传图片: debug_product.png
+2025-08-26 23:54:07,507 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-26 23:54:07,508 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-26 23:54:07,508 - comfyui_client - INFO - 🔧 [调试模式] 模拟上传图片: debug_model.png
+2025-08-26 23:54:07,609 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-26 23:54:07,609 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-26 23:54:07,609 - comfyui_client - INFO - 🔧 [调试模式] 模拟创建工作流，任务ID: debug_task_188860
+2025-08-26 23:54:07,710 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: debug_task_188860
+2025-08-26 23:54:07,710 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-26 23:54:07,711 - comfyui_client - INFO - 🔧 [调试模式] 模拟等待任务完成: debug_task_188860
+2025-08-26 23:54:08,711 - ImageCompositionWorkflow - INFO - 🔧 [调试模式] 跳过文件下载，使用模拟数据: https://mock-output-url.com/debug_task_188860_result.png
+2025-08-26 23:54:08,712 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-Yes I Can Drive a Stick_黑人-男-25-健身_08-26-23-54.png
+2025-08-26 23:54:08,921 - feishu_client - INFO - Token获取成功
+2025-08-26 23:54:10,266 - feishu_client - ERROR - 写入图片失败: server error
+2025-08-26 23:54:10,267 - WorkflowManager - INFO -      ✅ 第 24 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:54:10,268 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-26 23:54:10,268 - __main__ - INFO - 
+============================================================
+📊 图片合成工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 23
+   - 成功: 2
+   - 失败: 0
+   - 跳过: 21
+   - 成功率: 100.0% (如果总行数 > 0)
+   - 总耗时: 9.01 秒
+   - 平均耗时: 0.39 秒/行
+
+⏭️ 跳过的行:
+   - 第 2 行：跳过
+   - 第 3 行：跳过
+   - 第 4 行：跳过
+   - 第 5 行：跳过
+   - 第 6 行：跳过
+   - 第 7 行：跳过
+   - 第 8 行：跳过
+   - 第 9 行：跳过
+   - 第 10 行：跳过
+   - 第 11 行：跳过
+   - 第 12 行：跳过
+   - 第 13 行：跳过
+   - 第 14 行：跳过
+   - 第 15 行：跳过
+   - 第 16 行：跳过
+   - 第 17 行：跳过
+   - 第 18 行：跳过
+   - 第 19 行：跳过
+   - 第 20 行：跳过
+   - 第 21 行：跳过
+   - 第 22 行：跳过
+
+✅ 成功处理的行:
+   - 第 23 行 (4.90s) - 1 个文件
+   - 第 24 行 (4.11s) - 1 个文件
+
+============================================================
+
+2025-08-26 23:54:10,269 - __main__ - INFO - 处理报告已保存到: reports/report_20250826_235410.txt
+2025-08-26 23:54:10,270 - __main__ - INFO - 所有数据处理成功

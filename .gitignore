@@ -1,0 +1,42 @@
+# 运行时生成的文件夹
+output/
+logs/
+reports/
+temp/
+
+# Python缓存文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 环境配置文件
+.env
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 依赖和虚拟环境
+venv/
+env/
+.venv/
+node_modules/
+
+# 测试覆盖率报告
+.coverage
+htmlcov/
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp

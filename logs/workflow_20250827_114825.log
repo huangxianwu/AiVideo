@@ -1,0 +1,176 @@
+2025-08-27 11:48:25,105 - __main__ - INFO - 日志文件: logs/workflow_20250827_114825.log
+2025-08-27 11:48:25,105 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-27 11:48:25,105 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-27 11:48:25,105 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-27 11:48:25,106 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-27 11:48:25,633 - feishu_client - INFO - Token获取成功
+2025-08-27 11:48:26,876 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-27 11:48:26,878 - feishu_client - INFO - 处理了 35 行有效数据
+2025-08-27 11:48:26,879 - __main__ - INFO -    ✅ 获取到 35 行数据
+2025-08-27 11:48:26,879 - __main__ - INFO - 🚀 步骤3: 执行完整工作流 (图片合成 + 图生视频)
+2025-08-27 11:48:26,879 - __main__ - INFO - 🎨 阶段1: 执行图片合成工作流
+2025-08-27 11:48:26,879 - WorkflowManager - INFO - 🚀 开始执行 图片合成工作流
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📊 总共需要处理 35 行数据
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 1/35 - 第 2 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 2/35 - 第 3 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 3/35 - 第 4 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 4/35 - 第 5 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 5/35 - 第 6 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 6/35 - 第 7 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 7/35 - 第 8 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 8/35 - 第 9 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 9/35 - 第 10 行，跳过
+2025-08-27 11:48:26,880 - WorkflowManager - INFO - 📝 处理进度: 10/35 - 第 11 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 11/35 - 第 12 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 12/35 - 第 13 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 13/35 - 第 14 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 14/35 - 第 15 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 15/35 - 第 16 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 16/35 - 第 17 行，跳过
+2025-08-27 11:48:26,881 - WorkflowManager - INFO - 📝 处理进度: 17/35 - 第 18 行，跳过
+2025-08-27 11:48:26,882 - WorkflowManager - INFO - 📝 处理进度: 18/35 - 第 19 行，跳过
+2025-08-27 11:48:26,882 - WorkflowManager - INFO - 📝 处理进度: 19/35 - 第 20 行，跳过
+2025-08-27 11:48:26,882 - WorkflowManager - INFO - 📝 处理进度: 20/35 - 第 21 行，跳过
+2025-08-27 11:48:26,882 - WorkflowManager - INFO - 📝 处理进度: 21/35 - 第 22 行，跳过
+2025-08-27 11:48:26,882 - WorkflowManager - INFO - 📝 处理进度: 22/35 - 第 23 行，跳过
+2025-08-27 11:48:26,883 - WorkflowManager - INFO - 📝 处理进度: 23/35 - 第 24 行，跳过
+2025-08-27 11:48:26,883 - WorkflowManager - INFO - 📝 处理进度: 24/35 - 第 25 行 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:48:27,171 - feishu_client - INFO - Token获取成功
+2025-08-27 11:48:29,461 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-27 11:48:30,065 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-27 11:48:30,065 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-27 11:48:32,418 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-27 11:48:32,418 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-27 11:48:32,703 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960549970527092738
+2025-08-27 11:48:32,704 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-27 11:48:33,144 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 11:50:36,667 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-This is Bull shit_拉丁-男-25-卷发相机_08-27-11-50.png
+2025-08-27 11:50:37,073 - feishu_client - INFO - Token获取成功
+2025-08-27 11:50:51,120 - feishu_client - INFO - 图片写入成功
+2025-08-27 11:50:52,192 - feishu_client - INFO - 行 25 状态更新为: 已完成
+2025-08-27 11:50:52,194 - WorkflowManager - INFO -      ✅ 第 25 行处理成功 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:50:52,194 - WorkflowManager - INFO - 📝 处理进度: 25/35 - 第 26 行 | 产品: 0826-UFO        | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:50:54,465 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-27 11:50:56,735 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-27 11:50:56,736 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-27 11:50:57,500 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-27 11:50:57,500 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-27 11:50:58,208 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960550580848656386
+2025-08-27 11:50:58,209 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-27 11:50:58,360 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 11:53:15,831 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-UFO_拉丁-男-25-卷发相机_08-27-11-53.png
+2025-08-27 11:53:16,652 - feishu_client - INFO - Token获取成功
+2025-08-27 11:53:49,642 - feishu_client - INFO - 图片写入成功
+2025-08-27 11:53:51,831 - feishu_client - INFO - 行 26 状态更新为: 已完成
+2025-08-27 11:53:51,832 - WorkflowManager - INFO -      ✅ 第 26 行处理成功 | 产品: 0826-UFO | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:53:51,833 - WorkflowManager - INFO - 📝 处理进度: 26/35 - 第 27 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:54:07,104 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-27 11:54:08,947 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-27 11:54:08,948 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-27 11:54:11,075 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-27 11:54:11,075 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-27 11:54:11,545 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960551391225937921
+2025-08-27 11:54:11,545 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-27 11:54:11,952 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 11:56:13,823 - ImageCompositionWorkflow - INFO -         ✅ 文件保存成功: ./output/img/0826-Yes I Can Drive a Stick_拉丁-男-25-卷发相机_08-27-11-56.png
+2025-08-27 11:56:14,100 - feishu_client - INFO - Token获取成功
+2025-08-27 11:56:25,991 - feishu_client - INFO - 图片写入成功
+2025-08-27 11:56:27,933 - feishu_client - INFO - 行 27 状态更新为: 已完成
+2025-08-27 11:56:27,934 - WorkflowManager - INFO -      ✅ 第 27 行处理成功 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:56:27,935 - WorkflowManager - INFO - 📝 处理进度: 27/35 - 第 28 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:56:30,243 - comfyui_client - INFO -         - 上传产品图片...
+2025-08-27 11:56:30,551 - comfyui_client - INFO -         ✅ 产品图片上传成功
+2025-08-27 11:56:30,552 - comfyui_client - INFO -         - 上传模特图片...
+2025-08-27 11:56:31,836 - comfyui_client - INFO -         ✅ 模特图片上传成功
+2025-08-27 11:56:31,836 - comfyui_client - INFO -         - 创建ComfyUI工作流...
+2025-08-27 11:56:32,091 - comfyui_client - INFO -         ✅ 工作流创建成功，任务ID: 1960551981309984770
+2025-08-27 11:56:32,091 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成
+2025-08-27 11:56:32,279 - comfyui_client - INFO -         🔸 子步骤4: 等待工作流执行完成 (已等待 0分0秒)
+2025-08-27 11:58:37,290 - comfyui_client - ERROR - 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [Connection reset by peer]
+2025-08-27 11:58:52,390 - comfyui_client - ERROR - 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [Connection reset by peer]
+2025-08-27 11:59:07,399 - comfyui_client - ERROR - 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [Connection reset by peer]
+2025-08-27 11:59:07,399 - comfyui_client - ERROR - ❌ 状态检查连续失败 3 次: 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [Connection reset by peer]
+2025-08-27 11:59:07,400 - WorkflowManager - ERROR -      ❌ 第 28 行处理失败 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 状态检查连续失败 3 次: 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [Connection reset by peer]
+2025-08-27 11:59:07,400 - WorkflowManager - INFO - 📝 处理进度: 28/35 - 第 29 行 | 产品: 0826-Yahweh     | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,403 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,403 - WorkflowManager - ERROR -      ❌ 第 29 行处理失败 | 产品: 0826-Yahweh | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,403 - WorkflowManager - INFO - 📝 处理进度: 29/35 - 第 30 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,405 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,405 - WorkflowManager - ERROR -      ❌ 第 30 行处理失败 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,405 - WorkflowManager - INFO - 📝 处理进度: 30/35 - 第 31 行 | 产品: 0826-Abvela     | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,407 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,408 - WorkflowManager - ERROR -      ❌ 第 31 行处理失败 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,408 - WorkflowManager - INFO - 📝 处理进度: 31/35 - 第 32 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,410 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,410 - WorkflowManager - ERROR -      ❌ 第 32 行处理失败 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,410 - WorkflowManager - INFO - 📝 处理进度: 32/35 - 第 33 行 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,412 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,413 - WorkflowManager - ERROR -      ❌ 第 33 行处理失败 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,413 - WorkflowManager - INFO - 📝 处理进度: 33/35 - 第 34 行 | 产品: 0826-Abvela     | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,415 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,415 - WorkflowManager - ERROR -      ❌ 第 34 行处理失败 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,416 - WorkflowManager - INFO - 📝 处理进度: 34/35 - 第 35 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,417 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,417 - WorkflowManager - ERROR -      ❌ 第 35 行处理失败 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,418 - WorkflowManager - INFO - 📝 处理进度: 35/35 - 第 36 行 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-27 11:59:07,419 - ImageCompositionWorkflow - ERROR -         ❌ 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,419 - WorkflowManager - ERROR -      ❌ 第 36 行处理失败 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩... | 错误: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,421 - __main__ - INFO - 
+============================================================
+📊 图片合成工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 35
+   - 成功: 3
+   - 失败: 9
+   - 跳过: 23
+   - 成功率: 74.3% (如果总行数 > 0)
+   - 总耗时: 481.06 秒
+   - 平均耗时: 13.74 秒/行
+
+❌ 失败详情:
+   - 第 28 行: 状态检查连续失败 3 次: 检查任务状态异常: Cannot connect to host www.runninghub.cn:443 ssl:default [Connection reset by peer]
+   - 第 29 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 30 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 31 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 32 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 33 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 34 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 35 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+   - 第 36 行: 图片合成处理异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+
+⏭️ 跳过的行:
+   - 第 2 行：跳过
+   - 第 3 行：跳过
+   - 第 4 行：跳过
+   - 第 5 行：跳过
+   - 第 6 行：跳过
+   - 第 7 行：跳过
+   - 第 8 行：跳过
+   - 第 9 行：跳过
+   - 第 10 行：跳过
+   - 第 11 行：跳过
+   - 第 12 行：跳过
+   - 第 13 行：跳过
+   - 第 14 行：跳过
+   - 第 15 行：跳过
+   - 第 16 行：跳过
+   - 第 17 行：跳过
+   - 第 18 行：跳过
+   - 第 19 行：跳过
+   - 第 20 行：跳过
+   - 第 21 行：跳过
+   - 第 22 行：跳过
+   - 第 23 行：跳过
+   - 第 24 行：跳过
+
+✅ 成功处理的行:
+   - 第 25 行 (145.31s) - 1 个文件
+   - 第 26 行 (179.64s) - 1 个文件
+   - 第 27 行 (156.10s) - 1 个文件
+
+============================================================
+
+2025-08-27 11:59:07,422 - __main__ - INFO - 🎬 阶段2: 执行图生视频工作流
+2025-08-27 11:59:07,424 - feishu_client - ERROR - ❌ 获取表格数据时发生错误: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]
+2025-08-27 11:59:07,424 - __main__ - ERROR - 执行过程中发生异常: Cannot connect to host open.feishu.cn:443 ssl:default [nodename nor servname provided, or not known]

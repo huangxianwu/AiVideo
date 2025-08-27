@@ -1,0 +1,156 @@
+2025-08-26 23:00:41,764 - __main__ - INFO - 日志文件: logs/workflow_20250826_230041.log
+2025-08-26 23:00:41,764 - __main__ - INFO - === 开始执行飞书表格数据处理工作流 ===
+2025-08-26 23:00:41,764 - __main__ - INFO - 🔧 步骤1: 初始化工作流管理器
+2025-08-26 23:00:41,764 - __main__ - INFO - 🔧 启用调试模式，将跳过ComfyUI API调用
+2025-08-26 23:00:41,764 - WorkflowManager - INFO - 🔧 工作流管理器运行在调试模式
+2025-08-26 23:00:41,764 - comfyui_client - INFO - 🔧 ComfyUI客户端运行在调试模式，将跳过实际API调用
+2025-08-26 23:00:41,764 - __main__ - INFO - 📊 步骤2: 获取飞书表格数据
+2025-08-26 23:00:41,765 - __main__ - INFO -    - 正在连接飞书API...
+2025-08-26 23:00:42,030 - feishu_client - INFO - Token获取成功
+2025-08-26 23:00:42,326 - feishu_client - INFO - 找到目标工作表: prd_model_sheet
+2025-08-26 23:00:42,654 - feishu_client - INFO - 列映射: {'product_image': 0, 'model_image': 1, 'prompt': 2, 'status': 3, 'composite_image': 4, 'product_name': 5, 'model_name': 7, 'video_status': 8}
+2025-08-26 23:00:42,655 - feishu_client - INFO - 解析行 1: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,655 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,655 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,655 - feishu_client - INFO - 解析行 2: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,655 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,655 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,655 - feishu_client - INFO - 解析行 3: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,655 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,655 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析行 4: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,656 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析行 5: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,656 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析行 6: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,656 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析行 7: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,656 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 23:00:42,656 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析行 8: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,657 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析行 9: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,657 - feishu_client - INFO - F列原始数据: '0826-Abvela'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析后的产品名: '0826-Abvela'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析行 10: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,657 - feishu_client - INFO - F列原始数据: '0826-freaks'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析后的产品名: '0826-freaks'
+2025-08-26 23:00:42,657 - feishu_client - INFO - 解析行 11: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,658 - feishu_client - INFO - F列原始数据: '0826-beautifully broken'
+2025-08-26 23:00:42,658 - feishu_client - INFO - 解析后的产品名: '0826-beautifully broken'
+2025-08-26 23:00:42,658 - feishu_client - INFO - 解析行 12: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,658 - feishu_client - INFO - F列原始数据: '0826-HIPPIE SOUL'
+2025-08-26 23:00:42,658 - feishu_client - INFO - 解析后的产品名: '0826-HIPPIE SOUL'
+2025-08-26 23:00:42,658 - feishu_client - INFO - 解析行 13: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,658 - feishu_client - INFO - F列原始数据: '0826-life is better'
+2025-08-26 23:00:42,658 - feishu_client - INFO - 解析后的产品名: '0826-life is better'
+2025-08-26 23:00:42,658 - feishu_client - INFO - 解析行 14: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,658 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析行 15: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,659 - feishu_client - INFO - F列原始数据: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析后的产品名: '0826-Yes, I Can Drive a Stick'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析行 16: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,659 - feishu_client - INFO - F列原始数据: '0826-Mothman'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析后的产品名: '0826-Mothman'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析行 17: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,659 - feishu_client - INFO - F列原始数据: '0826-This is Bull shit'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析后的产品名: '0826-This is Bull shit'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析行 18: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,659 - feishu_client - INFO - F列原始数据: '0826-UFO'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析后的产品名: '0826-UFO'
+2025-08-26 23:00:42,659 - feishu_client - INFO - 解析行 19: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,660 - feishu_client - INFO - F列原始数据: '0826-vision'
+2025-08-26 23:00:42,660 - feishu_client - INFO - 解析后的产品名: '0826-vision'
+2025-08-26 23:00:42,660 - feishu_client - INFO - 解析行 20: 原始数据长度=9, product_name_idx=5
+2025-08-26 23:00:42,660 - feishu_client - INFO - F列原始数据: '0826-Yahweh'
+2025-08-26 23:00:42,660 - feishu_client - INFO - 解析后的产品名: '0826-Yahweh'
+2025-08-26 23:00:42,661 - feishu_client - INFO - 处理了 20 行有效数据
+2025-08-26 23:00:42,662 - __main__ - INFO -    ✅ 获取到 20 行数据
+2025-08-26 23:00:42,662 - __main__ - INFO - 🚀 步骤3: 执行 图生视频工作流
+2025-08-26 23:00:42,662 - __main__ - INFO -    ✅ 工作流管理器初始化完成 - 模式: 图生视频工作流
+2025-08-26 23:00:42,662 - WorkflowManager - INFO - 🚀 开始执行 图生视频工作流
+2025-08-26 23:00:42,662 - WorkflowManager - INFO - 📊 总共需要处理 20 行数据
+2025-08-26 23:00:42,662 - WorkflowManager - INFO - 📝 处理进度: 1/20 - 第 2 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,662 - WorkflowManager - INFO -      ⏭️  跳过第 2 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 23:00:42,662 - WorkflowManager - INFO - 📝 处理进度: 2/20 - 第 3 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,662 - WorkflowManager - INFO -      ⏭️  跳过第 3 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 23:00:42,662 - WorkflowManager - INFO - 📝 处理进度: 3/20 - 第 4 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，甜笑注视镜头，清晰...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 4 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 4/20 - 第 5 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 5 行（不需要处理） | 产品: 0826-Abvela
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 5/20 - 第 6 行 | 产品: 0826-freaks | 提示词: 镜头绕模特环形移动，穿过背景人群桌椅，模特走路时俏皮挑眉，偶...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 6 行（不需要处理） | 产品: 0826-freaks
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 6/20 - 第 7 行 | 产品: 0826-beautifully broken | 提示词: 镜头从远慢推至 T 恤特写，模特走路中逐渐灿烂大笑，双手随步...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 7 行（不需要处理） | 产品: 0826-beautifully broken
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 7/20 - 第 8 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头动态追焦 T 恤印花，模特走路时侧头向背景朋友招呼，嘴角...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 8 行（不需要处理） | 产品: 0826-HIPPIE SOUL
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 8/20 - 第 9 行 | 产品: 0826-life is better | 提示词: [{'segmentStyle': {'bold': Fal...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 9 行（不需要处理） | 产品: 0826-life is better
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 9/20 - 第 10 行 | 产品: 0826-Abvela | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,663 - WorkflowManager - INFO -      ⏭️  跳过第 10 行（不需要处理） | 产品: 0826-Abvela
+2025-08-26 23:00:42,663 - WorkflowManager - INFO - 📝 处理进度: 10/20 - 第 11 行 | 产品: 0826-freaks | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 11 行（不需要处理） | 产品: 0826-freaks
+2025-08-26 23:00:42,664 - WorkflowManager - INFO - 📝 处理进度: 11/20 - 第 12 行 | 产品: 0826-beautifully broken | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 12 行（不需要处理） | 产品: 0826-beautifully broken
+2025-08-26 23:00:42,664 - WorkflowManager - INFO - 📝 处理进度: 12/20 - 第 13 行 | 产品: 0826-HIPPIE SOUL | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 13 行（不需要处理） | 产品: 0826-HIPPIE SOUL
+2025-08-26 23:00:42,664 - WorkflowManager - INFO - 📝 处理进度: 13/20 - 第 14 行 | 产品: 0826-life is better | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，路过镜头时抬手比小...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 14 行（不需要处理） | 产品: 0826-life is better
+2025-08-26 23:00:42,664 - WorkflowManager - INFO - 📝 处理进度: 14/20 - 第 15 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 15 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 23:00:42,664 - WorkflowManager - INFO - 📝 处理进度: 15/20 - 第 16 行 | 产品: 0826-Yes, I Can Drive a Stick | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 16 行（不需要处理） | 产品: 0826-Yes, I Can Drive a Stick
+2025-08-26 23:00:42,664 - WorkflowManager - INFO - 📝 处理进度: 16/20 - 第 17 行 | 产品: 0826-Mothman | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,664 - WorkflowManager - INFO -      ⏭️  跳过第 17 行（不需要处理） | 产品: 0826-Mothman
+2025-08-26 23:00:42,665 - WorkflowManager - INFO - 📝 处理进度: 17/20 - 第 18 行 | 产品: 0826-This is Bull shit | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,665 - WorkflowManager - INFO -      ⏭️  跳过第 18 行（不需要处理） | 产品: 0826-This is Bull shit
+2025-08-26 23:00:42,665 - WorkflowManager - INFO - 📝 处理进度: 18/20 - 第 19 行 | 产品: 0826-UFO | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,665 - WorkflowManager - INFO -      ⏭️  跳过第 19 行（不需要处理） | 产品: 0826-UFO
+2025-08-26 23:00:42,665 - WorkflowManager - INFO - 📝 处理进度: 19/20 - 第 20 行 | 产品: 0826-vision | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,665 - WorkflowManager - INFO -      ⏭️  跳过第 20 行（不需要处理） | 产品: 0826-vision
+2025-08-26 23:00:42,665 - WorkflowManager - INFO - 📝 处理进度: 20/20 - 第 21 行 | 产品: 0826-Yahweh | 提示词: 镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩...
+2025-08-26 23:00:42,665 - WorkflowManager - INFO -      ⏭️  跳过第 21 行（不需要处理） | 产品: 0826-Yahweh
+2025-08-26 23:00:42,665 - __main__ - INFO - 📋 步骤4: 生成处理报告
+2025-08-26 23:00:42,665 - __main__ - INFO - 
+============================================================
+📊 图生视频工作流 处理报告
+============================================================
+📈 处理统计:
+   - 总行数: 20
+   - 成功: 20
+   - 失败: 0
+   - 成功率: 100.0% (如果总行数 > 0)
+   - 总耗时: 0.00 秒
+   - 平均耗时: 0.00 秒/行
+
+✅ 成功处理的行:
+   - 第 2 行
+   - 第 3 行
+   - 第 4 行
+   - 第 5 行
+   - 第 6 行
+   - 第 7 行
+   - 第 8 行
+   - 第 9 行
+   - 第 10 行
+   - 第 11 行
+   - 第 12 行
+   - 第 13 行
+   - 第 14 行
+   - 第 15 行
+   - 第 16 行
+   - 第 17 行
+   - 第 18 行
+   - 第 19 行
+   - 第 20 行
+   - 第 21 行
+
+============================================================
+
+2025-08-26 23:00:42,666 - __main__ - INFO - 处理报告已保存到: reports/report_20250826_230042.txt
+2025-08-26 23:00:42,666 - __main__ - INFO - 所有数据处理成功
