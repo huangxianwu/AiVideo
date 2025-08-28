@@ -14,6 +14,7 @@ from datetime import datetime
 from config import load_config
 from workflow_processor import WorkflowProcessor
 from workflow_manager import WorkflowManager, WorkflowMode
+from png_processor import WhiteBackgroundRemover
 
 
 def select_workflow_mode():
@@ -21,6 +22,7 @@ def select_workflow_mode():
     print("\n" + "="*60)
     print("🔧 请选择工作流模式:")
     print("="*60)
+    print("0. 图片去白底处理 - 批量处理jpg图片去除白色背景")
     print("1. 图片合成工作流 - 合成产品图和模特图")
     print("2. 图生视频工作流 - 基于合成图生成视频")
     print("3. 完整工作流 - 先完成所有图片合成，再完成所有图生视频")
@@ -28,8 +30,11 @@ def select_workflow_mode():
     
     while True:
         try:
-            choice = input("请输入选择 (1、2 或 3): ").strip()
-            if choice == "1":
+            choice = input("请输入选择 (0、1、2 或 3): ").strip()
+            if choice == "0":
+                print("✅ 已选择: 图片去白底处理")
+                return "PNG_PROCESSOR"
+            elif choice == "1":
                 print("✅ 已选择: 图片合成工作流")
                 return WorkflowMode.IMAGE_COMPOSITION
             elif choice == "2":
@@ -39,12 +44,78 @@ def select_workflow_mode():
                 print("✅ 已选择: 完整工作流")
                 return "FULL_WORKFLOW"
             else:
-                print("❌ 无效选择，请输入 1、2 或 3")
+                print("❌ 无效选择，请输入 0、1、2 或 3")
         except KeyboardInterrupt:
             print("\n❌ 用户取消选择")
             sys.exit(130)
         except Exception as e:
             print(f"❌ 输入错误: {str(e)}")
+
+
+def process_png_images():
+    """处理图片去白底功能"""
+    try:
+        print("\n" + "="*60)
+        print("🖼️ 开始批量处理图片去白底")
+        print("="*60)
+        
+        # 设置输入和输出目录
+        input_dir = Path("images/jpg")
+        output_dir = Path("images/png")
+        
+        # 检查输入目录是否存在
+        if not input_dir.exists():
+            print(f"❌ 输入目录不存在: {input_dir}")
+            return False
+            
+        # 获取所有图片文件
+        image_files = []
+        for ext in ['*.jpg', '*.jpeg', '*.png', '*.bmp', '*.tiff']:
+            image_files.extend(input_dir.glob(ext))
+            image_files.extend(input_dir.glob(ext.upper()))
+        
+        if not image_files:
+            print(f"📁 {input_dir} 目录中没有找到图片文件")
+            return True
+            
+        print(f"📁 找到 {len(image_files)} 个图片文件")
+        
+        # 创建白背景移除器
+        remover = WhiteBackgroundRemover()
+        
+        # 确保输出目录存在
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 批量处理图片
+        success_count = 0
+        for image_file in image_files:
+            try:
+                print(f"🔄 正在处理: {image_file.name}")
+                # 生成输出文件路径
+                output_file = output_dir / f"{image_file.stem}_no_bg.png"
+                success = remover.process_single_image(str(image_file), str(output_file))
+                if success:
+                    success_count += 1
+                    # 删除原始文件
+                    image_file.unlink()
+                    print(f"✅ 处理完成并删除原文件: {image_file.name}")
+                else:
+                    print(f"❌ 处理失败: {image_file.name}")
+            except Exception as e:
+                print(f"❌ 处理 {image_file.name} 时出错: {str(e)}")
+        
+        print("\n" + "="*60)
+        print(f"🎉 批量处理完成!")
+        print(f"   - 成功处理: {success_count} 个文件")
+        print(f"   - 失败: {len(image_files) - success_count} 个文件")
+        print(f"   - 输出目录: {output_dir}")
+        print("="*60)
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ 图片处理过程中出错: {str(e)}")
+        return False
 
 
 def generate_workflow_report(results, workflow_name: str) -> str:
@@ -361,14 +432,19 @@ def main():
                 print("程序已取消")
                 return
             
-            # 正常执行模式
-            if args.retry:
-                print("📋 执行模式: 重试失败行")
-                print(f"   - 最大重试次数: {args.max_retries}")
+            # 处理图片去白底模式
+            if workflow_mode == "PNG_PROCESSOR":
+                success = process_png_images()
+                exit_code = 0 if success else 1
             else:
-                print("📋 执行模式: 正常处理")
-            print(f"   - 日志级别: {args.log_level}")
-            exit_code = asyncio.run(main_process(args, workflow_mode))
+                # 正常执行模式
+                if args.retry:
+                    print("📋 执行模式: 重试失败行")
+                    print(f"   - 最大重试次数: {args.max_retries}")
+                else:
+                    print("📋 执行模式: 正常处理")
+                print(f"   - 日志级别: {args.log_level}")
+                exit_code = asyncio.run(main_process(args, workflow_mode))
         
         sys.exit(exit_code)
         
