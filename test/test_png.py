@@ -76,7 +76,7 @@ def test_single_image():
         remover = WhiteBackgroundRemover()
         
         # 设置输出路径
-        output_path = output_dir / f"{test_image.stem}_no_bg.png"
+        output_path = output_dir / f"{test_image.stem}.png"
         
         # 处理单张图片
         success = remover.process_single_image(str(test_image), str(output_path))

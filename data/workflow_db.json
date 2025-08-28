@@ -1,0 +1,257 @@
+{
+  "workflows": {
+    "task_1_测试产品_20250828_173518": {
+      "task_id": "task_1_测试产品_20250828_173518",
+      "status": "已完成",
+      "created_at": "2025-08-28T17:35:18.555005",
+      "updated_at": "2025-08-28T17:35:18.556702",
+      "row_index": 1,
+      "product_name": "测试产品",
+      "image_path": "./output/0828/img/test_image.png",
+      "video_path": "./output/0828/video/test_video.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "生成测试图片",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_1_测试产品_20250828_173534": {
+      "task_id": "task_1_测试产品_20250828_173534",
+      "status": "已完成",
+      "created_at": "2025-08-28T17:35:34.268662",
+      "updated_at": "2025-08-28T17:35:34.270465",
+      "row_index": 1,
+      "product_name": "测试产品",
+      "image_path": "./output/0828/img/test_image.png",
+      "video_path": "./output/0828/video/test_video.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "生成测试图片",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_67_0828blesse_20250828_182029": {
+      "task_id": "task_67_0828blesse_20250828_182029",
+      "status": "已完成",
+      "created_at": "2025-08-28T18:20:29.240226",
+      "updated_at": "2025-08-28T18:56:45.963074",
+      "row_index": 67,
+      "product_name": "0828-blessed2",
+      "image_path": "./output/0828/img/0828-blessed2_黑人-男-25-胡茬酒吧_08-28-18-22.png",
+      "video_path": "./output/0828/video/0828-blessed2_黑人-男-25-胡茬酒吧_20250828_185645.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_67_0828blesse_20250828_182341": {
+      "task_id": "task_67_0828blesse_20250828_182341",
+      "status": "图片生成中",
+      "created_at": "2025-08-28T18:23:41.744511",
+      "updated_at": "2025-08-28T18:23:41.745041",
+      "row_index": 67,
+      "product_name": "0828-blessed2",
+      "image_path": null,
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_999_测试产品_20250828_185144": {
+      "task_id": "task_999_测试产品_20250828_185144",
+      "status": "已完成",
+      "created_at": "2025-08-28T18:51:44.884391",
+      "updated_at": "2025-08-28T18:51:44.887070",
+      "row_index": 999,
+      "product_name": "测试产品",
+      "image_path": "./output/test/img/test_image.png",
+      "video_path": "./output/test/video/test_video.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "测试提示词：镜头平行缓移跟拍，模特自然走路",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_999_测试产品_20250828_185225": {
+      "task_id": "task_999_测试产品_20250828_185225",
+      "status": "已完成",
+      "created_at": "2025-08-28T18:52:25.153972",
+      "updated_at": "2025-08-28T18:52:25.156080",
+      "row_index": 999,
+      "product_name": "测试产品",
+      "image_path": "./output/test/img/test_image.png",
+      "video_path": "./output/test/video/test_video.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "测试提示词：镜头平行缓移跟拍，模特自然走路",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_73_0828nota_20250828_185646": {
+      "task_id": "task_73_0828nota_20250828_185646",
+      "status": "已完成",
+      "created_at": "2025-08-28T18:56:46.752754",
+      "updated_at": "2025-08-28T18:59:00.663072",
+      "row_index": 73,
+      "product_name": "0828-not a",
+      "image_path": null,
+      "video_path": "./output/0828/video/0828-not a_白人-男-20-晚上街上酷酷的3_20250828_185900.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+        "workflow_type": "image_to_video"
+      }
+    },
+    "task_74_0828rather_20250828_185901": {
+      "task_id": "task_74_0828rather_20250828_185901",
+      "status": "已完成",
+      "created_at": "2025-08-28T18:59:01.408988",
+      "updated_at": "2025-08-28T19:02:11.839133",
+      "row_index": 74,
+      "product_name": "0828-rather",
+      "image_path": null,
+      "video_path": "./output/0828/video/0828-rather_白人-男-20-晚上街上酷酷的3_20250828_190211.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+        "workflow_type": "image_to_video"
+      }
+    },
+    "task_75_0828movie_20250828_190212": {
+      "task_id": "task_75_0828movie_20250828_190212",
+      "status": "已完成",
+      "created_at": "2025-08-28T19:02:12.634069",
+      "updated_at": "2025-08-28T19:04:55.600037",
+      "row_index": 75,
+      "product_name": "0828-movie",
+      "image_path": null,
+      "video_path": "./output/0828/video/0828-movie_白人-女-25-咖啡1_20250828_190455.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+        "workflow_type": "image_to_video"
+      }
+    },
+    "task_79_0827hailsa_20250828_201917": {
+      "task_id": "task_79_0827hailsa_20250828_201917",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T20:19:17.928666",
+      "updated_at": "2025-08-28T20:21:24.208908",
+      "row_index": 79,
+      "product_name": "0827-hail-santa",
+      "image_path": "./output/0828/img/0827-hail-santa_白人-女-25-咖啡1_08-28-20-21.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头环绕模特半圈（水平移动），女模特眼神沉静、面带从容笑意，匀速走时双手自然交叠于小腹前（指尖轻碰），偶尔随步伐小幅分开摆动，让印花在动态中清晰呈现，传递优雅随性",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_80_0827hailsa_20250828_202143": {
+      "task_id": "task_80_0827hailsa_20250828_202143",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T20:21:43.226948",
+      "updated_at": "2025-08-28T20:23:50.057167",
+      "row_index": 80,
+      "product_name": "0827-hail-santa",
+      "image_path": "./output/0828/img/0827-hail-santa_latin-女-25-长发_08-28-20-23.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景固定镜头，女模特走入画面中心，自然微笑、眼神明亮轻快，走路时双手轻握成半拳（指尖微露）随步伐小幅前后摆动，节奏轻盈，清晰呈现 T 恤正面印花，展现轻松活力氛围",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_81_0827hailsa_20250828_202405": {
+      "task_id": "task_81_0827hailsa_20250828_202405",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T20:24:05.340769",
+      "updated_at": "2025-08-28T20:26:13.024025",
+      "row_index": 81,
+      "product_name": "0827-hail-santa",
+      "image_path": "./output/0828/img/0827-hail-santa_latin-女-20-长发_08-28-20-26.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头缓慢向前推进聚焦，女模特抿嘴浅笑、眼神温柔带好奇，走路时侧身轻歪头，右手食指轻勾 T 恤下摆（不遮挡印花），左手自然下垂摆动，突出印花细节，传递俏皮亲和力",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_82_0827hailsa_20250828_202631": {
+      "task_id": "task_82_0827hailsa_20250828_202631",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T20:26:31.295432",
+      "updated_at": "2025-08-28T20:28:41.115000",
+      "row_index": 82,
+      "product_name": "0827-hail-santa",
+      "image_path": "./output/0828/img/0827-hail-santa_latin-女-18-马尾长发_08-28-20-28.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头平行跟拍同速移动，女模特大笑露齿、眼神灵动张扬，大步走时双手掌心向上轻扬（如托举微风）后自然回落，放大印花存在感，彰显热情活力",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_83_0827hailsa_20250828_202855": {
+      "task_id": "task_83_0827hailsa_20250828_202855",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T20:28:55.367408",
+      "updated_at": "2025-08-28T20:31:04.938218",
+      "row_index": 83,
+      "product_name": "0827-hail-santa",
+      "image_path": "./output/0828/img/0827-hail-santa_白人-女-25-金发上班族_08-28-20-31.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头先向后拉再缓移，女模特挑眉带飒爽感、眼神坚定自信，走路时左手轻插高腰裤侧兜（仅指尖入兜），右手随步伐轻甩（手腕微晃），展现印花与酷感风格融合，凸显个性",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_84_0827hailsa_20250828_212744": {
+      "task_id": "task_84_0827hailsa_20250828_212744",
+      "status": "失败",
+      "created_at": "2025-08-28T21:27:44.767686",
+      "updated_at": "2025-08-28T22:27:09.194446",
+      "row_index": 84,
+      "product_name": "0827-hail-santa",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "模特图片上传失败: 图片上传异常: Server disconnected",
+      "metadata": {
+        "prompt": "中景镜头环绕模特半圈（水平移动），女模特眼神沉静、面带从容笑意，匀速走时双手自然交叠于小腹前（指尖轻碰），偶尔随步伐小幅分开摆动，让印花在动态中清晰呈现，传递优雅随性",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_83_0827hailsa_20250828_224237": {
+      "task_id": "task_83_0827hailsa_20250828_224237",
+      "status": "图片生成中",
+      "created_at": "2025-08-28T22:42:37.323407",
+      "updated_at": "2025-08-28T22:42:37.325124",
+      "row_index": 83,
+      "product_name": "0827-hail-santa",
+      "image_path": null,
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头先向后拉再缓移，女模特挑眉带飒爽感、眼神坚定自信，走路时左手轻插高腰裤侧兜（仅指尖入兜），右手随步伐轻甩（手腕微晃），展现印花与酷感风格融合，凸显个性",
+        "workflow_type": "image_composition"
+      }
+    }
+  },
+  "statistics": {
+    "total_tasks": 16,
+    "completed": 8,
+    "image_generating": 2,
+    "video_generating": 5,
+    "failed": 1,
+    "pending": 0
+  },
+  "metadata": {
+    "created_at": "2025-08-28T17:34:44.456866",
+    "last_updated": "2025-08-28T22:42:37.325140",
+    "version": "1.0"
+  }
+}

@@ -18,15 +18,15 @@ class FeishuConfig:
     sheet_name: str
     range: str = "A2:I1000"  # 扩大范围到I列
     
-    # 列映射配置
-    product_image_column: str = "A"  # 产品图列
-    model_image_column: str = "B"    # 模特图列
-    prompt_column: str = "C"         # 提示词列
-    status_column: str = "D"         # 状态列
-    result_image_column: str = "E"   # 产品模特合成图列
-    product_name_column: str = "F"   # 产品名列
-    model_name_column: str = "H"     # 模特名列
-    video_status_column: str = "I"   # 视频是否已实现列
+    # 列映射配置 - 基于表头名称识别，不依赖固定位置
+    product_image_column: str = "产品图"  # 产品图列表头关键词
+    model_image_column: str = "模特图"    # 模特图列表头关键词
+    prompt_column: str = "提示词"         # 提示词列表头关键词
+    status_column: str = "图片是否已处理"  # 状态列表头关键词
+    composite_image_column: str = "产品模特合成图"  # 合成图列表头关键词
+    product_name_column: str = "产品名"   # 产品名列表头关键词
+    model_name_column: str = "模特名"     # 模特名列表头关键词
+    video_status_column: str = "视频是否已实现"   # 视频状态列表头关键词
 
 
 @dataclass
@@ -42,7 +42,7 @@ class ComfyUIConfig:
     prompt_node_id: str = "30"          # 提示词节点ID
     
     # 图生视频工作流配置
-    video_workflow_enabled: bool = False  # 视频工作流开关
+    video_workflow_enabled: bool = True  # 视频工作流开关
     video_workflow_id: str = "1959150471611101185"  # 图生视频工作流ID
     video_image_node_id: str = "293"     # 视频工作流图片节点ID
     video_prompt_node_id: str = "368"    # 视频工作流提示词节点ID
@@ -90,7 +90,7 @@ def load_config() -> AppConfig:
     comfyui_config = ComfyUIConfig(
         api_key=os.getenv("COMFYUI_API_KEY", "d4b17e6ea9474695965f3f3c9dd53c1d"),
         workflow_id=os.getenv("COMFYUI_WORKFLOW_ID", "1956307610033160194"),
-        video_workflow_enabled=os.getenv("VIDEO_WORKFLOW_ENABLED", "false").lower() == "true",
+        video_workflow_enabled=os.getenv("VIDEO_WORKFLOW_ENABLED", "true").lower() == "true",
         video_workflow_id=os.getenv("VIDEO_WORKFLOW_ID", "1959150471611101185"),
         video_image_node_id=os.getenv("VIDEO_IMAGE_NODE_ID", "293"),
         video_prompt_node_id=os.getenv("VIDEO_PROMPT_NODE_ID", "368")

@@ -14,7 +14,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def batch_remove_background(input_dir="images/jpg", output_dir="images/png", model_name="isnet-general-use"):
+def batch_remove_background(input_dir="images/jpg", output_dir="images/png", model_name="u2net"):
     """
     批量移除背景
     
@@ -76,7 +76,7 @@ def batch_remove_background(input_dir="images/jpg", output_dir="images/png", mod
                 output_image = remove(input_image, session=session)
                 
                 # 生成输出文件名
-                output_file = output_path / f"{image_file.stem}_no_bg.png"
+                output_file = output_path / f"{image_file.stem}.png"
                 
                 # 保存结果
                 output_image.save(output_file, 'PNG')
@@ -139,10 +139,10 @@ def main():
     
     # 可选的模型列表
     available_models = [
-        ('isnet-general-use', '高质量通用模型，推荐首选'),
-        ('u2net', '经典模型，人像效果好'),
-        ('u2netp', '轻量版本，速度快'),
-        ('silueta', '人像专用模型')
+        ('u2net', '经典模型，文字处理效果好，推荐首选'),
+        ('silueta', '轮廓检测专用，文字边缘清晰'),
+        ('isnet-general-use', '高质量通用模型'),
+        ('u2netp', '轻量版本，速度快')
     ]
     
     print("可用模型:")
@@ -160,10 +160,10 @@ def main():
             selected_model = available_models[model_index][0]
         else:
             print("无效选择，使用默认模型")
-            selected_model = "isnet-general-use"
+            selected_model = "u2net"
     except (ValueError, KeyboardInterrupt):
         print("使用默认模型")
-        selected_model = "isnet-general-use"
+        selected_model = "u2net"
     
     print(f"\n使用模型: {selected_model}")
     

@@ -155,7 +155,7 @@ class WhiteBackgroundRemover:
             # 设置输出路径
             if output_path is None:
                 input_file = Path(input_path)
-                output_path = input_file.parent / f"{input_file.stem}_no_bg.png"
+                output_path = input_file.parent / f"{input_file.stem}.png"
             
             # 保存结果
             success = cv2.imwrite(str(output_path), result)
@@ -183,7 +183,7 @@ class WhiteBackgroundRemover:
                 if result_pil:
                     if output_path is None:
                         input_file = Path(input_path)
-                        output_path = input_file.parent / f"{input_file.stem}_no_bg.png"
+                        output_path = input_file.parent / f"{input_file.stem}.png"
                     
                     result_pil.save(output_path, 'PNG')
                     logger.info(f"PIL方法处理完成: {output_path}")
@@ -226,7 +226,7 @@ class WhiteBackgroundRemover:
         
         success_count = 0
         for img_file in image_files:
-            output_file = output_path / f"{img_file.stem}_no_bg.png"
+            output_file = output_path / f"{img_file.stem}.png"
             
             if self.process_single_image(str(img_file), str(output_file)):
                 success_count += 1

@@ -17,14 +17,14 @@ from config import FeishuConfig
 class RowData:
     """表格行数据"""
     row_number: int
-    product_image: Union[str, Dict[str, Any]]
-    model_image: Union[str, Dict[str, Any]]
-    prompt: str
-    status: str
-    composite_image: str = ""  # E列产品模特合成图
-    product_name: str = ""  # F列产品名
-    model_name: str = ""    # H列模特名
-    video_status: str = ""  # I列视频是否已实现
+    product_image: Union[str, Dict[str, Any]]  # B列：产品图
+    model_image: Union[str, Dict[str, Any]]    # D列：模特图
+    prompt: str                                # G列：提示词
+    status: str                                # H列：图片是否已处理
+    composite_image: str = ""                  # F列：产品模特合成图
+    product_name: str = ""                     # C列：产品名
+    model_name: str = ""                       # E列：模特名
+    video_status: str = ""                     # I列：视频是否已实现
     original_data: List[Any] = None
 
 
@@ -163,6 +163,8 @@ class FeishuClient:
                         column_mapping['prompt'] = i
                     elif self.config.status_column.lower() in cell_str:
                         column_mapping['status'] = i
+                    elif self.config.composite_image_column.lower() in cell_str:
+                        column_mapping['composite_image'] = i
                     elif self.config.product_name_column.lower() in cell_str:
                         column_mapping['product_name'] = i
                     elif self.config.model_name_column.lower() in cell_str:
@@ -170,17 +172,17 @@ class FeishuClient:
                     elif self.config.video_status_column.lower() in cell_str:
                         column_mapping['video_status'] = i
         
-        # 如果没有表头行，使用默认索引
+        # 如果没有表头行，使用默认索引（根据用户纠正的列映射）
         if not column_mapping:
             column_mapping = {
-                'product_image': 0,
-                'model_image': 1,
-                'prompt': 2,
-                'status': 3,
-                'composite_image': 4,  # E列索引为4
-                'product_name': 5,  # F列索引为5
-                'model_name': 7,    # H列索引为7
-                'video_status': 8   # I列索引为8
+                'product_image': 1,     # B列：产品图
+                'model_image': 3,       # D列：模特图
+                'prompt': 6,            # G列：提示词
+                'status': 7,            # H列：图片是否已处理
+                'composite_image': 5,   # F列：产品模特合成图
+                'product_name': 2,      # C列：产品名
+                'model_name': 4,        # E列：模特名
+                'video_status': 8       # I列：视频是否已实现
             }
 
         
@@ -259,6 +261,55 @@ class FeishuClient:
         
         return str(cell).strip()
     
+    async def _get_column_letter_by_header(self, header_name: str) -> Optional[str]:
+        """根据表头名称获取列字母"""
+        try:
+            # 获取原始表格数据
+            sheet_info = await self.get_sheet_info()
+            sheet_id = sheet_info["sheet_id"]
+            
+            url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values/{sheet_id}!A1:Z1"
+            
+            headers = {
+                "Authorization": f"Bearer {self.access_token}"
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers) as response:
+                    if response.status != 200:
+                        self.logger.error(f"获取表头失败: HTTP {response.status}")
+                        return None
+                    
+                    data = await response.json()
+                    if data.get("code") != 0:
+                        self.logger.error(f"获取表头失败: {data.get('msg')}")
+                        return None
+                    
+                    # 调试信息：打印返回的数据结构
+                    self.logger.debug(f"API返回数据: {data}")
+                    
+                    values = data.get("data", {}).get("values", [])
+                    if not values:
+                        # 尝试其他可能的数据结构
+                        values = data.get("data", {}).get("valueRange", {}).get("values", [])
+                    
+                    if not values or not values[0]:
+                        self.logger.error(f"未找到表头行，返回数据结构: {data}")
+                        return None
+                    
+                    header_row = values[0]
+                    for i, cell in enumerate(header_row):
+                        if cell and header_name.lower() in str(cell).strip().lower():
+                            # 将索引转换为列字母 (0->A, 1->B, 2->C, ...)
+                            return chr(65 + i)  # 65是'A'的ASCII码
+                    
+                    self.logger.error(f"未找到包含'{header_name}'的列")
+                    return None
+                    
+        except Exception as e:
+            self.logger.error(f"获取列字母异常: {str(e)}")
+            return None
+    
     async def download_image(self, file_token: str) -> bytes:
         """下载图片文件"""
         if not self.access_token:
@@ -283,8 +334,13 @@ class FeishuClient:
             sheet_info = await self.get_sheet_info()
             sheet_id = sheet_info["sheet_id"]
             
-            # 构建状态列的单元格范围，使用sheet_id (例如: sheet_id!D2, sheet_id!D3, ...)
-            cell_range = f"{sheet_id}!{self.config.status_column}{row_number}:{self.config.status_column}{row_number}"
+            # 动态获取状态列位置
+            status_column_letter = await self._get_column_letter_by_header(self.config.status_column)
+            if not status_column_letter:
+                self.logger.error(f"无法找到'{self.config.status_column}'列")
+                return False
+            
+            cell_range = f"{sheet_id}!{status_column_letter}{row_number}:{status_column_letter}{row_number}"
             url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values"
             
             headers = {
@@ -373,6 +429,12 @@ class FeishuClient:
                 self.logger.error("无法获取sheet_id")
                 return False
             
+            # 动态获取合成图列位置
+            composite_column_letter = await self._get_column_letter_by_header(self.config.composite_image_column)
+            if not composite_column_letter:
+                self.logger.error(f"无法找到'{self.config.composite_image_column}'列")
+                return False
+            
             url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values_image"
             
             headers = {
@@ -380,8 +442,8 @@ class FeishuClient:
                 "Content-Type": "application/json"
             }
             
-            # E列对应的单元格范围，使用sheet_id，row_number已经是正确的表格行号
-            cell_range = f"{sheet_id}!{self.config.result_image_column}{row_number}:{self.config.result_image_column}{row_number}"
+            # 使用动态获取的合成图列位置
+            cell_range = f"{sheet_id}!{composite_column_letter}{row_number}:{composite_column_letter}{row_number}"
             
             # 读取图片二进制数据
             with open(image_path, 'rb') as f:

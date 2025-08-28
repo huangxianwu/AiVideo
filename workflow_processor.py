@@ -46,14 +46,15 @@ class WorkflowProcessor:
     
     def _create_directories(self):
         """创建必要的目录"""
+        from date_utils import get_date_subfolder_path
+        
         Path(self.config.temp_dir).mkdir(parents=True, exist_ok=True)
         Path(self.config.output_dir).mkdir(parents=True, exist_ok=True)
-        # 创建img子目录
-        img_dir = Path(self.config.output_dir) / "img"
-        img_dir.mkdir(parents=True, exist_ok=True)
-        # 创建video子目录
-        video_dir = Path(self.config.output_dir) / "video"
-        video_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 创建按日期组织的img和video子目录
+        img_dir = get_date_subfolder_path(self.config.output_dir, "img")
+        video_dir = get_date_subfolder_path(self.config.output_dir, "video")
+        
         self.logger.info(f"创建目录: {self.config.temp_dir}, {self.config.output_dir}, {img_dir}, {video_dir}")
     
     async def process_all_rows(self) -> List[ProcessResult]:
@@ -241,9 +242,10 @@ class WorkflowProcessor:
                     safe_model_name = "".join(c for c in model_name if c.isalnum() or c in (' ', '-', '_')).strip()
                     timestamp = datetime.now().strftime('%m/%d/%H:%M')
                     filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.png".replace('/', '-').replace(':', '-')
-                    # 保存到img子目录
-                    img_dir = os.path.join(self.config.output_dir, "img")
-                    filepath = os.path.join(img_dir, filename)
+                    
+                    # 使用日期组织的文件路径
+                    from date_utils import create_date_organized_filepath
+                    filepath = create_date_organized_filepath(self.config.output_dir, "img", filename)
                     
                     with open(filepath, 'wb') as f:
                         f.write(file_data)

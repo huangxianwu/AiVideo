@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from config import AppConfig
 from feishu_client import FeishuClient, RowData
 from comfyui_client import ComfyUIClient
+from data import DatabaseManager, WorkflowStatus
 
 
 class WorkflowMode(Enum):
@@ -36,10 +37,11 @@ class WorkflowResult:
 class BaseWorkflow(ABC):
     """工作流基类"""
     
-    def __init__(self, config: AppConfig, feishu_client: FeishuClient, comfyui_client: ComfyUIClient):
+    def __init__(self, config: AppConfig, feishu_client: FeishuClient, comfyui_client: ComfyUIClient, db_manager: DatabaseManager):
         self.config = config
         self.feishu_client = feishu_client
         self.comfyui_client = comfyui_client
+        self.db_manager = db_manager
         self.logger = logging.getLogger(self.__class__.__name__)
     
     @abstractmethod
@@ -73,17 +75,33 @@ class ImageCompositionWorkflow(BaseWorkflow):
         """处理图片合成"""
         start_time = asyncio.get_event_loop().time()
         
+        # 生成任务ID
+        product_name = getattr(row_data, 'product_name', '')
+        task_id = self.db_manager.generate_task_id(row_data.row_number, product_name)
+        
         try:
-            # self.logger.info(f"🎨 开始处理图片合成 - 第 {row_data.row_number} 行，产品名：{getattr(row_data, 'product_name', '未知')}，提示词：{row_data.prompt}")
+            # self.logger.info(f"🎨 开始处理图片合成 - 第 {row_data.row_number} 行，产品名：{product_name}，提示词：{row_data.prompt}")
             
             # 验证数据
             validation_error = self._validate_row_data(row_data)
             if validation_error:
+                # 记录失败任务
+                self.db_manager.start_image_generation(task_id, row_data.row_number, product_name)
+                self.db_manager.mark_task_failed(task_id, validation_error)
+                
                 return WorkflowResult(
                     success=False,
                     row_number=row_data.row_number,
+                    task_id=task_id,
                     error=validation_error
                 )
+            
+            # 开始图片生成任务
+            metadata = {
+                'prompt': row_data.prompt,
+                'workflow_type': 'image_composition'
+            }
+            self.db_manager.start_image_generation(task_id, row_data.row_number, product_name, metadata)
             
             # 下载图片
             product_image_data = await self._download_image(row_data.product_image)
@@ -96,14 +114,22 @@ class ImageCompositionWorkflow(BaseWorkflow):
             )
             
             if not workflow_result.success:
+                # 标记任务失败
+                self.db_manager.mark_task_failed(task_id, workflow_result.error)
+                
                 return WorkflowResult(
                     success=False,
                     row_number=row_data.row_number,
+                    task_id=task_id,
                     error=workflow_result.error
                 )
             
             # 下载并保存结果
             output_files = await self._save_result_files(row_data, workflow_result)
+            
+            # 完成图片生成，准备视频生成
+            if output_files:
+                self.db_manager.complete_image_generation(task_id, output_files[0])
             
             # 更新表格状态
             await self._update_table_status(row_data, output_files)
@@ -113,7 +139,7 @@ class ImageCompositionWorkflow(BaseWorkflow):
             return WorkflowResult(
                 success=True,
                 row_number=row_data.row_number,
-                task_id=workflow_result.task_id,
+                task_id=task_id,
                 output_files=output_files,
                 processing_time=processing_time
             )
@@ -123,9 +149,13 @@ class ImageCompositionWorkflow(BaseWorkflow):
             error_msg = f"图片合成处理异常: {str(e)}"
             self.logger.error(f"        ❌ {error_msg}")
             
+            # 标记任务失败
+            self.db_manager.mark_task_failed(task_id, error_msg)
+            
             return WorkflowResult(
                 success=False,
                 row_number=row_data.row_number,
+                task_id=task_id,
                 error=error_msg,
                 processing_time=processing_time
             )
@@ -174,6 +204,7 @@ class ImageCompositionWorkflow(BaseWorkflow):
         """保存结果文件"""
         import os
         from datetime import datetime
+        from date_utils import create_date_organized_filepath
         
         output_files = []
         if workflow_result.output_urls:
@@ -195,10 +226,9 @@ class ImageCompositionWorkflow(BaseWorkflow):
             safe_model_name = "".join(c for c in model_name if c.isalnum() or c in (' ', '-', '_')).strip()
             timestamp = datetime.now().strftime('%m/%d/%H:%M')
             filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.png".replace('/', '-').replace(':', '-')
-            # 保存到img子目录
-            img_dir = os.path.join(self.config.output_dir, "img")
-            os.makedirs(img_dir, exist_ok=True)
-            filepath = os.path.join(img_dir, filename)
+            
+            # 使用日期组织的文件路径
+            filepath = create_date_organized_filepath(self.config.output_dir, "img", filename)
             
             with open(filepath, 'wb') as f:
                 f.write(file_data)
@@ -234,39 +264,73 @@ class ImageToVideoWorkflow(BaseWorkflow):
         if row_data.video_status != "否":
             return False
         
-        # 只检查列E（产品模特合成图）是否为空
+        # 检查产品模特合成图是否存在
         has_composite_image = (
             hasattr(row_data, 'composite_image') and 
             row_data.composite_image and 
             (
-                (isinstance(row_data.composite_image, str) and row_data.composite_image.strip()) or
-                (isinstance(row_data.composite_image, dict) and row_data.composite_image.get('fileToken'))
+                (isinstance(row_data.composite_image, str) and bool(row_data.composite_image.strip())) or
+                (isinstance(row_data.composite_image, dict) and bool(row_data.composite_image.get('fileToken')))
             )
         )
         
-        # 添加调试信息
-        # self.logger.info(f"      🔍 第 {row_data.row_number} 行判断条件:")
-        # self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
-        # self.logger.info(f"         - video_status: '{row_data.video_status}'")
-        # self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
-        # self.logger.info(f"         - has_composite_image: {has_composite_image}")
-        # self.logger.info(f"         - 最终判断结果: {has_composite_image}")
+        # 检查提示词是否存在
+        has_prompt = (
+            hasattr(row_data, 'prompt') and 
+            row_data.prompt and 
+            bool(row_data.prompt.strip())
+        )
         
-        return has_composite_image
+        # 添加调试信息
+        self.logger.info(f"      🔍 第 {row_data.row_number} 行图生视频判断条件:")
+        self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
+        self.logger.info(f"         - video_status: '{row_data.video_status}'")
+        self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
+        self.logger.info(f"         - has_composite_image: {has_composite_image}")
+        self.logger.info(f"         - prompt: '{getattr(row_data, 'prompt', 'N/A')[:50]}...'")
+        self.logger.info(f"         - has_prompt: {has_prompt}")
+        self.logger.info(f"         - 最终判断结果: {has_composite_image and has_prompt}")
+        
+        # 只有当产品模特合成图和提示词都不为空时才执行
+        return has_composite_image and has_prompt
     
     async def process_row(self, row_data: RowData) -> WorkflowResult:
         """处理图生视频"""
         start_time = asyncio.get_event_loop().time()
+        
+        # 生成任务ID或查找现有任务
+        product_name = getattr(row_data, 'product_name', '')
+        existing_task = self.db_manager.get_task_by_row_index(row_data.row_number)
+        
+        if existing_task:
+            task_id = existing_task['task_id']
+            # 更新状态为视频生成中
+            self.db_manager.start_video_generation(task_id)
+        else:
+            # 创建新任务（如果之前没有图片生成任务）
+            task_id = self.db_manager.generate_task_id(row_data.row_number, product_name)
+            metadata = {
+                'prompt': row_data.prompt or "生成视频",
+                'workflow_type': 'image_to_video'
+            }
+            # 开始图片生成任务（即使跳过图片生成步骤，也需要创建任务记录）
+            self.db_manager.start_image_generation(task_id, row_data.row_number, product_name, metadata)
+            # 直接转到视频生成状态
+            self.db_manager.start_video_generation(task_id)
         
         try:
             self.logger.info(f"🎬 开始处理图生视频 - 第 {row_data.row_number} 行")
             
             # 检查是否有合成图片（从E列获取）
             if not row_data.composite_image:
+                error_msg = "没有找到合成图片，请先完成图片合成"
+                self.db_manager.mark_task_failed(task_id, error_msg)
+                
                 return WorkflowResult(
                     success=False,
                     row_number=row_data.row_number,
-                    error="没有找到合成图片，请先完成图片合成"
+                    task_id=task_id,
+                    error=error_msg
                 )
             
             # 下载合成图片
@@ -294,14 +358,22 @@ class ImageToVideoWorkflow(BaseWorkflow):
                     os.unlink(temp_image_path)
             
             if not video_result.success:
+                # 标记任务失败
+                self.db_manager.mark_task_failed(task_id, video_result.error)
+                
                 return WorkflowResult(
                     success=False,
                     row_number=row_data.row_number,
+                    task_id=task_id,
                     error=video_result.error
                 )
             
             # 下载并保存视频文件
             output_files = await self._save_video_files(row_data, video_result)
+            
+            # 完成视频生成
+            if output_files:
+                self.db_manager.complete_video_generation(task_id, output_files[0])
             
             # 更新视频状态
             await self._update_video_status(row_data)
@@ -311,7 +383,7 @@ class ImageToVideoWorkflow(BaseWorkflow):
             return WorkflowResult(
                 success=True,
                 row_number=row_data.row_number,
-                task_id=video_result.task_id,
+                task_id=task_id,
                 output_files=output_files,
                 processing_time=processing_time
             )
@@ -321,9 +393,13 @@ class ImageToVideoWorkflow(BaseWorkflow):
             error_msg = f"图生视频处理异常: {str(e)}"
             self.logger.error(f"        ❌ {error_msg}")
             
+            # 标记任务失败
+            self.db_manager.mark_task_failed(task_id, error_msg)
+            
             return WorkflowResult(
                 success=False,
                 row_number=row_data.row_number,
+                task_id=task_id,
                 error=error_msg,
                 processing_time=processing_time
             )
@@ -349,7 +425,7 @@ class ImageToVideoWorkflow(BaseWorkflow):
         """保存视频文件"""
         import os
         from datetime import datetime
-        from pathlib import Path
+        from date_utils import create_date_organized_filepath
         
         output_files = []
         if video_result.output_urls:
@@ -370,15 +446,13 @@ class ImageToVideoWorkflow(BaseWorkflow):
                 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 video_filename = f"{safe_product_name}_{safe_model_name}_{timestamp}.mp4"
                 
-                # 创建video子目录
-                video_dir = Path(self.config.output_dir) / "video"
-                video_dir.mkdir(parents=True, exist_ok=True)
-                video_filepath = video_dir / video_filename
+                # 使用日期组织的文件路径
+                video_filepath = create_date_organized_filepath(self.config.output_dir, "video", video_filename)
                 
                 with open(video_filepath, 'wb') as f:
                     f.write(video_data)
                 
-                output_files.append(str(video_filepath))
+                output_files.append(video_filepath)
                 self.logger.info(f"        ✅ 视频文件保存成功: {video_filepath}")
                 break  # 只处理第一个视频文件
         
@@ -405,15 +479,17 @@ class WorkflowManager:
         """初始化工作流"""
         from feishu_client import FeishuClient
         from comfyui_client import ComfyUIClient
+        from data import DatabaseManager
         
         feishu_client = FeishuClient(self.config.feishu)
         comfyui_client = ComfyUIClient(self.config.comfyui, debug_mode=self.debug_mode)
+        self.db_manager = DatabaseManager()  # 保存为实例属性
         
         self.workflows[WorkflowMode.IMAGE_COMPOSITION] = ImageCompositionWorkflow(
-            self.config, feishu_client, comfyui_client
+            self.config, feishu_client, comfyui_client, self.db_manager
         )
         self.workflows[WorkflowMode.IMAGE_TO_VIDEO] = ImageToVideoWorkflow(
-            self.config, feishu_client, comfyui_client
+            self.config, feishu_client, comfyui_client, self.db_manager
         )
     
     def get_workflow(self, mode: WorkflowMode) -> BaseWorkflow:
