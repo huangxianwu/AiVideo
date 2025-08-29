@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .product-image {
+            width: 200px;
+            height: auto;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+        .product-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.4;
+            word-wrap: break-word;
+            margin-bottom: 4px;
+        }
+        .product-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .loading {
+            display: none;
+        }
+        .btn-group-custom {
+            gap: 10px;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        /* 卡片样式 */
+        .product-card {
+            border: 2px solid transparent;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .product-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        .product-card.selected {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+        .product-card.downloaded {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40,167,69,0.05) 0%, rgba(40,167,69,0.1) 100%);
+        }
+        .product-card.downloaded::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(40,167,69,0.1);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* 选择框样式 */
+        .selection-checkbox {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        /* 下载状态图标 */
+        .download-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .product-card:hover .selection-checkbox {
+            opacity: 1;
+        }
+        .product-card.selected .selection-checkbox {
+            opacity: 1;
+            background: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+        
+        /* 网格布局 */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        /* 图片放大模态框 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .image-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .image-modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .image-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- 头部 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        产品管理系统
+                    </h1>
+                    <div class="d-flex btn-group-custom">
+                        <button class="btn btn-outline-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt me-1"></i>刷新数据
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="selectAll()">
+                            <i class="fas fa-check-square me-1"></i>全选当前页
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="clearSelection()">
+                            <i class="fas fa-times me-1"></i>清除选择
+                        </button>
+                        <button class="btn btn-success" onclick="downloadSelected()">
+                            <i class="fas fa-download me-1"></i>下载选中
+                        </button>
+                        <button class="btn btn-info" onclick="viewDownloaded()">
+                            <i class="fas fa-eye me-1"></i>查看已下载
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-2x mb-2"></i>
+                        <h5 class="card-title">总记录数</h5>
+                        <h3 id="totalRecords">{{ total }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-2x mb-2"></i>
+                        <h5 class="card-title">当前页</h5>
+                        <h3 id="currentPage">{{ page }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-list fa-2x mb-2"></i>
+                        <h5 class="card-title">总页数</h5>
+                        <h3 id="totalPages">{{ total_pages }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <h5 class="card-title">已选择</h5>
+                        <h3 id="selectedCount">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品卡片网格 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">产品列表</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="productsGrid" class="products-grid">
+                            {% for item in data %}
+                            <div class="product-card" data-product-id="{{ item.product_id }}">
+                                <div class="selection-checkbox" onclick="toggleCardSelection('{{ item.product_id }}')">
+                                    <i class="fas fa-check" style="display: none;"></i>
+                                </div>
+                                <img src="{{ item.main_image_url }}" 
+                                     class="product-image w-100" 
+                                     alt="{{ item.product_name }}"
+                                     onclick="openImageModal('{{ item.main_image_url }}', '{{ item.product_name }}')"
+                                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMDAgODBDMTA1LjUyMyA4MCAxMTAgNzUuNTIzIDExMCA3MEM1MTAgNjQuNDc3IDEwNS41MjMgNjAgMTAwIDYwQzk0LjQ3NyA2MCA5MCA2NC40NzcgOTAgNzBDOTAgNzUuNTIzIDk0LjQ3NyA4MCAxMDAgODBaIiBmaWxsPSIjOUU5RTlFIi8+CjxwYXRoIGQ9Ik0xNDAgMTQwSDYwVjEyMEw4MCAxMDBMMTAwIDEyMEwxMjAgODBMMTQwIDEwMFYxNDBaIiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPgo='">
+                                <div class="p-3">
+                                    <div class="product-name" title="{{ item.product_name }}">
+                                        {{ item.product_name }}
+                                    </div>
+                                    <div class="product-time">
+                                        {{ item.creation_time }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 图片放大模态框 -->
+        <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+            <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+            <div class="image-modal-content">
+                <img id="modalImage" src="" alt="">
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="分页导航">
+                    <ul class="pagination justify-content-center">
+                        {% if has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page - 1 }}&per_page={{ per_page }}">
+                                <i class="fas fa-chevron-left"></i> 上一页
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                <i class="fas fa-chevron-left"></i> 上一页
+                            </span>
+                        </li>
+                        {% endif %}
+
+                        {% for p in range(1, total_pages + 1) %}
+                            {% if p == page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ p }}</span>
+                            </li>
+                            {% elif p <= 3 or p > total_pages - 3 or (p >= page - 2 and p <= page + 2) %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ p }}&per_page={{ per_page }}">{{ p }}</a>
+                            </li>
+                            {% elif p == 4 and page > 6 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% elif p == total_pages - 3 and page < total_pages - 5 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page + 1 }}&per_page={{ per_page }}">
+                                下一页 <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                下一页 <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载提示 -->
+    <div class="loading position-fixed top-50 start-50 translate-middle">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">加载中...</span>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                <strong class="me-auto">系统通知</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                消息内容
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedItems = new Set();
+         let allSelectedProducts = new Set(); // 全局选择状态
+         let currentPage = 1;
+ 
+         // 加载数据
+          function loadData(page) {
+              currentPage = page;
+              
+              fetch(`/api/data?page=${page}&per_page=50`)
+              .then(response => response.json())
+              .then(data => {
+                  console.log('API返回数据:', data);
+                  updateTable(data.data || []);
+                  updatePagination(data);
+                  // 恢复选择状态
+                  setTimeout(restoreSelectionState, 100);
+              })
+              .catch(error => {
+                  console.error('Error loading data:', error);
+                  alert('加载数据失败');
+              });
+          }
+         
+         // 更新卡片网格
+         function updateTable(data) {
+             const grid = document.querySelector('#productsGrid');
+             grid.innerHTML = '';
+             
+             data.forEach(item => {
+                 const card = document.createElement('div');
+                 card.className = 'product-card';
+                 card.setAttribute('data-product-id', item.product_id);
+                 
+                 // 如果已下载，添加下载样式
+                 if (item.is_downloaded) {
+                     card.classList.add('downloaded');
+                 }
+                 
+                 const downloadStatusHtml = item.is_downloaded ? 
+                     '<div class="download-status"><i class="fas fa-check"></i></div>' : '';
+                 
+                 card.innerHTML = `
+                     <div class="selection-checkbox" onclick="toggleCardSelection('${item.product_id}')">
+                         <i class="fas fa-check" style="display: none;"></i>
+                     </div>
+                     ${downloadStatusHtml}
+                     <img src="${item.main_image_url}" 
+                          class="product-image w-100" 
+                          alt="${item.product_name}"
+                          onclick="openImageModal('${item.main_image_url}', '${item.product_name}')"
+                          onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMDAgODBDMTA1LjUyMyA4MCAxMTAgNzUuNTIzIDExMCA3MEM1MTAgNjQuNDc3IDEwNS41MjMgNjAgMTAwIDYwQzk0LjQ3NyA2MCA5MCA2NC40NzcgOTAgNzBDOTAgNzUuNTIzIDk0LjQ3NyA4MCAxMDAgODBaIiBmaWxsPSIjOUU5RTlFIi8+CjxwYXRoIGQ9Ik0xNDAgMTQwSDYwVjEyMEw4MCAxMDBMMTAwIDEyMEwxMjAgODBMMTQwIDEwMFYxNDBaIiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPgo='">
+                     <div class="p-3">
+                         <div class="product-name" title="${item.product_name}">
+                             ${item.product_name}
+                         </div>
+                         <div class="product-time">
+                             ${item.creation_time}
+                         </div>
+                     </div>
+                 `;
+                 
+                 grid.appendChild(card);
+             });
+         }
+         
+         // 更新分页
+          function updatePagination(pagination) {
+               const paginationContainer = document.querySelector('.pagination');
+               if (!paginationContainer || !pagination) return;
+               
+               paginationContainer.innerHTML = '';
+               
+               // 检查必要的分页字段
+               if (!pagination.page || !pagination.total_pages) {
+                   console.error('分页数据不完整:', pagination);
+                   return;
+               }
+               
+               // 更新统计信息
+               document.getElementById('totalRecords').textContent = pagination.total;
+               document.getElementById('currentPage').textContent = pagination.page;
+               document.getElementById('totalPages').textContent = pagination.total_pages;
+               
+               // 上一页
+               if (pagination.has_prev) {
+                   const prevBtn = document.createElement('li');
+                   prevBtn.className = 'page-item';
+                   prevBtn.innerHTML = `<a class="page-link" href="#" onclick="loadData(${pagination.page - 1})"><i class="fas fa-chevron-left"></i> 上一页</a>`;
+                   paginationContainer.appendChild(prevBtn);
+               } else {
+                   const prevBtn = document.createElement('li');
+                   prevBtn.className = 'page-item disabled';
+                   prevBtn.innerHTML = `<span class="page-link"><i class="fas fa-chevron-left"></i> 上一页</span>`;
+                   paginationContainer.appendChild(prevBtn);
+               }
+               
+               // 页码逻辑：显示更多页码
+               let startPage = Math.max(1, pagination.page - 5);
+               let endPage = Math.min(pagination.total_pages, pagination.page + 5);
+               
+               // 如果总页数较少，显示所有页码
+               if (pagination.total_pages <= 11) {
+                   startPage = 1;
+                   endPage = pagination.total_pages;
+               }
+               
+               // 显示第一页
+               if (startPage > 1) {
+                   const firstBtn = document.createElement('li');
+                   firstBtn.className = 'page-item';
+                   firstBtn.innerHTML = `<a class="page-link" href="#" onclick="loadData(1)">1</a>`;
+                   paginationContainer.appendChild(firstBtn);
+                   
+                   if (startPage > 2) {
+                       const ellipsis = document.createElement('li');
+                       ellipsis.className = 'page-item disabled';
+                       ellipsis.innerHTML = `<span class="page-link">...</span>`;
+                       paginationContainer.appendChild(ellipsis);
+                   }
+               }
+               
+               // 显示页码范围
+               for (let i = startPage; i <= endPage; i++) {
+                   const pageBtn = document.createElement('li');
+                   pageBtn.className = `page-item ${i === pagination.page ? 'active' : ''}`;
+                   pageBtn.innerHTML = `<a class="page-link" href="#" onclick="loadData(${i})">${i}</a>`;
+                   paginationContainer.appendChild(pageBtn);
+               }
+               
+               // 显示最后一页
+               if (endPage < pagination.total_pages) {
+                   if (endPage < pagination.total_pages - 1) {
+                       const ellipsis = document.createElement('li');
+                       ellipsis.className = 'page-item disabled';
+                       ellipsis.innerHTML = `<span class="page-link">...</span>`;
+                       paginationContainer.appendChild(ellipsis);
+                   }
+                   
+                   const lastBtn = document.createElement('li');
+                   lastBtn.className = 'page-item';
+                   lastBtn.innerHTML = `<a class="page-link" href="#" onclick="loadData(${pagination.total_pages})">${pagination.total_pages}</a>`;
+                   paginationContainer.appendChild(lastBtn);
+               }
+               
+               // 下一页
+               if (pagination.has_next) {
+                   const nextBtn = document.createElement('li');
+                   nextBtn.className = 'page-item';
+                   nextBtn.innerHTML = `<a class="page-link" href="#" onclick="loadData(${pagination.page + 1})">下一页 <i class="fas fa-chevron-right"></i></a>`;
+                   paginationContainer.appendChild(nextBtn);
+               } else {
+                   const nextBtn = document.createElement('li');
+                   nextBtn.className = 'page-item disabled';
+                   nextBtn.innerHTML = `<span class="page-link">下一页 <i class="fas fa-chevron-right"></i></span>`;
+                   paginationContainer.appendChild(nextBtn);
+               }
+           }
+ 
+         // 更新选择计数
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = allSelectedProducts.size;
+        }
+        
+        // 卡片选择切换
+        function toggleCardSelection(productId) {
+            const card = document.querySelector(`[data-product-id="${productId}"]`);
+            const checkbox = card.querySelector('.selection-checkbox');
+            const checkIcon = checkbox.querySelector('i');
+            
+            if (allSelectedProducts.has(productId)) {
+                // 取消选择
+                allSelectedProducts.delete(productId);
+                selectedItems.delete(productId);
+                card.classList.remove('selected');
+                checkIcon.style.display = 'none';
+            } else {
+                // 选择
+                allSelectedProducts.add(productId);
+                selectedItems.add(productId);
+                card.classList.add('selected');
+                checkIcon.style.display = 'block';
+            }
+            
+            updateSelectedCount();
+        }
+        
+        // 图片放大模态框
+        function openImageModal(imageUrl, productName) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalImage.src = imageUrl;
+            modalImage.alt = productName;
+            modal.style.display = 'block';
+            
+            // 阻止事件冒泡
+            event.stopPropagation();
+        }
+        
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+        
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+
+        // 全选当前页
+        function selectAll() {
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach(card => {
+                const productId = card.getAttribute('data-product-id');
+                if (!allSelectedProducts.has(productId)) {
+                    allSelectedProducts.add(productId);
+                    selectedItems.add(productId);
+                    card.classList.add('selected');
+                    const checkIcon = card.querySelector('.selection-checkbox i');
+                    checkIcon.style.display = 'block';
+                }
+            });
+            updateSelectedCount();
+        }
+
+        // 清除选择
+        function clearSelection() {
+            selectedItems.clear();
+            allSelectedProducts.clear();
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach(card => {
+                card.classList.remove('selected');
+                const checkIcon = card.querySelector('.selection-checkbox i');
+                checkIcon.style.display = 'none';
+            });
+            updateSelectedCount();
+        }
+
+        // 显示Toast消息
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastHeader = toastElement.querySelector('.toast-header i');
+            
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            toastHeader.className = `fas me-2 ${
+                type === 'success' ? 'fa-check-circle text-success' :
+                type === 'error' ? 'fa-exclamation-circle text-danger' :
+                'fa-info-circle text-primary'
+            }`;
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+
+        // 刷新数据
+        function refreshData() {
+            document.querySelector('.loading').style.display = 'block';
+            
+            fetch('/api/refresh')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showToast('刷新失败', 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('网络错误', 'error');
+                })
+                .finally(() => {
+                    document.querySelector('.loading').style.display = 'none';
+                });
+        }
+
+        // 下载选中的图片
+        function downloadSelected() {
+            if (allSelectedProducts.size === 0) {
+                showToast('请先选择要下载的图片', 'error');
+                return;
+            }
+
+            if (!confirm(`确定要下载 ${allSelectedProducts.size} 张选中的图片吗？`)) {
+                return;
+            }
+
+            document.querySelector('.loading').style.display = 'block';
+            
+            fetch('/api/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_ids: Array.from(allSelectedProducts)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(`成功下载 ${data.success_count} 张图片到 images/jpg/ 目录`, 'success');
+                    allSelectedProducts.clear();
+                    clearSelection();
+                    // 重新加载当前页面数据以显示下载状态
+                    loadData(currentPage);
+                } else {
+                    showToast('下载失败: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showToast('下载过程中发生错误', 'error');
+            })
+            .finally(() => {
+                document.querySelector('.loading').style.display = 'none';
+            });
+        }
+
+        // 恢复选择状态的函数
+         function restoreSelectionState() {
+             const cards = document.querySelectorAll('.product-card');
+             cards.forEach(card => {
+                 const productId = card.getAttribute('data-product-id');
+                 if (allSelectedProducts.has(productId)) {
+                     card.classList.add('selected');
+                     const checkIcon = card.querySelector('.selection-checkbox i');
+                     checkIcon.style.display = 'block';
+                     selectedItems.add(productId);
+                 }
+             });
+             updateSelectedCount();
+         }
+         
+         // 查看已下载页面
+         function viewDownloaded() {
+             window.location.href = '/downloaded';
+         }
+
+        // 页面加载完成后初始化
+         document.addEventListener('DOMContentLoaded', function() {
+             loadData(1);
+         });
+    </script>
+</body>
+</html>

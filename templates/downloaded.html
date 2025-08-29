@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>已下载产品 - 产品管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .btn-group-custom {
+            gap: 8px;
+        }
+        
+        /* 产品网格 */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        /* 图片样式 */
+        .product-image {
+            height: auto;
+            max-height: 300px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            background: #f8f9fa;
+        }
+        .product-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* 产品名称 */
+        .product-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        
+        /* 产品时间 */
+        .product-time {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        /* 卡片样式 */
+        .product-card {
+            border: 2px solid #28a745;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(40,167,69,0.05) 0%, rgba(40,167,69,0.1) 100%);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+        }
+        .product-card:hover {
+            box-shadow: 0 8px 25px rgba(40,167,69,0.3);
+            transform: translateY(-2px);
+        }
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(40,167,69,0.1);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* 下载状态图标 */
+        .download-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* 图片模态框 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            cursor: pointer;
+        }
+        .image-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .image-modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .image-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- 头部 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-download me-2 text-success"></i>
+                        已下载产品
+                    </h1>
+                    <div class="d-flex btn-group-custom">
+                        <button class="btn btn-outline-primary" onclick="window.location.href='/'">
+                            <i class="fas fa-arrow-left me-1"></i>返回主页
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt me-1"></i>刷新数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 统计信息 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">已下载总数</h6>
+                                <h4 class="mb-0" id="totalDownloaded">0</h4>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-download fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 产品网格 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="products-grid" id="productsGrid">
+                    <!-- 产品卡片将在这里动态生成 -->
+                </div>
+                
+                <!-- 空状态 -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <h4>暂无已下载产品</h4>
+                    <p>您还没有下载任何产品，<a href="/">去主页选择产品</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片模态框 -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+        <div class="image-modal-content">
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+    
+    <!-- 加载指示器 -->
+    <div class="d-flex justify-content-center" id="loadingIndicator">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">加载中...</span>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                <strong class="me-auto">系统通知</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                消息内容
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 加载已下载产品数据
+        function loadDownloadedData() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            fetch('/api/downloaded')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                
+                if (data.status === 'success') {
+                    updateProductGrid(data.data);
+                    updateStatistics(data.total);
+                } else {
+                    showToast('加载数据失败: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                console.error('Error loading downloaded data:', error);
+                showToast('加载数据失败', 'error');
+            });
+        }
+        
+        // 更新产品网格
+        function updateProductGrid(data) {
+            const grid = document.querySelector('#productsGrid');
+            const emptyState = document.querySelector('#emptyState');
+            
+            if (data.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            grid.innerHTML = '';
+            
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-product-id', item.product_id);
+                
+                card.innerHTML = `
+                    <div class="download-status">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <img src="${item.main_image_url}" 
+                         class="product-image w-100" 
+                         alt="${item.product_name}"
+                         onclick="openImageModal('${item.main_image_url}', '${item.product_name}')"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMDAgODBDMTA1LjUyMyA4MCAxMTAgNzUuNTIzIDExMCA3MEM1MTAgNjQuNDc3IDEwNS41MjMgNjAgMTAwIDYwQzk0LjQ3NyA2MCA5MCA2NC40NzcgOTAgNzBDOTAgNzUuNTIzIDk0LjQ3NyA4MCAxMDAgODBaIiBmaWxsPSIjOUU5RTlFIi8+CjxwYXRoIGQ9Ik0xNDAgMTQwSDYwVjEyMEw4MCAxMDBMMTAwIDEyMEwxMjAgODBMMTQwIDEwMFYxNDBaIiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPgo='">
+                    <div class="p-3">
+                        <div class="product-name" title="${item.product_name}">
+                            ${item.product_name}
+                        </div>
+                        <div class="product-time">
+                            ${item.creation_time}
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // 更新统计信息
+        function updateStatistics(total) {
+            document.getElementById('totalDownloaded').textContent = total;
+        }
+        
+        // 打开图片模态框
+        function openImageModal(imageUrl, productName) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalImage.src = imageUrl;
+            modalImage.alt = productName;
+            modal.style.display = 'block';
+        }
+        
+        // 关闭图片模态框
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+        
+        // 刷新数据
+        function refreshData() {
+            loadDownloadedData();
+            showToast('数据已刷新', 'success');
+        }
+        
+        // 显示Toast通知
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            // 根据类型设置样式
+            toastElement.className = 'toast';
+            if (type === 'success') {
+                toastElement.classList.add('bg-success', 'text-white');
+            } else if (type === 'error') {
+                toastElement.classList.add('bg-danger', 'text-white');
+            }
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDownloadedData();
+        });
+        
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
+</body>
+</html>

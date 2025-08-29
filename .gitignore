@@ -40,3 +40,22 @@ htmlcov/
 # 临时文件
 *.tmp
 *.temp
+
+# 图片和媒体文件（保留示例文件）
+images/jpg/*
+images/png/*
+images/original/*
+!images/jpg/.gitkeep
+!images/png/.gitkeep
+!images/original/.gitkeep
+
+# 数据库文件
+images/csvdb/*.csv
+!images/csvdb/.gitkeep
+
+# 分析和临时文档
+analysis/
+temp_tests/
+
+# 工作流数据
+data/workflow_db.json
