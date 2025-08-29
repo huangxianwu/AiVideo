@@ -6,7 +6,7 @@
 
 import os
 from pathlib import Path
-from batch_bg_removal import batch_remove_background
+from .batch_bg_removal import batch_remove_background
 import shutil
 
 def test_u2net_fix():

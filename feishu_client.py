@@ -368,7 +368,7 @@ class FeishuClient:
                             self.logger.error(f"更新状态失败: {data.get('msg')}")
                             return False
                         
-                        self.logger.info(f"行 {row_number} 状态更新为: {status}")
+                        self.logger.info(f"第{row_number}行，图片写入成功，图片状态更新为：{status}")
                         return True
                     except Exception as json_error:
                         response_text = await response.text()
@@ -474,20 +474,24 @@ class FeishuClient:
             return False
     
     async def update_video_status(self, row_number: int, video_status: str) -> bool:
-        """更新视频状态到I列"""
+        """更新视频状态"""
         try:
             sheet_info = await self.get_sheet_info()
             sheet_id = sheet_info["sheet_id"]
             
+            # 动态获取视频状态列位置
+            video_status_column_letter = await self._get_column_letter_by_header(self.config.video_status_column)
+            if not video_status_column_letter:
+                self.logger.error(f"无法找到'{self.config.video_status_column}'列")
+                return False
+            
+            cell_range = f"{sheet_id}!{video_status_column_letter}{row_number}:{video_status_column_letter}{row_number}"
             url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values"
             
             headers = {
                 "Authorization": f"Bearer {self.access_token}",
                 "Content-Type": "application/json"
             }
-            
-            # 构建单元格范围 (I列)
-            cell_range = f"{sheet_id}!{self.config.video_status_column}{row_number}:{self.config.video_status_column}{row_number}"
             
             payload = {
                 "valueRange": {
@@ -498,14 +502,23 @@ class FeishuClient:
             
             async with aiohttp.ClientSession() as session:
                 async with session.put(url, json=payload, headers=headers) as response:
-                    data = await response.json()
-                    
-                    if data.get("code") != 0:
-                        self.logger.error(f"更新视频状态失败: {data.get('msg')}")
+                    if response.status != 200:
+                        response_text = await response.text()
+                        self.logger.error(f"更新视频状态失败: HTTP {response.status}, 响应: {response_text}")
                         return False
                     
-                    self.logger.info(f"视频状态更新成功到单元格: {cell_range}")
-                    return True
+                    try:
+                        data = await response.json()
+                        if data.get("code") != 0:
+                            self.logger.error(f"更新视频状态失败: {data.get('msg')}")
+                            return False
+                        
+                        self.logger.info(f"第{row_number}行，视频写入成功，视频状态更新为：{video_status}")
+                        return True
+                    except Exception as json_error:
+                        response_text = await response.text()
+                        self.logger.error(f"解析响应JSON失败: {json_error}, 响应内容: {response_text}")
+                        return False
                     
         except Exception as e:
             self.logger.error(f"更新视频状态异常: {str(e)}")

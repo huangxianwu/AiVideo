@@ -15,7 +15,7 @@ from config import load_config
 from workflow_processor import WorkflowProcessor
 from workflow_manager import WorkflowManager, WorkflowMode
 from png_processor import WhiteBackgroundRemover
-from batch_bg_removal import batch_remove_background
+from temp_tests.batch_bg_removal import batch_remove_background
 
 
 def select_workflow_mode():
@@ -219,10 +219,34 @@ async def main_process(args, workflow_mode):
             logger.info("🔧 启用调试模式，将跳过ComfyUI API调用")
         workflow_manager = WorkflowManager(config, debug_mode=debug_mode)
         
+        # 步骤1.5: 任务恢复检查
+        logger.info("🔄 步骤1.5: 检查未完成任务并尝试恢复")
+        from task_recovery_manager import TaskRecoveryManager
+        from data import DatabaseManager
+        from feishu_client import FeishuClient
+        from comfyui_client import ComfyUIClient
+        
+        # 初始化必要的客户端
+        db_manager = DatabaseManager()
+        feishu_client = FeishuClient(config.feishu)
+        comfyui_client = ComfyUIClient(config.comfyui, debug_mode=debug_mode)
+        
+        # 初始化任务恢复管理器
+        recovery_manager = TaskRecoveryManager(config, db_manager, comfyui_client, feishu_client)
+        
+        # 执行任务恢复
+        recovery_results = await recovery_manager.check_and_recover_tasks()
+        if recovery_results.get('total_recovered', 0) > 0:
+            logger.info(f"   ✅ 恢复了 {recovery_results['total_recovered']} 个未完成任务")
+            for workflow_type, count in recovery_results.get('by_type', {}).items():
+                if count > 0:
+                    logger.info(f"      - {workflow_type}: {count} 个任务")
+        else:
+            logger.info("   ℹ️ 没有发现需要恢复的任务")
+        
         # 步骤2: 获取飞书数据
         logger.info("📊 步骤2: 获取飞书表格数据")
-        from feishu_client import FeishuClient
-        feishu_client = FeishuClient(config.feishu)
+        # feishu_client 已在步骤1.5中初始化
         
         logger.info("   - 正在连接飞书API...")
         rows_data = await feishu_client.get_sheet_data()

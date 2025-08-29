@@ -227,31 +227,615 @@
     },
     "task_83_0827hailsa_20250828_224237": {
       "task_id": "task_83_0827hailsa_20250828_224237",
-      "status": "图片生成中",
+      "status": "视频生成中",
       "created_at": "2025-08-28T22:42:37.323407",
-      "updated_at": "2025-08-28T22:42:37.325124",
+      "updated_at": "2025-08-28T22:44:42.139583",
       "row_index": 83,
       "product_name": "0827-hail-santa",
-      "image_path": null,
+      "image_path": "./output/0828/img/0827-hail-santa_白人-女-25-金发上班族_08-28-22-44.png",
       "video_path": null,
       "error_message": null,
       "metadata": {
         "prompt": "中景镜头先向后拉再缓移，女模特挑眉带飒爽感、眼神坚定自信，走路时左手轻插高腰裤侧兜（仅指尖入兜），右手随步伐轻甩（手腕微晃），展现印花与酷感风格融合，凸显个性",
         "workflow_type": "image_composition"
       }
+    },
+    "task_84_0827hailsa_20250828_224449": {
+      "task_id": "task_84_0827hailsa_20250828_224449",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T22:44:49.411268",
+      "updated_at": "2025-08-28T22:46:55.125093",
+      "row_index": 84,
+      "product_name": "0827-hail-santa",
+      "image_path": "./output/0828/img/0827-hail-santa_白人-女-18-金发校园1_08-28-22-46.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头环绕模特半圈（水平移动），女模特眼神沉静、面带从容笑意，匀速走时双手自然交叠于小腹前（指尖轻碰），偶尔随步伐小幅分开摆动，让印花在动态中清晰呈现，传递优雅随性",
+        "workflow_type": "image_composition"
+      }
+    },
+    "task_76_0827hailsa_20250828_224720": {
+      "task_id": "task_76_0827hailsa_20250828_224720",
+      "status": "已完成",
+      "created_at": "2025-08-28T22:47:20.981834",
+      "updated_at": "2025-08-28T22:49:46.307419",
+      "row_index": 76,
+      "product_name": "0827-hail-santa",
+      "image_path": null,
+      "video_path": "./output/0828/video/0827-hail-santa_拉丁裔-女-25-街上挎包1_20250828_224946.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头平行跟拍同速移动，女模特大笑露齿、眼神灵动张扬，大步走时双手掌心向上轻扬（如托举微风）后自然回落，放大印花存在感，彰显热情活力",
+        "workflow_type": "image_to_video"
+      }
+    },
+    "task_77_0827hailsa_20250828_224947": {
+      "task_id": "task_77_0827hailsa_20250828_224947",
+      "status": "已完成",
+      "created_at": "2025-08-28T22:49:47.095587",
+      "updated_at": "2025-08-28T22:51:57.797305",
+      "row_index": 77,
+      "product_name": "0827-hail-santa",
+      "image_path": null,
+      "video_path": "./output/0828/video/0827-hail-santa_拉丁裔-女-25-街上挎包1_20250828_225157.mp4",
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头缓慢向前推进聚焦，女模特抿嘴浅笑、眼神温柔带好奇，走路时侧身轻歪头，右手食指轻勾 T 恤下摆（不遮挡印花），左手自然下垂摆动，突出印花细节，传递俏皮亲和力",
+        "workflow_type": "image_to_video"
+      }
+    },
+    "task_78_0827hailsa_20250828_225158": {
+      "task_id": "task_78_0827hailsa_20250828_225158",
+      "status": "视频生成中",
+      "created_at": "2025-08-28T22:51:58.972043",
+      "updated_at": "2025-08-28T22:51:58.976934",
+      "row_index": 78,
+      "product_name": "0827-hail-santa",
+      "image_path": null,
+      "video_path": null,
+      "error_message": null,
+      "metadata": {
+        "prompt": "中景镜头缓慢向前推进聚焦，女模特抿嘴浅笑、眼神温柔带好奇，走路时侧身轻歪头，右手食指轻勾 T 恤下摆（不遮挡印花），左手自然下垂摆动，突出印花细节，传递俏皮亲和力",
+        "workflow_type": "image_to_video"
+      }
+    },
+    "test_task_1756393076": {
+      "task_id": "test_task_1756393076",
+      "workflow_type": "图片合成",
+      "status": "失败",
+      "created_at": "2025-08-28T22:57:56.486943",
+      "updated_at": "2025-08-28T23:01:03.534781",
+      "row_index": 999,
+      "product_name": "测试产品",
+      "image_prompt": "测试提示词",
+      "video_prompt": "",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "恢复失败: RowData.__init__() got an unexpected keyword argument 'video_prompt'",
+      "metadata": {},
+      "comfyui_task_id": "test_comfyui_123"
+    },
+    "video_task_16_272074": {
+      "task_id": "video_task_16_272074",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:02:14.446324",
+      "updated_at": "2025-08-28T23:23:45.720638",
+      "row_index": 16,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头平行跟拍同速移动，女模特大笑露齿、眼神灵动张扬，大步走时双手掌心向上轻扬（如托举微风）后自然回落，放大印花存在感，彰显热情活力",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "恢复失败: 缺少图片路径，无法开始视频生成",
+      "metadata": {},
+      "comfyui_task_id": "1961081911319937025"
+    },
+    "video_task_17_272386": {
+      "task_id": "video_task_17_272386",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:07:26.214790",
+      "updated_at": "2025-08-28T23:09:04.362366",
+      "row_index": 17,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头缓慢向前推进聚焦，女模特抿嘴浅笑、眼神温柔带好奇，走路时侧身轻歪头，右手食指轻勾 T 恤下摆（不遮挡印花），左手自然下垂摆动，突出印花细节，传递俏皮亲和力",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961083213336756225"
+    },
+    "video_task_18_272484": {
+      "task_id": "video_task_18_272484",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:09:04.364094",
+      "updated_at": "2025-08-28T23:09:41.661018",
+      "row_index": 18,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头缓慢向前推进聚焦，女模特抿嘴浅笑、眼神温柔带好奇，走路时侧身轻歪头，右手食指轻勾 T 恤下摆（不遮挡印花），左手自然下垂摆动，突出印花细节，传递俏皮亲和力",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961083623963312129"
+    },
+    "video_task_19_272521": {
+      "task_id": "video_task_19_272521",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:09:41.664699",
+      "updated_at": "2025-08-28T23:11:20.150703",
+      "row_index": 19,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头环绕模特半圈（水平移动），女模特眼神沉静、面带从容笑意，匀速走时双手自然交叠于小腹前（指尖轻碰），偶尔随步伐小幅分开摆动，让印花在动态中清晰呈现，传递优雅随性",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961083782717689857"
+    },
+    "video_task_20_272620": {
+      "task_id": "video_task_20_272620",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:11:20.153477",
+      "updated_at": "2025-08-28T23:12:58.689421",
+      "row_index": 20,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景固定镜头，女模特走入画面中心，自然微笑、眼神明亮轻快，走路时双手轻握成半拳（指尖微露）随步伐小幅前后摆动，节奏轻盈，清晰呈现 T 恤正面印花，展现轻松活力氛围",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961084196057960449"
+    },
+    "video_task_21_272718": {
+      "task_id": "video_task_21_272718",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:12:58.691283",
+      "updated_at": "2025-08-28T23:14:36.940347",
+      "row_index": 21,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头缓慢向前推进聚焦，女模特抿嘴浅笑、眼神温柔带好奇，走路时侧身轻歪头，右手食指轻勾 T 恤下摆（不遮挡印花），左手自然下垂摆动，突出印花细节，传递俏皮亲和力",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961084609792495617"
+    },
+    "video_task_22_272817": {
+      "task_id": "video_task_22_272817",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:14:36.943747",
+      "updated_at": "2025-08-28T23:16:16.012937",
+      "row_index": 22,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头平行跟拍同速移动，女模特大笑露齿、眼神灵动张扬，大步走时双手掌心向上轻扬（如托举微风）后自然回落，放大印花存在感，彰显热情活力",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961085023694831617"
+    },
+    "video_task_23_272916": {
+      "task_id": "video_task_23_272916",
+      "workflow_type": "图生视频",
+      "status": "失败",
+      "created_at": "2025-08-28T23:16:16.015008",
+      "updated_at": "2025-08-28T23:17:53.999854",
+      "row_index": 23,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头先向后拉再缓移，女模特挑眉带飒爽感、眼神坚定自信，走路时左手轻插高腰裤侧兜（仅指尖入兜），右手随步伐轻甩（手腕微晃），展现印花与酷感风格融合，凸显个性",
+      "image_path": null,
+      "video_path": null,
+      "error_message": "图生视频处理异常: DatabaseManager.update_task_with_files() takes 3 positional arguments but 4 were given",
+      "metadata": {},
+      "comfyui_task_id": "1961085437106405378"
+    },
+    "video_task_24_273014": {
+      "task_id": "video_task_24_273014",
+      "workflow_type": "图生视频",
+      "status": "已完成",
+      "created_at": "2025-08-28T23:17:54.002627",
+      "updated_at": "2025-08-28T23:25:24.436502",
+      "row_index": 24,
+      "product_name": "0827-hail-santa",
+      "image_prompt": "",
+      "video_prompt": "中景镜头环绕模特半圈（水平移动），女模特眼神沉静、面带从容笑意，匀速走时双手自然交叠于小腹前（指尖轻碰），偶尔随步伐小幅分开摆动，让印花在动态中清晰呈现，传递优雅随性",
+      "image_path": null,
+      "video_path": "./output/0828/video/0827-hail-santa_白人-女-18-金发校园1_20250828_232524.mp4",
+      "error_message": "图片上传失败: HTTP错误: 504",
+      "metadata": {},
+      "comfyui_task_id": "1961087326518722561",
+      "output_files": [
+        "./output/0828/video/0827-hail-santa_白人-女-18-金发校园1_20250828_232524.mp4"
+      ]
+    },
+    "composition_task_25_290469": {
+      "task_id": "composition_task_25_290469",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-08-29T14:16:55.685482",
+      "updated_at": "2025-08-29T14:21:02.246821",
+      "row_index": 25,
+      "product_name": "0829-stand for flag",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/img/0829-stand for flag_白人-男-32-路上_08-29-14-21.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961312107662856193",
+      "output_files": [
+        "./output/0829/img/0829-stand for flag_白人-男-32-路上_08-29-14-21.png"
+      ]
+    },
+    "composition_task_26_290727": {
+      "task_id": "composition_task_26_290727",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-08-29T14:21:13.782825",
+      "updated_at": "2025-08-29T14:23:19.975600",
+      "row_index": 26,
+      "product_name": "0829-stand for flag",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/img/0829-stand for flag_黑人-男-32-社区街上1_08-29-14-23.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961313189575184385",
+      "output_files": [
+        "./output/0829/img/0829-stand for flag_黑人-男-32-社区街上1_08-29-14-23.png"
+      ]
+    },
+    "composition_task_27_290872": {
+      "task_id": "composition_task_27_290872",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T14:23:39.130143",
+      "updated_at": "2025-08-29T14:37:34.608854",
+      "row_index": 27,
+      "product_name": "0829-stand for flag",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-stand for flag_黑人-男-32-酒吧街上1_20250829_143734.mp4",
+      "video_path": "./output/0829/video/0829-stand for flag_黑人-男-32-酒吧街上1_20250829_143734.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961316619144318978",
+      "output_files": [
+        "./output/0829/video/0829-stand for flag_黑人-男-32-酒吧街上1_20250829_143734.mp4"
+      ]
+    },
+    "composition_task_28_291134": {
+      "task_id": "composition_task_28_291134",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T14:28:01.443615",
+      "updated_at": "2025-08-29T14:39:49.351753",
+      "row_index": 28,
+      "product_name": "0828-movie",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0828-movie_白人-男-32-咖啡墨镜1_20250829_143949.mp4",
+      "video_path": "./output/0829/video/0828-movie_白人-男-32-咖啡墨镜1_20250829_143949.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961317306565578754",
+      "output_files": [
+        "./output/0829/video/0828-movie_白人-男-32-咖啡墨镜1_20250829_143949.mp4"
+      ]
+    },
+    "composition_task_29_291394": {
+      "task_id": "composition_task_29_291394",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T14:32:20.815222",
+      "updated_at": "2025-08-29T16:48:41.364184",
+      "row_index": 29,
+      "product_name": "0828-father and son",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0828-father and son_白人-男-32-咖啡墨镜2_20250829_164841.mp4",
+      "video_path": "./output/0829/video/0828-father and son_白人-男-32-咖啡墨镜2_20250829_164841.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961349614806945793",
+      "output_files": [
+        "./output/0829/video/0828-father and son_白人-男-32-咖啡墨镜2_20250829_164841.mp4"
+      ]
+    },
+    "composition_task_30_293619": {
+      "task_id": "composition_task_30_293619",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:09:25.954979",
+      "updated_at": "2025-08-29T16:51:35.786802",
+      "row_index": 30,
+      "product_name": "0828-father and son",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0828-father and son_白人-男-32-咖啡墨镜3_20250829_165135.mp4",
+      "video_path": "./output/0829/video/0828-father and son_白人-男-32-咖啡墨镜3_20250829_165135.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961350329449238530",
+      "output_files": [
+        "./output/0829/video/0828-father and son_白人-男-32-咖啡墨镜3_20250829_165135.mp4"
+      ]
+    },
+    "composition_task_31_293882": {
+      "task_id": "composition_task_31_293882",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:13:49.127423",
+      "updated_at": "2025-08-29T16:54:19.349988",
+      "row_index": 31,
+      "product_name": "0828-not a",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0828-not a_白人-男-32-咖啡墨镜4_20250829_165419.mp4",
+      "video_path": "./output/0829/video/0828-not a_白人-男-32-咖啡墨镜4_20250829_165419.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961351034243334145",
+      "output_files": [
+        "./output/0829/video/0828-not a_白人-男-32-咖啡墨镜4_20250829_165419.mp4"
+      ]
+    },
+    "composition_task_32_294019": {
+      "task_id": "composition_task_32_294019",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:16:06.093074",
+      "updated_at": "2025-08-29T17:03:52.145728",
+      "row_index": 32,
+      "product_name": "0828-father and son",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0828-father and son_黑人-男-32-咖啡墨镜1_20250829_170352.mp4",
+      "video_path": "./output/0829/video/0828-father and son_黑人-男-32-咖啡墨镜1_20250829_170352.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961351752819884034",
+      "output_files": [
+        "./output/0829/video/0828-father and son_黑人-男-32-咖啡墨镜1_20250829_170352.mp4"
+      ]
+    },
+    "composition_task_33_294159": {
+      "task_id": "composition_task_33_294159",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:18:26.374130",
+      "updated_at": "2025-08-29T17:49:35.392305",
+      "row_index": 33,
+      "product_name": "0828-blessed2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0828-blessed2_黑人-男-32-咖啡墨镜2_20250829_174935.mp4",
+      "video_path": "./output/0829/video/0828-blessed2_黑人-男-32-咖啡墨镜2_20250829_174935.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961364942551175170",
+      "output_files": [
+        "./output/0829/video/0828-blessed2_黑人-男-32-咖啡墨镜2_20250829_174935.mp4"
+      ]
+    },
+    "composition_task_34_294425": {
+      "task_id": "composition_task_34_294425",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:22:51.667469",
+      "updated_at": "2025-08-29T17:07:00.039662",
+      "row_index": 34,
+      "product_name": "0829-Cat Starry Night",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-Cat Starry Night_白人-男-32-咖啡墨镜3_20250829_170700.mp4",
+      "video_path": "./output/0829/video/0829-Cat Starry Night_白人-男-32-咖啡墨镜3_20250829_170700.mp4",
+      "error_message": "模特图片上传失败: HTTP错误: 504",
+      "metadata": {},
+      "comfyui_task_id": "1961354216163954689",
+      "output_files": [
+        "./output/0829/video/0829-Cat Starry Night_白人-男-32-咖啡墨镜3_20250829_170700.mp4"
+      ]
+    },
+    "composition_task_35_294495": {
+      "task_id": "composition_task_35_294495",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:24:01.916243",
+      "updated_at": "2025-08-29T17:09:45.347714",
+      "row_index": 35,
+      "product_name": "0829-my daughter2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_170945.mp4",
+      "video_path": "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_170945.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961354923709485057",
+      "output_files": [
+        "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_170945.mp4"
+      ]
+    },
+    "composition_task_36_294638": {
+      "task_id": "composition_task_36_294638",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T15:26:25.038875",
+      "updated_at": "2025-08-29T17:12:29.406013",
+      "row_index": 36,
+      "product_name": "0829-sleep",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-sleep_白人-男-32-咖啡墨镜4_20250829_171229.mp4",
+      "video_path": "./output/0829/video/0829-sleep_白人-男-32-咖啡墨镜4_20250829_171229.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961355602133991426",
+      "output_files": [
+        "./output/0829/video/0829-sleep_白人-男-32-咖啡墨镜4_20250829_171229.mp4"
+      ]
+    },
+    "composition_task_34_299264": {
+      "task_id": "composition_task_34_299264",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-08-29T16:43:30.891409",
+      "updated_at": "2025-08-29T16:45:41.555130",
+      "row_index": 34,
+      "product_name": "0829-Cat Starry Night",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/img/0829-Cat Starry Night_白人-男-32-咖啡墨镜3_08-29-16-45.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961349010659426306",
+      "output_files": [
+        "./output/0829/img/0829-Cat Starry Night_白人-男-32-咖啡墨镜3_08-29-16-45.png"
+      ]
+    },
+    "composition_task_25_301167": {
+      "task_id": "composition_task_25_301167",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-08-29T17:15:13.948009",
+      "updated_at": "2025-08-29T17:19:29.517684",
+      "row_index": 25,
+      "product_name": "0829-my daughter2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/img/0829-my daughter2_白人-男-32-路上_08-29-17-19.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961357007720759297",
+      "output_files": [
+        "./output/0829/img/0829-my daughter2_白人-男-32-路上_08-29-17-19.png"
+      ]
+    },
+    "composition_task_33_301435": {
+      "task_id": "composition_task_33_301435",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-08-29T17:19:41.744693",
+      "updated_at": "2025-08-29T17:21:49.664374",
+      "row_index": 33,
+      "product_name": "0828-blessed2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/img/0828-blessed2_黑人-男-32-咖啡墨镜2_08-29-17-21.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961358111657377794",
+      "output_files": [
+        "./output/0829/img/0828-blessed2_黑人-男-32-咖啡墨镜2_08-29-17-21.png"
+      ]
+    },
+    "composition_task_37_302126": {
+      "task_id": "composition_task_37_302126",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T17:31:12.991713",
+      "updated_at": "2025-08-29T17:51:56.674291",
+      "row_index": 37,
+      "product_name": "0829-my daughter2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-my daughter2_白人-男-32-咖啡墨镜3_20250829_175156.mp4",
+      "video_path": "./output/0829/video/0829-my daughter2_白人-男-32-咖啡墨镜3_20250829_175156.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961365643813638145",
+      "output_files": [
+        "./output/0829/video/0829-my daughter2_白人-男-32-咖啡墨镜3_20250829_175156.mp4"
+      ]
+    },
+    "composition_task_38_302425": {
+      "task_id": "composition_task_38_302425",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T17:36:12.204051",
+      "updated_at": "2025-08-29T17:54:42.017720",
+      "row_index": 38,
+      "product_name": "0829-my daughter2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_175442.mp4",
+      "video_path": "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_175442.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961366225051897858",
+      "output_files": [
+        "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_175442.mp4"
+      ]
+    },
+    "composition_task_39_302627": {
+      "task_id": "composition_task_39_302627",
+      "workflow_type": "图片合成",
+      "status": "已完成",
+      "created_at": "2025-08-29T17:39:33.752629",
+      "updated_at": "2025-08-29T18:40:41.488153",
+      "row_index": 39,
+      "product_name": "0829-my daughter2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_184041.mp4",
+      "video_path": "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_184041.mp4",
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961377929102020609",
+      "output_files": [
+        "./output/0829/video/0829-my daughter2_黑人-男-32-咖啡墨镜2_20250829_184041.mp4"
+      ]
+    },
+    "composition_task_39_305864": {
+      "task_id": "composition_task_39_305864",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-08-29T18:33:30.674878",
+      "updated_at": "2025-08-29T18:38:06.589362",
+      "row_index": 39,
+      "product_name": "0829-my daughter2",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0829/img/0829-my daughter2_黑人-男-32-咖啡墨镜2_08-29-18-38.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1961376804412014594",
+      "output_files": [
+        "./output/0829/img/0829-my daughter2_黑人-男-32-咖啡墨镜2_08-29-18-38.png"
+      ]
     }
   },
   "statistics": {
-    "total_tasks": 16,
-    "completed": 8,
-    "image_generating": 2,
-    "video_generating": 5,
-    "failed": 1,
+    "total_tasks": 49,
+    "completed": 24,
+    "image_generating": 1,
+    "video_generating": 14,
+    "failed": 10,
     "pending": 0
   },
   "metadata": {
     "created_at": "2025-08-28T17:34:44.456866",
-    "last_updated": "2025-08-28T22:42:37.325140",
+    "last_updated": "2025-08-29T18:40:41.488179",
     "version": "1.0"
   }
 }

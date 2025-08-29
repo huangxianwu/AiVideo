@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from config import AppConfig
 from feishu_client import FeishuClient, RowData
 from comfyui_client import ComfyUIClient
-from data import DatabaseManager, WorkflowStatus
+from data import DatabaseManager, WorkflowStatus, WorkflowType
 
 
 class WorkflowMode(Enum):
@@ -75,33 +75,27 @@ class ImageCompositionWorkflow(BaseWorkflow):
         """处理图片合成"""
         start_time = asyncio.get_event_loop().time()
         
-        # 生成任务ID
-        product_name = getattr(row_data, 'product_name', '')
-        task_id = self.db_manager.generate_task_id(row_data.row_number, product_name)
+        # 验证数据
+        validation_error = self._validate_row_data(row_data)
+        if validation_error:
+            return WorkflowResult(
+                success=False,
+                row_number=row_data.row_number,
+                error=validation_error
+            )
+        
+        # 记录任务开始
+        task_id = f"composition_task_{row_data.row_number}_{int(asyncio.get_event_loop().time())}"
+        self.db_manager.add_workflow_task(
+            task_id=task_id,
+            row_index=row_data.row_number,
+            workflow_type=WorkflowType.IMAGE_COMPOSITION,
+            product_name=row_data.product_name or "",
+            image_prompt=row_data.prompt or "",
+            video_prompt=""
+        )
         
         try:
-            # self.logger.info(f"🎨 开始处理图片合成 - 第 {row_data.row_number} 行，产品名：{product_name}，提示词：{row_data.prompt}")
-            
-            # 验证数据
-            validation_error = self._validate_row_data(row_data)
-            if validation_error:
-                # 记录失败任务
-                self.db_manager.start_image_generation(task_id, row_data.row_number, product_name)
-                self.db_manager.mark_task_failed(task_id, validation_error)
-                
-                return WorkflowResult(
-                    success=False,
-                    row_number=row_data.row_number,
-                    task_id=task_id,
-                    error=validation_error
-                )
-            
-            # 开始图片生成任务
-            metadata = {
-                'prompt': row_data.prompt,
-                'workflow_type': 'image_composition'
-            }
-            self.db_manager.start_image_generation(task_id, row_data.row_number, product_name, metadata)
             
             # 下载图片
             product_image_data = await self._download_image(row_data.product_image)
@@ -112,6 +106,10 @@ class ImageCompositionWorkflow(BaseWorkflow):
                 product_image_data,
                 model_image_data
             )
+            
+            # 更新ComfyUI任务ID（如果有的话）
+            if hasattr(workflow_result, 'task_id') and workflow_result.task_id:
+                self.db_manager.update_task_comfyui_id(task_id, workflow_result.task_id)
             
             if not workflow_result.success:
                 # 标记任务失败
@@ -127,8 +125,9 @@ class ImageCompositionWorkflow(BaseWorkflow):
             # 下载并保存结果
             output_files = await self._save_result_files(row_data, workflow_result)
             
-            # 完成图片生成，准备视频生成
+            # 更新任务状态和文件路径
             if output_files:
+                self.db_manager.update_task_with_files(task_id, output_files)
                 self.db_manager.complete_image_generation(task_id, output_files[0])
             
             # 更新表格状态
@@ -281,15 +280,15 @@ class ImageToVideoWorkflow(BaseWorkflow):
             bool(row_data.prompt.strip())
         )
         
-        # 添加调试信息
-        self.logger.info(f"      🔍 第 {row_data.row_number} 行图生视频判断条件:")
-        self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
-        self.logger.info(f"         - video_status: '{row_data.video_status}'")
-        self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
-        self.logger.info(f"         - has_composite_image: {has_composite_image}")
-        self.logger.info(f"         - prompt: '{getattr(row_data, 'prompt', 'N/A')[:50]}...'")
-        self.logger.info(f"         - has_prompt: {has_prompt}")
-        self.logger.info(f"         - 最终判断结果: {has_composite_image and has_prompt}")
+        # 调试信息已注释 - 根据用户要求不显示详细判断条件
+        # self.logger.info(f"      🔍 第 {row_data.row_number} 行图生视频判断条件:")
+        # self.logger.info(f"         - video_workflow_enabled: {self.config.comfyui.video_workflow_enabled}")
+        # self.logger.info(f"         - video_status: '{row_data.video_status}'")
+        # self.logger.info(f"         - composite_image: {getattr(row_data, 'composite_image', 'N/A')}")
+        # self.logger.info(f"         - has_composite_image: {has_composite_image}")
+        # self.logger.info(f"         - prompt: '{getattr(row_data, 'prompt', 'N/A')[:50]}...'")
+        # self.logger.info(f"         - has_prompt: {has_prompt}")
+        # self.logger.info(f"         - 最终判断结果: {has_composite_image and has_prompt}")
         
         # 只有当产品模特合成图和提示词都不为空时才执行
         return has_composite_image and has_prompt
@@ -298,8 +297,7 @@ class ImageToVideoWorkflow(BaseWorkflow):
         """处理图生视频"""
         start_time = asyncio.get_event_loop().time()
         
-        # 生成任务ID或查找现有任务
-        product_name = getattr(row_data, 'product_name', '')
+        # 查找现有任务或创建新任务
         existing_task = self.db_manager.get_task_by_row_index(row_data.row_number)
         
         if existing_task:
@@ -307,14 +305,16 @@ class ImageToVideoWorkflow(BaseWorkflow):
             # 更新状态为视频生成中
             self.db_manager.start_video_generation(task_id)
         else:
-            # 创建新任务（如果之前没有图片生成任务）
-            task_id = self.db_manager.generate_task_id(row_data.row_number, product_name)
-            metadata = {
-                'prompt': row_data.prompt or "生成视频",
-                'workflow_type': 'image_to_video'
-            }
-            # 开始图片生成任务（即使跳过图片生成步骤，也需要创建任务记录）
-            self.db_manager.start_image_generation(task_id, row_data.row_number, product_name, metadata)
+            # 记录新的图生视频任务
+            task_id = f"video_task_{row_data.row_number}_{int(asyncio.get_event_loop().time())}"
+            self.db_manager.add_workflow_task(
+                task_id=task_id,
+                row_index=row_data.row_number,
+                workflow_type=WorkflowType.IMAGE_TO_VIDEO,
+                product_name=row_data.product_name or "",
+                image_prompt="",
+                video_prompt=row_data.prompt or "生成视频"
+            )
             # 直接转到视频生成状态
             self.db_manager.start_video_generation(task_id)
         
@@ -357,6 +357,10 @@ class ImageToVideoWorkflow(BaseWorkflow):
                 if os.path.exists(temp_image_path):
                     os.unlink(temp_image_path)
             
+            # 更新ComfyUI任务ID（如果有的话）
+            if hasattr(video_result, 'task_id') and video_result.task_id:
+                self.db_manager.update_task_comfyui_id(task_id, video_result.task_id)
+            
             if not video_result.success:
                 # 标记任务失败
                 self.db_manager.mark_task_failed(task_id, video_result.error)
@@ -371,8 +375,9 @@ class ImageToVideoWorkflow(BaseWorkflow):
             # 下载并保存视频文件
             output_files = await self._save_video_files(row_data, video_result)
             
-            # 完成视频生成
+            # 更新任务状态和文件路径
             if output_files:
+                self.db_manager.update_task_with_files(task_id, output_files)
                 self.db_manager.complete_video_generation(task_id, output_files[0])
             
             # 更新视频状态
@@ -531,14 +536,15 @@ class WorkflowManager:
                 ))
                 continue
             
-            self.logger.info(f"📝 处理进度: {i:>2}/{len(rows_data):<2} - 第 {row_data.row_number:>2} 行 | 产品: {product_name:<15} | 提示词: {prompt_preview}")
+            self.logger.info(f"第{row_data.row_number}行，开始处理：")
+            self.logger.info(f"    产品名：{product_name} | 模特名：{row_data.model_name or '未知模特'} | 提示词：{row_data.prompt or '无提示词'}")
             
             # 处理该行数据
             result = await workflow.process_row(row_data)
             results.append(result)
             
             if result.success:
-                self.logger.info(f"     ✅ 第 {row_data.row_number} 行处理成功 | 产品: {product_name} | 提示词: {prompt_preview}")
+                self.logger.info(f"第{row_data.row_number}行处理成功！")
             else:
                 self.logger.error(f"     ❌ 第 {row_data.row_number} 行处理失败 | 产品: {product_name} | 提示词: {prompt_preview} | 错误: {result.error}")
         

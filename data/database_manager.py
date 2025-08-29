@@ -8,7 +8,7 @@
 import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-from .workflow_database import WorkflowDatabase, WorkflowStatus
+from .workflow_database import WorkflowDatabase, WorkflowStatus, WorkflowType
 
 
 class DatabaseManager:
@@ -329,3 +329,93 @@ class DatabaseManager:
         """
         task = self.get_task_info(task_id)
         return task.get('status') if task else None
+    
+    # ===== 任务恢复相关方法 =====
+    
+    def add_workflow_task(self, task_id: str, row_index: int, workflow_type: WorkflowType,
+                         product_name: str = "", image_prompt: str = "", 
+                         video_prompt: str = "", metadata: Dict = None) -> bool:
+        """添加工作流任务记录
+        
+        Args:
+            task_id: 任务ID
+            row_index: 表格行索引
+            workflow_type: 工作流类型
+            product_name: 产品名称
+            image_prompt: 图片提示词
+            video_prompt: 视频提示词
+            metadata: 额外元数据
+            
+        Returns:
+            bool: 是否成功
+        """
+        return self.db.add_workflow_task(
+            task_id, row_index, workflow_type, product_name,
+            image_prompt, video_prompt, metadata
+        )
+    
+    def get_incomplete_tasks_by_type(self, workflow_type: WorkflowType) -> List[Dict]:
+        """按工作流类型获取未完成的任务
+        
+        Args:
+            workflow_type: 工作流类型
+            
+        Returns:
+            List[Dict]: 未完成任务列表
+        """
+        return self.db.get_incomplete_tasks_by_type(workflow_type)
+    
+    def update_task_comfyui_id(self, task_id: str, comfyui_task_id: str) -> bool:
+        """更新任务的ComfyUI任务ID
+        
+        Args:
+            task_id: 任务ID
+            comfyui_task_id: ComfyUI任务ID
+            
+        Returns:
+            bool: 是否更新成功
+        """
+        return self.db.update_task_comfyui_id(task_id, comfyui_task_id)
+    
+    def update_task_with_files(self, task_id: str, output_files: List[str]) -> bool:
+        """更新任务文件信息
+        
+        Args:
+            task_id: 任务ID
+            output_files: 输出文件列表
+            
+        Returns:
+            bool: 是否更新成功
+        """
+        return self.db.update_task_with_files(task_id, output_files)
+    
+    def get_all_incomplete_tasks(self) -> List[Dict]:
+        """获取所有未完成的任务（用于启动时恢复检查）
+        
+        Returns:
+            List[Dict]: 所有未完成任务列表
+        """
+        return self.db.get_incomplete_tasks()
+    
+    def check_comfyui_task_status(self, task_id: str) -> Optional[str]:
+        """检查任务的ComfyUI状态
+        
+        Args:
+            task_id: 任务ID
+            
+        Returns:
+            str: ComfyUI任务ID，如果不存在返回None
+        """
+        task = self.get_task_info(task_id)
+        return task.get('comfyui_task_id') if task else None
+    
+    def delete_task(self, task_id: str) -> bool:
+        """删除任务
+        
+        Args:
+            task_id: 任务ID
+            
+        Returns:
+            bool: 是否删除成功
+        """
+        return self.db.delete_task(task_id)

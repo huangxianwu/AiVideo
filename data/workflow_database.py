@@ -24,6 +24,12 @@ class WorkflowStatus(Enum):
     PENDING = "等待中"
 
 
+class WorkflowType(Enum):
+    """工作流类型枚举"""
+    IMAGE_COMPOSITION = "图片合成"
+    IMAGE_TO_VIDEO = "图生视频"
+
+
 class WorkflowDatabase:
     """工作流数据库类"""
     
@@ -130,6 +136,62 @@ class WorkflowDatabase:
                 
             except Exception as e:
                 print(f"添加任务失败: {e}")
+                return False
+    
+    def add_workflow_task(self, task_id: str, row_index: int, workflow_type: WorkflowType,
+                         product_name: str = "", image_prompt: str = "", 
+                         video_prompt: str = "", metadata: Dict = None) -> bool:
+        """添加新的工作流任务
+        
+        Args:
+            task_id: 任务ID
+            row_index: 表格行索引
+            workflow_type: 工作流类型
+            product_name: 产品名称
+            image_prompt: 图片生成提示词
+            video_prompt: 视频生成提示词
+            metadata: 额外元数据
+            
+        Returns:
+            bool: 是否添加成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                # 检查任务是否已存在
+                if task_id in data["workflows"]:
+                    print(f"工作流任务 {task_id} 已存在")
+                    return False
+                
+                # 创建新的工作流任务记录
+                task_data = {
+                    "task_id": task_id,
+                    "workflow_type": workflow_type.value,
+                    "status": WorkflowStatus.PENDING.value,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat(),
+                    "row_index": row_index,
+                    "product_name": product_name,
+                    "image_prompt": image_prompt,
+                    "video_prompt": video_prompt,
+                    "image_path": None,
+                    "video_path": None,
+                    "error_message": None,
+                    "metadata": metadata or {}
+                }
+                
+                data["workflows"][task_id] = task_data
+                
+                # 更新统计信息
+                data["statistics"]["total_tasks"] += 1
+                data["statistics"]["pending"] += 1
+                
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"添加工作流任务失败: {e}")
                 return False
     
     def update_task_status(self, task_id: str, status: WorkflowStatus, 
@@ -368,3 +430,89 @@ class WorkflowDatabase:
         except Exception as e:
             print(f"数据库备份失败: {e}")
             return False
+    
+    def get_incomplete_tasks_by_type(self, workflow_type: WorkflowType) -> List[Dict]:
+        """按工作流类型获取未完成的任务
+        
+        Args:
+            workflow_type: 工作流类型
+            
+        Returns:
+            List[Dict]: 未完成任务列表
+        """
+        try:
+            data = self._load_data()
+            incomplete_statuses = [
+                WorkflowStatus.PENDING.value,
+                WorkflowStatus.IMAGE_GENERATING.value,
+                WorkflowStatus.VIDEO_GENERATING.value
+            ]
+            return [task for task in data["workflows"].values() 
+                   if task["status"] in incomplete_statuses and 
+                   task.get("workflow_type") == workflow_type.value]
+        except Exception as e:
+            print(f"获取未完成任务失败: {e}")
+            return []
+    
+    def update_task_comfyui_id(self, task_id: str, comfyui_task_id: str) -> bool:
+        """更新任务的ComfyUI任务ID
+        
+        Args:
+            task_id: 任务ID
+            comfyui_task_id: ComfyUI任务ID
+            
+        Returns:
+            bool: 是否更新成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if task_id not in data["workflows"]:
+                    print(f"任务 {task_id} 不存在")
+                    return False
+                
+                data["workflows"][task_id]["comfyui_task_id"] = comfyui_task_id
+                data["workflows"][task_id]["updated_at"] = datetime.now().isoformat()
+                
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"更新ComfyUI任务ID失败: {e}")
+                return False
+    
+    def update_task_with_files(self, task_id: str, output_files: List[str]) -> bool:
+        """更新任务文件信息
+        
+        Args:
+            task_id: 任务ID
+            output_files: 输出文件列表
+            
+        Returns:
+            bool: 是否更新成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if task_id not in data["workflows"]:
+                    print(f"任务 {task_id} 不存在")
+                    return False
+                
+                task = data["workflows"][task_id]
+                task["output_files"] = output_files
+                task["updated_at"] = datetime.now().isoformat()
+                
+                # 根据工作流类型设置相应的路径
+                if task.get("workflow_type") == WorkflowType.IMAGE_COMPOSITION.value:
+                    task["image_path"] = output_files[0] if output_files else None
+                elif task.get("workflow_type") == WorkflowType.IMAGE_TO_VIDEO.value:
+                    task["video_path"] = output_files[0] if output_files else None
+                
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"更新任务文件信息失败: {e}")
+                return False
