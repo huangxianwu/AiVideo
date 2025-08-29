@@ -44,10 +44,8 @@ htmlcov/
 # 图片和媒体文件（保留示例文件）
 images/jpg/*
 images/png/*
-images/original/*
 !images/jpg/.gitkeep
 !images/png/.gitkeep
-!images/original/.gitkeep
 
 # 数据库文件
 images/csvdb/*.csv
