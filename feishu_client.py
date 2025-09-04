@@ -8,6 +8,7 @@ import asyncio
 import aiohttp
 import logging
 import os
+import ssl
 from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass
 from config import FeishuConfig
@@ -36,6 +37,11 @@ class FeishuClient:
         self.access_token: Optional[str] = None
         self.logger = logging.getLogger(__name__)
         
+        # 创建SSL上下文，禁用证书验证以解决SSL问题
+        self.ssl_context = ssl.create_default_context()
+        self.ssl_context.check_hostname = False
+        self.ssl_context.verify_mode = ssl.CERT_NONE
+        
     async def get_access_token(self) -> str:
         """获取飞书访问令牌"""
         url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
@@ -45,13 +51,20 @@ class FeishuClient:
             "app_secret": self.config.app_secret
         }
         
+        print(f"[DEBUG] 飞书Token请求 - URL: {url}")
+        print(f"[DEBUG] 飞书Token请求 - App ID: {self.config.app_id}")
+        print(f"[DEBUG] 飞书Token请求 - App Secret: {self.config.app_secret[:10]}...")
+        
         headers = {
             "Content-Type": "application/json"
         }
         
-        async with aiohttp.ClientSession() as session:
+        connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+        async with aiohttp.ClientSession(connector=connector) as session:
             async with session.post(url, json=payload, headers=headers) as response:
+                print(f"[DEBUG] 飞书Token响应状态: {response.status}")
                 data = await response.json()
+                print(f"[DEBUG] 飞书Token响应数据: {data}")
                 
                 if data.get("code") != 0:
                     raise Exception(f"获取token失败: code={data.get('code')}, msg={data.get('msg')}")
@@ -71,7 +84,8 @@ class FeishuClient:
             "Authorization": f"Bearer {self.access_token}"
         }
         
-        async with aiohttp.ClientSession() as session:
+        connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+        async with aiohttp.ClientSession(connector=connector) as session:
             async with session.get(url, headers=headers) as response:
                 data = await response.json()
                 
@@ -115,7 +129,8 @@ class FeishuClient:
             }
             
             # 发送API请求
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.get(url, headers=headers) as response:
                     data = await response.json()
                     
@@ -274,7 +289,8 @@ class FeishuClient:
                 "Authorization": f"Bearer {self.access_token}"
             }
             
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.get(url, headers=headers) as response:
                     if response.status != 200:
                         self.logger.error(f"获取表头失败: HTTP {response.status}")
@@ -321,7 +337,8 @@ class FeishuClient:
             "Authorization": f"Bearer {self.access_token}"
         }
         
-        async with aiohttp.ClientSession() as session:
+        connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+        async with aiohttp.ClientSession(connector=connector) as session:
             async with session.get(url, headers=headers) as response:
                 if response.status != 200:
                     raise Exception(f"下载图片失败: HTTP {response.status}")
@@ -355,8 +372,9 @@ class FeishuClient:
                 }
             }
             
-            async with aiohttp.ClientSession() as session:
-                async with session.put(url, json=payload, headers=headers) as response:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
+                async with session.post(url, json=payload, headers=headers) as response:
                     if response.status != 200:
                         response_text = await response.text()
                         self.logger.error(f"更新状态失败: HTTP {response.status}, 响应: {response_text}")
@@ -401,7 +419,8 @@ class FeishuClient:
             data.add_field('size', str(len(file_data)))
             data.add_field('file', file_data, filename=os.path.basename(image_path), content_type='image/png')
             
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, data=data, headers=headers) as response:
                     result = await response.json()
                     
@@ -473,6 +492,101 @@ class FeishuClient:
             self.logger.error(f"写入图片异常: {str(e)}")
             return False
     
+    async def update_cell_value(self, cell_range: str, value: str) -> bool:
+        """更新单元格值"""
+        try:
+            if not self.access_token:
+                await self.get_access_token()
+                
+            url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values"
+            
+            headers = {
+                "Authorization": f"Bearer {self.access_token}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "valueRange": {
+                    "range": cell_range,
+                    "values": [[value]]
+                }
+            }
+            
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
+                async with session.put(url, json=payload, headers=headers) as response:
+                    if response.status != 200:
+                        response_text = await response.text()
+                        self.logger.error(f"更新单元格值失败: HTTP {response.status}, 响应: {response_text}")
+                        return False
+                    
+                    try:
+                        data = await response.json()
+                        if data.get("code") != 0:
+                            self.logger.error(f"更新单元格值失败: {data.get('msg')}")
+                            return False
+                        
+                        self.logger.info(f"单元格 {cell_range} 更新成功，值: {value}")
+                        return True
+                    except Exception as json_error:
+                        response_text = await response.text()
+                        self.logger.error(f"解析响应JSON失败: {json_error}, 响应内容: {response_text}")
+                        return False
+                    
+        except Exception as e:
+            self.logger.error(f"更新单元格值异常: {str(e)}")
+            return False
+    
+    async def _write_image_file_to_cell(self, cell_range: str, image_path: str) -> bool:
+        """将图片文件直接写入表格单元格"""
+        try:
+            if not self.access_token:
+                await self.get_access_token()
+                
+            # 使用专门的图片写入接口 (v2版本)
+            url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values_image"
+            
+            headers = {
+                "Authorization": f"Bearer {self.access_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # 读取图片文件的二进制数据
+            with open(image_path, 'rb') as f:
+                image_data = f.read()
+            
+            # 构建图片写入payload
+            payload = {
+                "range": cell_range,
+                "image": list(image_data),  # 转换为字节数组
+                "name": os.path.basename(image_path)
+            }
+            
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
+                async with session.post(url, json=payload, headers=headers) as response:
+                    if response.status != 200:
+                        response_text = await response.text()
+                        self.logger.error(f"写入图片失败: HTTP {response.status}, 响应: {response_text}")
+                        return False
+                    
+                    try:
+                        data = await response.json()
+                        if data.get("code") != 0:
+                            self.logger.error(f"写入图片失败: {data.get('msg')}")
+                            return False
+                        
+                        self.logger.info(f"图片写入单元格 {cell_range} 成功")
+                        return True
+                    except Exception as json_error:
+                        response_text = await response.text()
+                        self.logger.error(f"解析响应JSON失败: {json_error}, 响应内容: {response_text}")
+                        return False
+                    
+        except Exception as e:
+            self.logger.error(f"写入图片异常: {str(e)}")
+            return False
+    
     async def update_video_status(self, row_number: int, video_status: str) -> bool:
         """更新视频状态"""
         try:
@@ -486,40 +600,7 @@ class FeishuClient:
                 return False
             
             cell_range = f"{sheet_id}!{video_status_column_letter}{row_number}:{video_status_column_letter}{row_number}"
-            url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values"
-            
-            headers = {
-                "Authorization": f"Bearer {self.access_token}",
-                "Content-Type": "application/json"
-            }
-            
-            payload = {
-                "valueRange": {
-                    "range": cell_range,
-                    "values": [[video_status]]
-                }
-            }
-            
-            async with aiohttp.ClientSession() as session:
-                async with session.put(url, json=payload, headers=headers) as response:
-                    if response.status != 200:
-                        response_text = await response.text()
-                        self.logger.error(f"更新视频状态失败: HTTP {response.status}, 响应: {response_text}")
-                        return False
-                    
-                    try:
-                        data = await response.json()
-                        if data.get("code") != 0:
-                            self.logger.error(f"更新视频状态失败: {data.get('msg')}")
-                            return False
-                        
-                        self.logger.info(f"第{row_number}行，视频写入成功，视频状态更新为：{video_status}")
-                        return True
-                    except Exception as json_error:
-                        response_text = await response.text()
-                        self.logger.error(f"解析响应JSON失败: {json_error}, 响应内容: {response_text}")
-                        return False
-                    
+            return await self.update_cell_value(cell_range, video_status)
         except Exception as e:
             self.logger.error(f"更新视频状态异常: {str(e)}")
             return False

@@ -516,3 +516,296 @@ class WorkflowDatabase:
             except Exception as e:
                 print(f"更新任务文件信息失败: {e}")
                 return False
+    
+    def get_workflows(self) -> List[Dict]:
+        """获取所有工作流列表
+        
+        Returns:
+            List[Dict]: 工作流列表
+        """
+        try:
+            data = self._load_data()
+            workflows = []
+            
+            # 如果数据中有custom_workflows字段，返回自定义工作流
+            if "custom_workflows" in data:
+                for workflow_id, workflow_data in data["custom_workflows"].items():
+                    workflow_info = {
+                        "id": workflow_id,
+                        "workflow_id": workflow_id,
+                        "workflow_name": workflow_data.get("name", workflow_id),
+                        "name": workflow_data.get("name", workflow_id),
+                        "description": workflow_data.get("description", ""),
+                        "created_at": workflow_data.get("created_at", ""),
+                        "updated_at": workflow_data.get("updated_at", ""),
+                        "nodes": workflow_data.get("nodes", [])
+                    }
+                    workflows.append(workflow_info)
+            
+            return workflows
+            
+        except Exception as e:
+            print(f"获取工作流列表失败: {e}")
+            return []
+    
+    def create_workflow(self, workflow_id: str, name: str, description: str = "") -> bool:
+        """创建新工作流
+        
+        Args:
+            workflow_id: 工作流ID
+            name: 工作流名称
+            description: 工作流描述
+            
+        Returns:
+            bool: 是否创建成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                # 确保custom_workflows字段存在
+                if "custom_workflows" not in data:
+                    data["custom_workflows"] = {}
+                
+                # 检查工作流是否已存在
+                if workflow_id in data["custom_workflows"]:
+                    print(f"工作流 {workflow_id} 已存在")
+                    return False
+                
+                # 创建新工作流
+                workflow_data = {
+                    "name": name,
+                    "description": description,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat(),
+                    "nodes": []
+                }
+                
+                data["custom_workflows"][workflow_id] = workflow_data
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"创建工作流失败: {e}")
+                return False
+    
+    def get_workflow(self, workflow_id: str) -> Optional[Dict]:
+        """获取单个工作流详情
+        
+        Args:
+            workflow_id: 工作流ID
+            
+        Returns:
+            Dict: 工作流信息，如果不存在返回None
+        """
+        try:
+            data = self._load_data()
+            
+            if "custom_workflows" in data and workflow_id in data["custom_workflows"]:
+                workflow_data = data["custom_workflows"][workflow_id]
+                return {
+                    "id": workflow_id,
+                    "workflow_id": workflow_id,
+                    "workflow_name": workflow_data.get("name", workflow_id),
+                    "name": workflow_data.get("name", workflow_id),
+                    "description": workflow_data.get("description", ""),
+                    "created_at": workflow_data.get("created_at", ""),
+                    "updated_at": workflow_data.get("updated_at", ""),
+                    "nodes": workflow_data.get("nodes", [])
+                }
+            
+            return None
+            
+        except Exception as e:
+            print(f"获取工作流失败: {e}")
+            return None
+    
+    def update_workflow(self, workflow_id: str, name: str = None, description: str = None) -> bool:
+        """更新工作流信息
+        
+        Args:
+            workflow_id: 工作流ID
+            name: 新名称（可选）
+            description: 新描述（可选）
+            
+        Returns:
+            bool: 是否更新成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if "custom_workflows" not in data or workflow_id not in data["custom_workflows"]:
+                    print(f"工作流 {workflow_id} 不存在")
+                    return False
+                
+                workflow_data = data["custom_workflows"][workflow_id]
+                
+                if name is not None:
+                    workflow_data["name"] = name
+                if description is not None:
+                    workflow_data["description"] = description
+                
+                workflow_data["updated_at"] = datetime.now().isoformat()
+                
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"更新工作流失败: {e}")
+                return False
+    
+    def delete_workflow(self, workflow_id: str) -> bool:
+        """删除工作流
+        
+        Args:
+            workflow_id: 工作流ID
+            
+        Returns:
+            bool: 是否删除成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if "custom_workflows" not in data or workflow_id not in data["custom_workflows"]:
+                    print(f"工作流 {workflow_id} 不存在")
+                    return False
+                
+                del data["custom_workflows"][workflow_id]
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"删除工作流失败: {e}")
+                return False
+    
+    def get_workflow_nodes(self, workflow_id: str) -> List[Dict]:
+        """获取工作流的节点列表
+        
+        Args:
+            workflow_id: 工作流ID
+            
+        Returns:
+            List[Dict]: 节点列表
+        """
+        try:
+            workflow = self.get_workflow(workflow_id)
+            if workflow:
+                return workflow.get("nodes", [])
+            return []
+            
+        except Exception as e:
+            print(f"获取工作流节点失败: {e}")
+            return []
+    
+    def add_workflow_node(self, workflow_id: str, node_id: str, name: str, 
+                         node_type: str, description: str = "", 
+                         required: bool = True, default_value: Any = None) -> str:
+        """向工作流添加节点
+        
+        Args:
+            workflow_id: 工作流ID
+            node_id: 节点ID
+            name: 节点名称
+            node_type: 节点类型
+            description: 节点描述
+            required: 是否必填
+            default_value: 默认值
+            
+        Returns:
+            str: 节点ID
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if "custom_workflows" not in data or workflow_id not in data["custom_workflows"]:
+                    raise ValueError(f"工作流 {workflow_id} 不存在")
+                
+                workflow_data = data["custom_workflows"][workflow_id]
+                
+                # 创建节点数据
+                node_data = {
+                    "node_id": node_id,
+                    "name": name,
+                    "type": node_type,
+                    "description": description,
+                    "required": required,
+                    "default_value": default_value,
+                    "created_at": datetime.now().isoformat()
+                }
+                
+                workflow_data["nodes"].append(node_data)
+                workflow_data["updated_at"] = datetime.now().isoformat()
+                
+                self._save_data(data)
+                return node_id
+                
+            except Exception as e:
+                print(f"添加工作流节点失败: {e}")
+                raise
+    
+    def delete_workflow_node(self, workflow_id: str, node_id: str) -> bool:
+        """删除工作流节点
+        
+        Args:
+            workflow_id: 工作流ID
+            node_id: 节点ID
+            
+        Returns:
+            bool: 是否删除成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if "custom_workflows" not in data or workflow_id not in data["custom_workflows"]:
+                    print(f"工作流 {workflow_id} 不存在")
+                    return False
+                
+                workflow_data = data["custom_workflows"][workflow_id]
+                nodes = workflow_data["nodes"]
+                
+                # 查找并删除节点
+                for i, node in enumerate(nodes):
+                    if node.get("id") == node_id or node.get("node_id") == node_id:
+                        del nodes[i]
+                        workflow_data["updated_at"] = datetime.now().isoformat()
+                        self._save_data(data)
+                        return True
+                
+                print(f"节点 {node_id} 不存在")
+                return False
+                
+            except Exception as e:
+                print(f"删除工作流节点失败: {e}")
+                return False
+    
+    def clear_workflow_nodes(self, workflow_id: str) -> bool:
+        """清空工作流的所有节点
+        
+        Args:
+            workflow_id: 工作流ID
+            
+        Returns:
+            bool: 是否清空成功
+        """
+        with self._lock:
+            try:
+                data = self._load_data()
+                
+                if "custom_workflows" not in data or workflow_id not in data["custom_workflows"]:
+                    print(f"工作流 {workflow_id} 不存在")
+                    return False
+                
+                workflow_data = data["custom_workflows"][workflow_id]
+                workflow_data["nodes"] = []
+                workflow_data["updated_at"] = datetime.now().isoformat()
+                
+                self._save_data(data)
+                return True
+                
+            except Exception as e:
+                print(f"清空工作流节点失败: {e}")
+                return False

@@ -1,0 +1,319 @@
+/* ERP系统样式 */
+
+:root {
+    --sidebar-width-expanded: 250px;
+    --sidebar-width-collapsed: 70px;
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --transition-speed: 0.3s;
+}
+
+/* 基础布局 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+.erp-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 侧边栏样式 */
+.erp-sidebar {
+    width: var(--sidebar-width-collapsed);
+    background-color: var(--secondary-color);
+    color: white;
+    transition: width var(--transition-speed) ease;
+    overflow: hidden;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+}
+
+.erp-sidebar.expanded {
+    width: var(--sidebar-width-expanded);
+}
+
+.sidebar-header {
+    padding: 20px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.erp-sidebar.expanded .sidebar-header h3 {
+    opacity: 1;
+}
+
+.btn-toggle {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.sidebar-menu {
+    padding: 15px 0;
+    list-style: none;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: white;
+    text-decoration: none;
+    transition: background-color var(--transition-speed) ease;
+    white-space: nowrap;
+}
+
+.sidebar-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu a.active {
+    background-color: var(--primary-color);
+}
+
+.sidebar-menu i {
+    margin-right: 15px;
+    font-size: 1.2rem;
+    min-width: 25px;
+    text-align: center;
+}
+
+.sidebar-menu span {
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.erp-sidebar.expanded .sidebar-menu span {
+    opacity: 1;
+}
+
+/* 主内容区域 */
+.erp-main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width-collapsed);
+    padding: 20px;
+    transition: margin-left var(--transition-speed) ease;
+}
+
+.erp-sidebar.expanded + .erp-main-content {
+    margin-left: var(--sidebar-width-expanded);
+}
+
+/* 顶部导航 */
+.top-nav {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--dark-color);
+}
+
+.breadcrumb {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+}
+
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb li:not(:last-child)::after {
+    content: '/';
+    margin: 0 10px;
+    color: #ccc;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* 卡片样式 */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* 按钮样式 */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+    }
+    
+    .sidebar.expanded {
+        width: var(--sidebar-width-expanded);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .sidebar.expanded + .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Tailwind CSS 兼容的自定义样式 */
+
+/* 产品卡片选中状态 */
+[data-product-id].selected {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+}
+
+[data-product-id].selected .absolute.top-2.left-2 {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+}
+
+[data-product-id].selected .absolute.top-2.left-2 i {
+    display: block !important;
+}
+
+/* 图片模态框显示状态 */
+.image-modal.show {
+    display: flex !important;
+}
+
+/* Toast 通知动画 */
+.toast.show {
+    transform: translateX(0) !important;
+}
+
+/* 加载状态显示 */
+.loading.show {
+    display: flex !important;
+}
+
+/* 图片模态框 */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.image-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.image-modal img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.image-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* 加载动画 */
+.loading {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+/* 统计卡片 */
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}

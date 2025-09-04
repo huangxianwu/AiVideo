@@ -1,329 +1,154 @@
-# 飞书表格数据处理ComfyUI工作流
+# ToolKit - 智能图像处理工作流平台
 
-这是一个Python工具包，用于从飞书表格获取数据，处理图片，并通过ComfyUI执行AI工作流，最终将生成的图片写回飞书表格。该项目提供了完整的自动化图像处理解决方案。
+一个集成飞书API、ComfyUI工作流和ERP系统的智能图像处理平台，提供完整的自动化图像处理解决方案。
 
-## 📚 文档目录
-
-- [项目结构说明](docs/project_structure.md) - 详细的项目文件组织和模块功能说明
-- [飞书API使用说明](docs/feishu_api.md) - 飞书开放平台API的使用方法和示例
-- [ComfyUI API使用说明](docs/comfyui_api.md) - ComfyUI工作流API的使用方法和配置
-- [工作流程说明](docs/workflow_guide.md) - 完整的处理流程和操作指南
-
-## 功能特性
-
-- 🔐 飞书API认证和表格数据获取
-- 📊 智能解析表格数据和嵌入式图片
-- 🖼️ 自动下载和处理图片文件
-- 🤖 ComfyUI工作流执行和状态监控
-- 📝 详细的日志记录和错误处理
-- 🔄 失败重试机制
-- 📋 处理结果报告生成
-
-## 系统要求
-
-- Python 3.8+
-- 网络连接（访问飞书API和ComfyUI服务）
-
-## 安装步骤
-
-### 1. 克隆或下载代码
+## 🚀 快速开始
 
 ```bash
+# 1. 克隆项目
 git clone <repository_url>
 cd toolKit
-```
 
-### 2. 创建虚拟环境（推荐）
-
-```bash
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS/Linux
-source venv/bin/activate
-```
-
-### 3. 安装依赖
-
-```bash
+# 2. 安装依赖
 pip install -r requirements.txt
-```
 
-### 4. 配置环境变量
-
-复制环境变量模板文件：
-
-```bash
+# 3. 配置环境
 cp .env.example .env
+# 编辑 .env 文件填入配置信息
+
+# 4. 启动应用
+python web_app.py
 ```
 
-编辑 `.env` 文件，填入你的配置信息：
+访问 http://localhost:5000 开始使用
 
-```env
-# 飞书应用配置
-FEISHU_APP_ID=cli_xxxxxxxxxx
-FEISHU_APP_SECRET=xxxxxxxxxx
-FEISHU_SPREADSHEET_TOKEN=xxxxxxxxxx
-FEISHU_SHEET_NAME=Sheet1
-FEISHU_RANGE=A1:Z1000
+## 📚 完整文档
 
-# ComfyUI配置
-COMFYUI_API_KEY=your_api_key
-COMFYUI_WORKFLOW_ID=your_workflow_id
-```
+### 🎯 按角色查看文档
 
-## 配置说明
+| 角色 | 推荐文档 | 说明 |
+|------|----------|------|
+| **新用户** | [用户手册](docs/USER_MANUAL.md) | 快速上手指南和功能介绍 |
+| **开发者** | [开发者指南](docs/DEVELOPER_GUIDE.md) | 开发环境、架构设计、API文档 |
+| **运维人员** | [部署指南](docs/DEPLOYMENT_GUIDE.md) | 部署、监控、维护指南 |
+| **产品经理** | [项目文档](docs/PROJECT_DOCUMENTATION.md) | 完整的功能特性和技术规范 |
 
-### 飞书配置
+### 📖 按内容查看文档
 
-1. **获取飞书应用凭证**：
-   - 访问 [飞书开放平台](https://open.feishu.cn/)
-   - 创建应用并获取 App ID 和 App Secret
-   - 确保应用有表格读写权限
+| 文档类型 | 文档链接 | 内容概述 |
+|----------|----------|----------|
+| **📋 文档导航** | [文档中心](docs/README.md) | 所有文档的导航和快速查找 |
+| **📖 项目概述** | [项目文档](docs/PROJECT_DOCUMENTATION.md) | 项目完整介绍和技术规范 |
+| **👤 用户指南** | [用户手册](docs/USER_MANUAL.md) | 详细的操作指南和功能说明 |
+| **💻 开发文档** | [开发者指南](docs/DEVELOPER_GUIDE.md) | 开发环境、架构、编码规范 |
+| **🔌 API文档** | [API参考](docs/API_REFERENCE.md) | 完整的API接口文档 |
+| **🚀 部署文档** | [部署指南](docs/DEPLOYMENT_GUIDE.md) | 部署、监控、维护指南 |
 
-2. **表格配置**：
-   - `FEISHU_SPREADSHEET_TOKEN`：表格的唯一标识符
-   - `FEISHU_SHEET_NAME`：工作表名称
-   - `FEISHU_RANGE`：数据范围，如 "A1:Z1000"
+> 💡 **提示**：首次使用建议先查看 [文档中心](docs/README.md) 了解完整的文档结构
 
-3. **列映射配置**：
-   - `FEISHU_PRODUCT_IMAGE_COLUMN`：产品图片列名
-   - `FEISHU_MODEL_IMAGE_COLUMN`：模特图片列名
-   - `FEISHU_PROMPT_COLUMN`：提示词列名
-   - `FEISHU_STATUS_COLUMN`：状态列名
+## ✨ 核心功能
 
-### ComfyUI配置
+- 🔐 **飞书集成** - 自动获取表格数据和图片
+- 🤖 **AI工作流** - ComfyUI智能图像处理
+- 🌐 **Web界面** - 直观的操作界面和ERP系统
+- 🎨 **图像处理** - 白底去除、PNG转换、批量处理
+- 📊 **数据管理** - CSV导入、状态跟踪、报告生成
+- 🔄 **自动化** - 完整的端到端处理流程
 
-1. **API配置**：
-   - `COMFYUI_API_KEY`：ComfyUI API密钥
-   - `COMFYUI_WORKFLOW_ID`：工作流ID
-   - `COMFYUI_BASE_URL`：API基础URL
+## 🛠️ 技术栈
 
-2. **节点ID配置**：
-   - 根据你的ComfyUI工作流配置相应的节点ID
+- **后端**: Python 3.8+, Flask, asyncio
+- **前端**: HTML5, CSS3, JavaScript
+- **集成**: 飞书API, ComfyUI API
+- **数据**: CSV, JSON, 图像处理
+- **部署**: Docker, Nginx, Gunicorn
 
-## 📁 项目结构
+## 📋 快速导航
+
+### 常见任务
+
+| 我想要... | 查看文档 |
+|-----------|----------|
+| 🚀 **快速上手** | [用户手册 - 快速开始](docs/USER_MANUAL.md#快速开始) |
+| 🔧 **搭建开发环境** | [开发者指南 - 环境设置](docs/DEVELOPER_GUIDE.md#开发环境设置) |
+| 🚀 **部署到生产** | [部署指南](docs/DEPLOYMENT_GUIDE.md) |
+| 🔌 **API集成** | [API参考文档](docs/API_REFERENCE.md) |
+| ❓ **解决问题** | [用户手册 - 故障排除](docs/USER_MANUAL.md#故障排除) |
+| 📖 **了解架构** | [项目文档 - 系统架构](docs/PROJECT_DOCUMENTATION.md#系统架构) |
+
+### 详细安装和配置
+
+完整的安装步骤、环境配置、系统要求等详细信息，请查看：
+- 📖 [项目文档 - 安装指南](docs/PROJECT_DOCUMENTATION.md#安装指南)
+- 👤 [用户手册 - 系统要求](docs/USER_MANUAL.md#系统要求)
+- 💻 [开发者指南 - 开发环境](docs/DEVELOPER_GUIDE.md#开发环境设置)
+
+## 🏗️ 项目结构
 
 ```
 toolKit/
-├── docs/                    # 📚 文档目录
-│   ├── feishu_api.md       # 飞书API使用说明
-│   ├── comfyui_api.md      # ComfyUI API使用说明
-│   ├── project_structure.md # 项目结构说明
-│   └── workflow_guide.md   # 工作流程说明
-├── test/                   # 🧪 测试文件目录
-│   ├── test_api.py         # API接口测试
-│   ├── test_full_workflow.py # 完整工作流测试
-│   └── test_*.py           # 其他测试文件
-├── output/                 # 📁 生成图片输出目录
-├── logs/                   # 📋 日志文件目录
-├── reports/                # 📊 处理报告目录
-├── main.py                 # 🚀 主程序入口
+├── docs/                    # 📚 完整文档目录
+│   ├── README.md           # 📋 文档中心导航
+│   ├── PROJECT_DOCUMENTATION.md  # 📖 项目完整文档
+│   ├── USER_MANUAL.md      # 👤 用户操作手册
+│   ├── DEVELOPER_GUIDE.md  # 💻 开发者指南
+│   ├── API_REFERENCE.md    # 🔌 API接口文档
+│   └── DEPLOYMENT_GUIDE.md # 🚀 部署运维指南
+├── web_app.py              # 🌐 Web应用主程序
+├── main.py                 # 🚀 命令行工具入口
 ├── config.py               # ⚙️ 配置管理
 ├── feishu_client.py        # 📊 飞书API客户端
 ├── comfyui_client.py       # 🤖 ComfyUI API客户端
-├── workflow_processor.py   # 🔄 工作流处理器
+├── templates/              # 📄 Web模板目录
+├── static/                 # 🎨 静态资源目录
 └── requirements.txt        # 📦 依赖包列表
 ```
 
-## 🧪 测试
+## 🌟 主要特色
 
-项目提供了完整的测试套件，位于 `test/` 目录：
+### 🎯 智能化处理
+- **自动化工作流**：从数据获取到结果输出的完整自动化
+- **智能重试机制**：网络异常和处理失败的自动重试
+- **状态实时跟踪**：处理进度和状态的实时监控
 
-```bash
-# 测试API连接
-python test/test_api.py
+### 🔧 易用性设计
+- **Web可视化界面**：直观的操作界面，无需命令行
+- **批量处理支持**：支持大规模数据的批量处理
+- **详细日志记录**：完整的操作日志和错误追踪
 
-# 测试完整工作流
-python test/test_full_workflow.py
+### 🚀 高性能架构
+- **异步处理**：高并发的异步任务处理
+- **模块化设计**：松耦合的模块化架构
+- **可扩展性**：支持插件和功能扩展
 
-# 测试图片写入功能
-python test/test_image_write.py
+## 🤝 贡献指南
 
-# 快速调试模式测试
-python test_debug_mode.py
-```
+我们欢迎社区贡献！请查看 [开发者指南](docs/DEVELOPER_GUIDE.md) 了解：
+- 开发环境搭建
+- 代码规范和最佳实践
+- 测试指南
+- 提交流程
 
-### 🐛 调试模式
+## 📄 许可证
 
-调试模式是专为开发和测试设计的特殊运行模式，可以显著加快测试速度：
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
-#### 功能特点
+## 📞 获取帮助
 
-- **跳过ComfyUI API调用**：使用模拟数据代替实际的AI处理
-- **快速执行**：整个工作流在几十秒内完成，而非数小时
-- **完整流程测试**：保留所有业务逻辑，只跳过耗时的API调用
-- **模拟结果生成**：创建模拟的输出文件和报告
+### 📚 文档资源
+- [文档中心](docs/README.md) - 完整的文档导航
+- [常见问题](docs/USER_MANUAL.md#常见问题) - FAQ和解决方案
+- [故障排除](docs/USER_MANUAL.md#故障排除) - 问题诊断指南
 
-#### 使用场景
+### 💬 社区支持
+- **GitHub Issues** - 报告问题和功能请求
+- **Discussions** - 社区讨论和经验分享
+- **Wiki** - 社区维护的知识库
 
-- **功能开发**：快速验证新功能的逻辑正确性
-- **代码调试**：定位和修复业务逻辑问题
-- **集成测试**：验证各模块间的协作
-- **性能测试**：测试除AI处理外的系统性能
+### 🔧 技术支持
+- **邮箱**: support@toolkit.com
+- **文档问题**: docs@toolkit.com
 
-#### 使用方法
+---
 
-```bash
-# 启动调试模式，选择工作流类型
-python main.py --debug
-
-# 运行自动化测试脚本
-python test_debug_mode.py
-```
-
-#### 调试模式 vs 正常模式
-
-| 特性 | 正常模式 | 调试模式 |
-|------|----------|----------|
-| ComfyUI API调用 | ✅ 实际调用 | ❌ 跳过（模拟） |
-| 执行时间 | 数小时 | 几十秒 |
-| 业务逻辑 | ✅ 完整执行 | ✅ 完整执行 |
-| 文件操作 | ✅ 真实文件 | ✅ 模拟文件 |
-| 报告生成 | ✅ 真实数据 | ✅ 模拟数据 |
-| 适用场景 | 生产环境 | 开发测试 |
-
-## 使用方法
-
-### 基本使用
-
-```bash
-# 处理所有未处理的数据
-python main.py
-
-# 重试失败的数据
-python main.py --retry
-
-# 设置最大重试次数
-python main.py --retry --max-retries 5
-
-# 干运行模式（只检查数据，不实际执行）
-python main.py --dry-run
-
-# 调试模式（跳过ComfyUI API调用，快速测试）
-python main.py --debug
-
-# 设置日志级别
-python main.py --log-level DEBUG
-```
-
-### 命令行参数
-
-- `--retry`：重试失败的行
-- `--max-retries N`：设置最大重试次数（默认3次）
-- `--dry-run`：干运行模式，只检查数据完整性
-- `--debug`：调试模式，跳过ComfyUI API调用，使用模拟数据快速测试
-- `--log-level LEVEL`：设置日志级别（DEBUG/INFO/WARNING/ERROR）
-
-## 数据格式要求
-
-### 飞书表格格式
-
-表格应包含以下列：
-
-| 列名 | 类型 | 说明 |
-|------|------|------|
-| product_image | 图片/URL | 产品图片（嵌入式图片或URL） |
-| model_image | 图片/URL | 模特图片（嵌入式图片或URL） |
-| prompt | 文本 | AI生成提示词 |
-| is_read | 文本 | 处理状态（空=未处理，其他=已处理） |
-
-### 图片格式支持
-
-- **嵌入式图片**：飞书表格中直接插入的图片
-- **URL链接**：指向图片文件的HTTP/HTTPS链接
-- **支持格式**：PNG, JPG, JPEG, GIF, BMP
-
-## 输出文件
-
-### 目录结构
-
-```
-.
-├── temp/           # 临时文件目录
-├── output/          # 输出文件目录
-├── logs/            # 日志文件目录
-└── reports/         # 处理报告目录
-```
-
-### 日志文件
-
-- 位置：`logs/workflow_YYYYMMDD_HHMMSS.log`
-- 包含详细的执行过程和错误信息
-
-### 处理报告
-
-- 位置：`reports/report_YYYYMMDD_HHMMSS.txt`
-- 包含处理结果统计和详细信息
-
-## 错误处理
-
-### 常见错误及解决方案
-
-1. **飞书API认证失败**
-   - 检查 App ID 和 App Secret 是否正确
-   - 确认应用权限配置
-
-2. **表格访问失败**
-   - 检查表格Token是否正确
-   - 确认应用有表格访问权限
-
-3. **ComfyUI API调用失败**
-   - 检查API密钥和工作流ID
-   - 确认网络连接正常
-
-4. **图片下载失败**
-   - 检查图片URL是否有效
-   - 确认网络连接稳定
-
-### 重试机制
-
-- 自动重试网络请求失败
-- 支持手动重试失败的数据行
-- 可配置重试次数和延迟时间
-
-## 性能优化
-
-### 配置建议
-
-- `REQUEST_TIMEOUT`：根据网络情况调整请求超时时间
-- `RETRY_DELAY`：设置合适的重试延迟避免API限制
-- `COMFYUI_POLL_INTERVAL`：调整ComfyUI状态检查间隔
-
-### 批处理
-
-- 脚本支持处理大量数据
-- 自动管理临时文件和内存使用
-- 支持断点续传（跳过已处理的数据）
-
-## 开发说明
-
-### 项目结构
-
-```
-.
-├── main.py                 # 主程序入口
-├── config.py               # 配置管理
-├── feishu_client.py        # 飞书API客户端
-├── comfyui_client.py       # ComfyUI API客户端
-├── workflow_processor.py   # 工作流处理器
-├── requirements.txt        # 依赖包列表
-├── .env.example           # 环境变量模板
-└── README.md              # 说明文档
-```
-
-### 扩展开发
-
-- 所有模块都采用异步设计，支持高并发处理
-- 使用类型提示，便于IDE支持和代码维护
-- 模块化设计，便于功能扩展和测试
-
-## 许可证
-
-本项目采用 MIT 许可证。
-
-## 支持
-
-如有问题或建议，请提交 Issue 或联系开发团队。
+**开始使用**: [用户手册](docs/USER_MANUAL.md) | **开发指南**: [开发者文档](docs/DEVELOPER_GUIDE.md) | **API文档**: [API参考](docs/API_REFERENCE.md)

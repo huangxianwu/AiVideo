@@ -22,17 +22,23 @@ toolKit/
 │   ├── comfyui_api.md           # ComfyUI API使用说明
 │   ├── project_structure.md     # 项目结构说明（本文档）
 │   └── workflow_guide.md        # 工作流程说明
-├── test/                         # 测试文件目录
-│   ├── test_api.py              # API接口测试
-│   ├── test_full_workflow.py    # 完整工作流测试
-│   ├── test_image_position.py   # 图片位置测试
-│   ├── test_image_write.py      # 图片写入测试
-│   ├── test_modules.py          # 模块功能测试
-│   └── test_output.py           # 输出结果测试
+├── web_app.py                   # Web应用主程序
+├── white_background_remover.py  # 白底去除处理模块
+├── templates/                    # Web模板目录
+│   ├── index.html              # 主页模板
+│   ├── selected.html           # 选择页面模板
+│   ├── downloaded.html         # 下载完成页面模板
+│   ├── error.html              # 错误页面模板
+│   ├── workflow.html           # 工作流页面模板
+│   ├── workflow_execute.html   # 工作流执行页面模板
+│   ├── workflow_management.html # 工作流管理页面模板
+│   ├── erp_index.html          # ERP主页模板
+│   └── erp_selected.html       # ERP选择页面模板
 ├── output/                       # 生成图片输出目录
 ├── temp/                         # 临时文件目录
 ├── logs/                         # 日志文件目录
 ├── reports/                      # 处理报告目录
+├── static/                       # 静态资源目录
 └── __pycache__/                  # Python缓存目录
 ```
 
@@ -99,6 +105,25 @@ class WorkflowResult:
 ### 5. workflow_processor.py - 工作流处理器
 **功能：** 核心业务逻辑，协调各个客户端完成数据处理流程
 
+### 6. web_app.py - Web应用主程序
+**功能：** Flask Web应用，提供图形化界面和API接口
+
+**主要路由：**
+- `/`: 主页，显示工作流选择界面
+- `/workflow/<workflow_name>`: 工作流执行页面
+- `/erp`: ERP系统主页
+- `/erp/convert_to_png`: PNG转换功能
+- `/api/*`: RESTful API接口
+
+### 7. white_background_remover.py - 白底去除处理模块
+**功能：** 图像白色背景去除和PNG转换
+
+**主要类：**
+- `WhiteBackgroundRemover`: 白底去除处理器
+- 支持批量处理和单张图片处理
+- 自动检测和去除白色背景
+- 输出透明背景PNG格式
+
 **主要方法：**
 - `process_all_rows()`: 处理所有数据行
 - `process_single_row()`: 处理单行数据
@@ -145,6 +170,10 @@ TASK_TIMEOUT=300
 requests>=2.28.0
 python-dotenv>=0.19.0
 Pillow>=9.0.0
+Flask>=2.0.0
+numpy>=1.21.0
+opencv-python>=4.5.0
+scikit-image>=0.18.0
 ```
 
 ### My workflow python.json 工作流配置

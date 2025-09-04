@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP系统 - POD产品选择</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e293b',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50" x-data="{ sidebarOpen: true }">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="bg-secondary text-white transition-all duration-300 ease-in-out" 
+             :class="sidebarOpen ? 'w-64' : 'w-16'">
+            <!-- 侧边栏头部 -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold" x-show="sidebarOpen" x-transition>ERP系统</h1>
+                <button @click="sidebarOpen = !sidebarOpen" 
+                        class="p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="mt-6">
+                <div class="px-3">
+                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg bg-primary text-white">
+                        <i class="fas fa-shopping-cart w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>POD产品选择</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-box w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>产品管理</span>
+                    </a>
+                    <a href="/workflow/list" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-list w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>工作流列表</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-chart-line w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>销售分析</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-users w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>客户管理</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-cog w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>系统设置</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm border-b border-gray-200">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">POD产品选择</h1>
+                        <p class="text-sm text-gray-500 mt-1">管理和选择POD产品</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 text-gray-600">
+                            <i class="fas fa-user-circle text-xl"></i>
+                            <span class="text-sm font-medium">管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 面包屑导航 -->
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li>
+                            <a href="#" class="text-gray-500 hover:text-gray-700 text-sm">首页</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        </li>
+                        <li>
+                            <span class="text-gray-900 text-sm font-medium">POD产品选择</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- 主内容区域 -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- 操作按钮区 -->
+                <div class="mb-6">
+                    <div class="flex flex-wrap gap-3">
+                        <button id="importCsvBtn" 
+                                class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-file-import mr-2"></i>
+                            导入CSV
+                        </button>
+                        <button onclick="refreshData()" 
+                                class="inline-flex items-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-sync-alt mr-2"></i>
+                            刷新数据
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 隐藏的文件上传输入 -->
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-database text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">总记录数</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="totalRecords">{{ total }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">当前页</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="currentPage">{{ page }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-list text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">总页数</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="totalPages">{{ total_pages }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-md transition-shadow" 
+                         id="selectedCard" onclick="goToSelectedPage()">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-orange-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">已选择</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="selectedCount">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 产品卡片网格 -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">产品列表</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                            {% for item in data %}
+                            <div class="group relative bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer" 
+                                 data-product-id="{{ item.product_id }}">
+                                <!-- 选择复选框 -->
+                                <div class="absolute top-2 left-2 z-10 w-6 h-6 bg-white rounded-full border-2 border-gray-300 flex items-center justify-center cursor-pointer hover:border-blue-500 transition-colors"
+                                     onclick="toggleCardSelection('{{ item.product_id }}')">
+                                    <i class="fas fa-check text-blue-500 text-xs hidden"></i>
+                                </div>
+                                
+                                <!-- 产品图片 -->
+                                <div class="aspect-square overflow-hidden rounded-t-lg">
+                                    <img src="{{ item.main_image_url }}" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                                         alt="{{ item.product_name }}"
+                                         onclick="openImageModal('{{ item.main_image_url }}', '{{ item.product_name }}')"
+                                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMDAgODBDMTA1LjUyMyA4MCAxMTAgNzUuNTIzIDExMCA3MEM1MTAgNjQuNDc3IDEwNS41MjMgNjAgMTAwIDYwQzk0LjQ3NyA2MCA5MCA2NC40NzcgOTAgNzBDOTAgNzUuNTIzIDk0LjQ3NyA4MCAxMDAgODBaIiBmaWxsPSIjOUU5RTlFIi8+CjxwYXRoIGQ9Ik0xNDAgMTQwSDYwVjEyMEw4MCAxMDBMMTAwIDEyMEwxMjAgODBMMTQwIDEwMFYxNDBaIiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPgo='">
+                                </div>
+                                
+                                <!-- 产品信息 -->
+                                <div class="p-3">
+                                    <h4 class="text-sm font-medium text-gray-900 truncate" title="{{ item.product_name }}">
+                                        {{ item.product_name }}
+                                    </h4>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        {{ item.creation_time }}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图片放大模态框 -->
+                <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center hidden" onclick="closeImageModal()">
+                    <button class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 transition-colors" onclick="closeImageModal()">
+                        &times;
+                    </button>
+                    <div class="max-w-4xl max-h-full p-4">
+                        <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg">
+                    </div>
+                </div>
+
+                <!-- 分页 -->
+                <div class="mt-8">
+                    <nav class="flex items-center justify-center" aria-label="分页导航">
+                        <div class="flex items-center space-x-1">
+                            <!-- 上一页 -->
+                            {% if has_prev %}
+                            <a href="?page={{ page - 1 }}&per_page={{ per_page }}" 
+                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-700 transition-colors">
+                                <i class="fas fa-chevron-left mr-1"></i> 上一页
+                            </a>
+                            {% else %}
+                            <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 bg-gray-100 border border-gray-300 rounded-l-md cursor-not-allowed">
+                                <i class="fas fa-chevron-left mr-1"></i> 上一页
+                            </span>
+                            {% endif %}
+
+                            <!-- 页码 -->
+                            {% for p in range(1, total_pages + 1) %}
+                                {% if p == page %}
+                                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600">
+                                    {{ p }}
+                                </span>
+                                {% elif p <= 3 or p > total_pages - 3 or (p >= page - 2 and p <= page + 2) %}
+                                <a href="?page={{ p }}&per_page={{ per_page }}" 
+                                   class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 transition-colors">
+                                    {{ p }}
+                                </a>
+                                {% elif p == 4 and page > 6 %}
+                                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default">
+                                    ...
+                                </span>
+                                {% elif p == total_pages - 3 and page < total_pages - 5 %}
+                                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default">
+                                    ...
+                                </span>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- 下一页 -->
+                            {% if has_next %}
+                            <a href="?page={{ page + 1 }}&per_page={{ per_page }}" 
+                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-700 transition-colors">
+                                下一页 <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                            {% else %}
+                            <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 bg-gray-100 border border-gray-300 rounded-r-md cursor-not-allowed">
+                                下一页 <i class="fas fa-chevron-right ml-1"></i>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载提示 -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700 font-medium">加载中...</span>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2">
+        <div id="toast" class="bg-white rounded-lg shadow-lg border border-gray-200 p-4 min-w-80 transform translate-x-full transition-transform duration-300 hidden">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i id="toastIcon" class="fas fa-info-circle text-blue-500 text-lg"></i>
+                </div>
+                <div class="ml-3 flex-1">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-semibold text-gray-900">系统通知</h4>
+                        <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" onclick="hideToast()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <p id="toastMessage" class="mt-1 text-sm text-gray-600">
+                        消息内容
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/erp_script.js"></script>
+</body>
+</html>

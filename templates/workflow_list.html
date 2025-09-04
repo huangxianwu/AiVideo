@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作流列表</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        .page-title {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .page-description {
+            margin: 8px 0 0 0;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .card-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 20px 24px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .card-body {
+            padding: 24px;
+        }
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+            color: #212529;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.875rem;
+            margin: 0 2px;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+            padding: 12px;
+        }
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        .empty-state-description {
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        .alert {
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="header">
+            <h1 class="page-title">工作流管理</h1>
+            <p class="page-description">创建、编辑和管理工作流程</p>
+        </div>
+
+        <!-- 消息提示 -->
+        <div id="alertContainer"></div>
+
+        <!-- 工作流列表 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">工作流列表</h2>
+                <button class="btn btn-primary" onclick="createWorkflow()">
+                    <i class="fas fa-plus"></i> 新建工作流
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="loadingContainer" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> 加载中...
+                </div>
+                
+                <div id="workflowTableContainer" class="hidden">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>工作流名称</th>
+                                <th>工作流ID</th>
+                                <th>节点数量</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workflowTableBody">
+                            <!-- 工作流数据将在这里动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="emptyState" class="empty-state hidden">
+                    <div class="empty-state-icon">📋</div>
+                    <h3 class="empty-state-title">暂无工作流</h3>
+                    <p class="empty-state-description">点击上方按钮创建您的第一个工作流</p>
+                    <button class="btn btn-primary" onclick="createWorkflow()">
+                        <i class="fas fa-plus"></i> 创建工作流
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除工作流 "<span id="deleteWorkflowName"></span>" 吗？</p>
+                    <p class="text-muted">此操作不可撤销，工作流及其所有节点都将被删除。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let deleteWorkflowId = null;
+        let deleteModal = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            loadWorkflows();
+        });
+
+        // 加载工作流列表
+        async function loadWorkflows() {
+            try {
+                showLoading();
+                const response = await fetch('/api/workflows');
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayWorkflows(result.data);
+                } else {
+                    showAlert('error', result.message || '加载工作流列表失败');
+                    showEmpty();
+                }
+            } catch (error) {
+                console.error('加载工作流列表失败:', error);
+                showAlert('error', '网络错误，请稍后重试');
+                showEmpty();
+            }
+        }
+
+        // 显示工作流列表
+        function displayWorkflows(workflows) {
+            const tbody = document.getElementById('workflowTableBody');
+            const tableContainer = document.getElementById('workflowTableContainer');
+            const emptyState = document.getElementById('emptyState');
+            const loadingContainer = document.getElementById('loadingContainer');
+            
+            loadingContainer.classList.add('hidden');
+            
+            if (workflows.length === 0) {
+                showEmpty();
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            workflows.forEach(workflow => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${escapeHtml(workflow.name || workflow.id)}</td>
+                    <td><code>${escapeHtml(workflow.workflow_id || workflow.id)}</code></td>
+                    <td><span class="badge bg-info">${workflow.node_count || 0}</span></td>
+                    <td>${formatDate(workflow.created_at)}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editWorkflow('${workflow.id}')" title="编辑">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteWorkflow('${workflow.id}', '${escapeHtml(workflow.id)}')" title="删除">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="executeWorkflow('${workflow.id}')" title="执行">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            tableContainer.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            document.getElementById('loadingContainer').classList.remove('hidden');
+            document.getElementById('workflowTableContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+        }
+
+        // 显示空状态
+        function showEmpty() {
+            document.getElementById('loadingContainer').classList.add('hidden');
+            document.getElementById('workflowTableContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+        }
+
+        // 创建工作流
+        function createWorkflow() {
+            window.location.href = '/workflow/create';
+        }
+
+        // 编辑工作流
+        function editWorkflow(workflowId) {
+            window.location.href = `/workflow/edit/${workflowId}`;
+        }
+
+        // 执行工作流
+        function executeWorkflow(workflowId) {
+            window.location.href = `/workflow/execute/${workflowId}`;
+        }
+
+        // 删除工作流
+        function deleteWorkflow(workflowId, workflowName) {
+            deleteWorkflowId = workflowId;
+            document.getElementById('deleteWorkflowName').textContent = workflowName;
+            deleteModal.show();
+        }
+
+        // 确认删除
+        async function confirmDelete() {
+            if (!deleteWorkflowId) return;
+            
+            try {
+                const response = await fetch(`/api/workflows/${deleteWorkflowId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', result.message || '工作流删除成功');
+                    deleteModal.hide();
+                    loadWorkflows(); // 重新加载列表
+                } else {
+                    showAlert('error', result.message || '删除工作流失败');
+                }
+            } catch (error) {
+                console.error('删除工作流失败:', error);
+                showAlert('error', '网络错误，请稍后重试');
+            }
+            
+            deleteWorkflowId = null;
+        }
+
+        // 显示提示消息
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            
+            const alertHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    <i class="fas ${iconClass}"></i> ${escapeHtml(message)}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHtml;
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 3000);
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN');
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

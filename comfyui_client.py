@@ -52,12 +52,12 @@ class ComfyUIClient:
         url = f"{self.config.base_url}/task/openapi/upload"
         
         headers = {
-            "host": "www.runninghub.cn"
+            "Host": "www.runninghub.cn",
+            "Authorization": f"Bearer {self.config.api_key}"
         }
         
         # 构建multipart/form-data
         data = aiohttp.FormData()
-        data.add_field('apiKey', self.config.api_key)
         data.add_field('file', image_data, filename=filename, content_type='image/png')
         
         try:

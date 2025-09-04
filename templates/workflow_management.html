@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作流管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.2);
+            border-left-color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin-left: 280px;
+            padding: 20px;
+        }
+
+        .header {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 16px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: 6px;
+            background: none;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            border-color: #27ae60;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+            border-color: #229954;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #ffffff;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border-color: #d1d9e0;
+            color: #5a6c7d;
+        }
+
+        .btn-outline:hover {
+            background-color: #f8fafc;
+            border-color: #bdc3c7;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #34495e;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d9e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #ffffff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .node-item {
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background-color: #fafbfc;
+        }
+
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .node-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background-color: #d5f4e6;
+            border: 1px solid #a8e6cf;
+            color: #27ae60;
+        }
+
+        .alert-danger {
+            background-color: #fdf2f2;
+            border: 1px solid #f5b7b1;
+            color: #e74c3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: #95a5a6;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #7f8c8d;
+        }
+
+        .empty-state-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .table {
+                font-size: 12px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-title">
+                <i class="fas fa-cogs me-2"></i>
+                工作流管理
+            </h4>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" data-page="products">
+                        <i class="fas fa-box me-2"></i>
+                        <span class="nav-text">商品选择页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/workflow-management" data-page="workflow-management">
+                        <i class="fas fa-cogs me-2"></i>
+                        <span class="nav-text">工作流管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/workflow" data-page="workflow">
+                        <i class="fas fa-play me-2"></i>
+                        <span class="nav-text">工作流执行</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="page-title">工作流管理</h1>
+            <p class="page-description">创建、编辑和管理工作流程</p>
+        </div>
+
+        <!-- 工作流列表视图 -->
+        <div id="listView" class="card">
+            <div class="card-header">
+                <h2 class="card-title">工作流列表</h2>
+                <button class="btn btn-primary" onclick="showCreateForm()">+ 创建工作流</button>
+            </div>
+            <div class="card-body">
+                <div id="workflowTableContainer">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>工作流名称</th>
+                                <th>工作流ID</th>
+                                <th>描述</th>
+                                <th>节点数量</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workflowTableBody">
+                            <!-- 工作流数据将在这里动态加载 -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="emptyState" class="empty-state hidden">
+                        <div class="empty-state-icon">📋</div>
+                        <h3 class="empty-state-title">暂无工作流</h3>
+                        <p class="empty-state-description">点击上方按钮创建您的第一个工作流</p>
+                        <button class="btn btn-primary" onclick="showCreateForm()">创建工作流</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 创建/编辑工作流表单 -->
+        <div id="formView" class="card hidden">
+            <div class="card-header">
+                <h2 class="card-title" id="formTitle">创建工作流</h2>
+                <button class="btn btn-outline" onclick="showListView()">← 返回列表</button>
+            </div>
+            <div class="card-body">
+                <form id="workflowForm">
+                    <div class="form-group">
+                        <label for="workflowId">工作流ID *</label>
+                        <input type="text" id="workflowId" class="form-control" required 
+                               placeholder="请输入唯一的工作流ID，如：WF001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workflowName">工作流名称 *</label>
+                        <input type="text" id="workflowName" class="form-control" required 
+                               placeholder="请输入工作流名称">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workflowDescription">描述</label>
+                        <textarea id="workflowDescription" class="form-control" rows="3" 
+                                  placeholder="请输入工作流描述（可选）"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>工作流节点</label>
+                        <div id="nodesContainer">
+                            <!-- 节点将在这里动态添加 -->
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="addNode()">+ 添加节点</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">保存工作流</button>
+                        <button type="button" class="btn btn-outline" onclick="showListView()">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentWorkflowId = null;
+        let isEditMode = false;
+        let nodeCounter = 0;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWorkflows();
+            setupFormSubmission();
+        });
+
+        // 显示列表视图
+        function showListView() {
+            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('formView').classList.add('hidden');
+            loadWorkflows();
+        }
+
+        // 显示创建表单
+        function showCreateForm() {
+            isEditMode = false;
+            currentWorkflowId = null;
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('formView').classList.remove('hidden');
+            document.getElementById('formTitle').textContent = '创建工作流';
+            document.getElementById('submitBtn').textContent = '保存工作流';
+            // 在创建模式下启用工作流ID输入框
+            document.getElementById('workflowId').disabled = false;
+            resetForm();
+        }
+
+        // 显示编辑表单
+        function showEditForm(workflowId) {
+            isEditMode = true;
+            currentWorkflowId = workflowId;
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('formView').classList.remove('hidden');
+            document.getElementById('formTitle').textContent = '编辑工作流';
+            document.getElementById('submitBtn').textContent = '保存';
+            // 在编辑模式下禁用工作流ID输入框
+            document.getElementById('workflowId').disabled = true;
+            loadWorkflowForEdit(workflowId);
+        }
+
+        // 重置表单
+        function resetForm() {
+            document.getElementById('workflowForm').reset();
+            document.getElementById('nodesContainer').innerHTML = '';
+            nodeCounter = 0;
+        }
+
+        // 加载工作流列表
+        async function loadWorkflows() {
+            try {
+                const response = await fetch('/api/workflows');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const result = await response.json();
+                if (result.success) {
+                    renderWorkflowTable(result.data || []);
+                } else {
+                    throw new Error(result.error || '未知错误');
+                }
+            } catch (error) {
+                console.error('加载工作流失败:', error);
+                showAlert('加载工作流失败: ' + error.message, 'danger');
+            }
+        }
+
+        // 渲染工作流表格
+        function renderWorkflowTable(workflows) {
+            const tbody = document.getElementById('workflowTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (!workflows || workflows.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = workflows.map(workflow => `
+                <tr>
+                    <td><strong>${escapeHtml(workflow.name || '未命名')}</strong></td>
+                    <td><code>${escapeHtml(workflow.workflow_id || workflow.id)}</code></td>
+                    <td>${escapeHtml(workflow.description || '-')}</td>
+                    <td>${workflow.node_count || 0} 个节点</td>
+                    <td>${formatDate(workflow.created_at)}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-sm btn-primary" onclick="showEditForm('${workflow.id}')">
+                                编辑
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteWorkflow('${workflow.id}')">
+                                删除
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="executeWorkflow('${workflow.id}')">
+                                执行
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 加载工作流用于编辑
+        async function loadWorkflowForEdit(workflowId) {
+            try {
+                const response = await fetch(`/api/workflows/${workflowId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const result = await response.json();
+                if (result.success) {
+                    const workflow = result.data;
+                    
+                    // 填充基本信息
+                    document.getElementById('workflowId').value = workflow.id || '';
+                    document.getElementById('workflowName').value = workflow.name || '';
+                    document.getElementById('workflowDescription').value = workflow.description || '';
+                    
+                    // 清空并重新加载节点
+                    document.getElementById('nodesContainer').innerHTML = '';
+                    nodeCounter = 0;
+                    
+                    // 加载节点
+                    if (workflow.nodes && workflow.nodes.length > 0) {
+                        workflow.nodes.forEach(node => {
+                            addNode(node.id || node.name, node.type, node.name || node.description || '');
+                        });
+                    }
+                } else {
+                    throw new Error(result.error || '未知错误');
+                }
+            } catch (error) {
+                console.error('加载工作流详情失败:', error);
+                showAlert('加载工作流详情失败: ' + error.message, 'danger');
+            }
+        }
+
+        // 添加节点
+        function addNode(nodeId = '', nodeType = 'text', nodeName = '') {
+            nodeCounter++;
+            const nodeContainer = document.getElementById('nodesContainer');
+            
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'node-item';
+            nodeDiv.innerHTML = `
+                <div class="node-header">
+                    <h4>节点 ${nodeCounter}</h4>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeNode(this)">
+                        删除
+                    </button>
+                </div>
+                <div class="node-controls">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label>节点ID *</label>
+                        <input type="text" class="form-control node-id" required 
+                               placeholder="请输入节点ID" value="${escapeHtml(nodeId)}">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label>节点名称 *</label>
+                        <input type="text" class="form-control node-name" required 
+                               placeholder="请输入节点名称" value="${escapeHtml(nodeName)}">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label>节点类型 *</label>
+                        <select class="form-control node-type" required>
+                            <option value="text" ${nodeType === 'text' ? 'selected' : ''}>文本</option>
+                            <option value="number" ${nodeType === 'number' ? 'selected' : ''}>数字</option>
+                            <option value="image" ${nodeType === 'image' ? 'selected' : ''}>图片</option>
+                            <option value="video" ${nodeType === 'video' ? 'selected' : ''}>视频</option>
+                            <option value="audio" ${nodeType === 'audio' ? 'selected' : ''}>音频</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            nodeContainer.appendChild(nodeDiv);
+        }
+
+        // 移除节点
+        function removeNode(button) {
+            button.closest('.node-item').remove();
+        }
+
+        // 设置表单提交
+        function setupFormSubmission() {
+            document.getElementById('workflowForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('workflowName').value.trim(),
+                    description: document.getElementById('workflowDescription').value.trim(),
+                    nodes: []
+                };
+                
+                // 只有在创建新工作流时才发送工作流ID
+                if (!isEditMode) {
+                    formData.workflow_id = document.getElementById('workflowId').value.trim();
+                }
+                
+                // 收集节点数据
+                const nodeItems = document.querySelectorAll('.node-item');
+                for (const nodeItem of nodeItems) {
+                    const nodeId = nodeItem.querySelector('.node-id').value.trim();
+                    const nodeName = nodeItem.querySelector('.node-name').value.trim();
+                    const nodeType = nodeItem.querySelector('.node-type').value;
+                    
+                    if (!nodeId) {
+                        showAlert('请填写所有节点的ID', 'danger');
+                        return;
+                    }
+                    
+                    if (!nodeName) {
+                        showAlert('请填写所有节点的名称', 'danger');
+                        return;
+                    }
+                    
+                    formData.nodes.push({
+                        node_id: nodeId,
+                        node_name: nodeName,
+                        node_type: nodeType
+                    });
+                }
+                
+                // 验证至少有一个节点
+                if (formData.nodes.length === 0) {
+                    showAlert('请至少添加一个节点', 'danger');
+                    return;
+                }
+                
+                try {
+                    const url = isEditMode ? `/api/workflows/${currentWorkflowId}` : '/api/workflows';
+                    const method = isEditMode ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        showAlert(isEditMode ? '工作流更新成功' : '工作流创建成功', 'success');
+                        setTimeout(() => {
+                            showListView();
+                        }, 1500);
+                    } else {
+                        throw new Error(result.error || '未知错误');
+                    }
+                } catch (error) {
+                    console.error('保存工作流失败:', error);
+                    showAlert('保存工作流失败: ' + error.message, 'danger');
+                }
+            });
+        }
+
+        // 删除工作流
+        async function deleteWorkflow(workflowId) {
+            if (!confirm('确定要删除这个工作流吗？此操作不可恢复。')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/workflows/${workflowId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('工作流删除成功', 'success');
+                    loadWorkflows();
+                } else {
+                    throw new Error(result.error || '未知错误');
+                }
+            } catch (error) {
+                console.error('删除工作流失败:', error);
+                showAlert('删除工作流失败: ' + error.message, 'danger');
+            }
+        }
+
+        // 执行工作流
+        function executeWorkflow(workflowId) {
+            // 跳转到工作流执行页面
+            window.location.href = `/workflow-execute/${workflowId}`;
+        }
+
+        // 显示提示信息
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // 工具函数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+        }
+    </script>
+</body>
+</html>

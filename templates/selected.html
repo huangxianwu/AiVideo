@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>已选择的商品 - 产品图片管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <style>
+        .product-image {
+            width: 100%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+        
+        .product-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.4;
+            word-wrap: break-word;
+            margin-bottom: 4px;
+        }
+        
+        .product-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        /* 卡片样式 */
+        .product-card {
+            border: 2px solid transparent;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .product-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .product-card.downloaded {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40,167,69,0.05) 0%, rgba(40,167,69,0.1) 100%);
+        }
+        
+        .product-card.downloaded::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(40,167,69,0.1);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* 下载状态图标 */
+        .download-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* 网格布局 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        .download-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-downloaded {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-not-downloaded {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #bbb;
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+        
+        .back-button {
+            margin-bottom: 20px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .action-buttons .btn {
+            flex: 1;
+            font-size: 0.8rem;
+            padding: 6px 8px;
+        }
+        
+
+        
+        .btn-png {
+            background-color: #fd7e14;
+            border-color: #fd7e14;
+            color: white;
+        }
+        
+        .btn-png:hover {
+            background-color: #e8681a;
+            border-color: #e8681a;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- 加载动画 -->
+    <div class="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">加载中...</span>
+        </div>
+    </div>
+
+    <!-- Toast 消息 -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle me-2 text-primary"></i>
+                <strong class="me-auto">系统消息</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                消息内容
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- 头部 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-list text-warning me-2"></i>
+                        已选择的商品
+                    </h1>
+                    <div class="back-button">
+                        <button class="btn btn-outline-primary" onclick="goBack()">
+                            <i class="fas fa-arrow-left me-1"></i>返回主页
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="stats-card">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h4 id="totalSelected">0</h4>
+                            <p class="mb-0">选中商品总数</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="downloadedCount">0</h4>
+                            <p class="mb-0">已下载</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="notDownloadedCount">0</h4>
+                            <p class="mb-0">未下载</p>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="convertAllToPng" class="btn btn-warning btn-sm">
+                                <i class="fas fa-image me-1"></i>转换为PNG
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品网格 -->
+        <div class="row">
+            <div class="col-12">
+                <div id="productGrid" class="product-grid">
+                    <!-- 商品卡片将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div id="emptyState" class="text-center py-5" style="display: none;">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">暂无选中的商品</h4>
+            <p class="text-muted">请返回主页选择商品</p>
+            <button class="btn btn-primary" onclick="goBack()">
+                <i class="fas fa-arrow-left me-1"></i>返回主页
+            </button>
+        </div>
+    </div>
+
+    <!-- 图片放大模态框 -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="close" onclick="closeImageModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" alt="">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedProducts = [];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSelectedProducts();
+        });
+
+        // 从URL参数获取选中的商品ID并加载数据
+        function loadSelectedProducts() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ids = urlParams.get('ids');
+            
+            if (!ids) {
+                showEmptyState();
+                return;
+            }
+
+            document.querySelector('.loading').style.display = 'block';
+
+            fetch(`/api/selected?ids=${ids}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        selectedProducts = data.data;
+                        renderProducts();
+                        updateStats();
+                    } else {
+                        showToast('加载失败: ' + data.message, 'error');
+                        showEmptyState();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('网络错误', 'error');
+                    showEmptyState();
+                })
+                .finally(() => {
+                    document.querySelector('.loading').style.display = 'none';
+                });
+        }
+
+        // 渲染商品卡片
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            
+            if (selectedProducts.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            grid.innerHTML = selectedProducts.map(product => {
+                const isDownloaded = product.is_downloaded || false;
+                const downloadStatus = isDownloaded ? 
+                    '<span class="download-status status-downloaded"><i class="fas fa-check-circle me-1"></i>已下载</span>' :
+                    '<span class="download-status status-not-downloaded"><i class="fas fa-times-circle me-1"></i>未下载</span>';
+
+                return `
+                    <div class="product-card ${isDownloaded ? 'downloaded' : ''}" data-product-id="${product.product_id}">
+                        <img src="${product.main_image_url}" 
+                             alt="${product.product_name}" 
+                             class="product-image"
+                             onclick="openImageModal('${product.main_image_url}', '${product.product_name}')">
+                        
+                        <div class="p-3">
+                            <div class="product-name" title="${product.product_name}">${product.product_name}</div>
+                            <div class="product-time">${product.created_time || ''}</div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-png btn-sm" onclick="convertToPng('${product.product_id}', '${product.main_image_url.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-file-image me-1"></i>PNG
+                                </button>
+
+                            </div>
+                        </div>
+                        ${isDownloaded ? '<div class="download-status"><i class="fas fa-download"></i></div>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            const total = selectedProducts.length;
+            const downloaded = selectedProducts.filter(p => p.is_downloaded).length;
+            const notDownloaded = total - downloaded;
+
+            document.getElementById('totalSelected').textContent = total;
+            document.getElementById('downloadedCount').textContent = downloaded;
+            document.getElementById('notDownloadedCount').textContent = notDownloaded;
+        }
+
+        // 显示空状态
+        function showEmptyState() {
+            document.getElementById('productGrid').innerHTML = '';
+            document.getElementById('emptyState').style.display = 'block';
+            
+            // 重置统计
+            document.getElementById('totalSelected').textContent = '0';
+            document.getElementById('downloadedCount').textContent = '0';
+            document.getElementById('notDownloadedCount').textContent = '0';
+        }
+
+        // 返回主页
+        function goBack() {
+            window.location.href = '/';
+        }
+
+        // 图片放大模态框
+        function openImageModal(imageUrl, productName) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalImage.src = imageUrl;
+            modalImage.alt = productName;
+            modal.style.display = 'block';
+            
+            // 阻止事件冒泡
+            event.stopPropagation();
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+
+        // 显示Toast消息
+        function showToast(message, type = 'info') {
+            const toastElement = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastHeader = toastElement.querySelector('.toast-header i');
+            
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            toastHeader.className = `fas me-2 ${
+                type === 'success' ? 'fa-check-circle text-success' :
+                type === 'error' ? 'fa-exclamation-circle text-danger' :
+                'fa-info-circle text-primary'
+            }`;
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+        
+        // 转换单个图片为PNG
+        function convertToPng(productId, imageUrl) {
+            showToast('正在转换为PNG格式...', 'info');
+            
+            // 从selectedProducts中找到对应的产品信息
+            const product = selectedProducts.find(p => p.product_id === productId);
+            
+            // 构造后端期望的数据格式，包含完整的产品信息
+            const selectedImages = [{
+                id: productId,
+                image_url: imageUrl,
+                path: imageUrl,
+                product_name: product ? product.product_name : ''
+            }];
+            
+            fetch('/api/convert-to-png', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    selected_images: selectedImages
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const successCount = result.converted_images ? result.converted_images.length : 0;
+                    const failCount = result.failed_images ? result.failed_images.length : 0;
+                    
+                    if (successCount > 0) {
+                        showToast('PNG转换成功！', 'success');
+                    } else {
+                        const errorMsg = result.failed_images && result.failed_images.length > 0 
+                            ? result.failed_images[0].error 
+                            : '转换失败';
+                        showToast(`PNG转换失败: ${errorMsg}`, 'error');
+                    }
+                } else {
+                    showToast(`PNG转换失败: ${result.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('PNG转换失败', 'error');
+            });
+        }
+        
+
+        
+        // 批量转换为PNG
+        document.getElementById('convertAllToPng').addEventListener('click', function() {
+            if (selectedProducts.length === 0) {
+                showToast('没有可转换的图片', 'error');
+                return;
+            }
+            
+            showToast('正在批量转换为PNG格式...', 'info');
+            
+            // 构造后端期望的数据格式，包含完整的产品信息
+            const selectedImages = selectedProducts.map(product => ({
+                id: product.product_id,
+                image_url: product.main_image_url,
+                path: product.main_image_url,
+                product_name: product.product_name
+            }));
+            
+            fetch('/api/convert-to-png', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    selected_images: selectedImages
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const successCount = result.converted_images ? result.converted_images.length : 0;
+                    const failCount = result.failed_images ? result.failed_images.length : 0;
+                    
+                    if (failCount === 0) {
+                        showToast(`成功转换${successCount}张图片为PNG格式！`, 'success');
+                    } else {
+                        showToast(`转换完成：成功${successCount}张，失败${failCount}张`, 'warning');
+                        // 显示失败详情
+                        if (result.failed_images && result.failed_images.length > 0) {
+                            console.error('转换失败的图片:', result.failed_images);
+                        }
+                    }
+                } else {
+                    showToast(`转换失败: ${result.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('批量转换失败', 'error');
+            });
+        });
+    </script>
+</body>
+</html>

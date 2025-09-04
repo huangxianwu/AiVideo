@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作流管理 - 产品管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 左右布局 */
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .sidebar.collapsed {
+            width: 60px;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed .sidebar-title {
+            display: none;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .sidebar-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 15px;
+            text-align: center;
+        }
+        
+        .sidebar.collapsed .sidebar-menu span {
+            display: none;
+        }
+        
+        .sidebar.collapsed .sidebar-menu a {
+            justify-content: center;
+            padding: 15px 10px;
+        }
+        
+        .sidebar.collapsed .sidebar-menu i {
+            margin-right: 0;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        
+        .content-container {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        /* 工作流卡片样式 */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .workflow-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+        
+        .workflow-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .workflow-card-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .workflow-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .workflow-icon.image-composition {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .workflow-icon.image-to-video {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .workflow-icon.full-workflow {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .workflow-icon.background-removal {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .workflow-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .workflow-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .workflow-card-body {
+            padding: 25px;
+        }
+        
+        .workflow-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+        
+        .workflow-features li {
+            padding: 8px 0;
+            color: #495057;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .workflow-features i {
+            color: #28a745;
+            margin-right: 10px;
+            width: 16px;
+        }
+        
+        .workflow-button {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .workflow-button.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .workflow-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .workflow-button.success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+        
+        .workflow-button.success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.4);
+        }
+        
+        .workflow-button.info {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        
+        .workflow-button.info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .workflow-button.warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+        
+        .workflow-button.warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+        }
+        
+        .workflow-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .workflow-button .spinner {
+            display: none;
+            margin-right: 8px;
+        }
+        
+        .workflow-button.loading .spinner {
+            display: inline-block;
+        }
+        
+        .workflow-button.loading .button-text {
+            opacity: 0.7;
+        }
+        
+        /* 状态显示 */
+        .status-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .status-container.show {
+            display: block;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .status-icon.running {
+            background: #007bff;
+        }
+        
+        .status-icon.success {
+            background: #28a745;
+        }
+        
+        .status-icon.error {
+            background: #dc3545;
+        }
+        
+        .status-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .status-content {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            
+            .sidebar.collapsed {
+                width: 60px;
+            }
+            
+            .content-container {
+                padding: 20px 15px;
+            }
+            
+            .workflow-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        <!-- 左侧菜单栏 -->
+        <div class="sidebar collapsed" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">产品管理系统</div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/">
+                        <i class="fas fa-box"></i>
+                        <span>商品选择页</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/workflow/list">
+                        <i class="fas fa-list"></i>
+                        <span>工作流列表</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/workflow-management">
+                        <i class="fas fa-cogs"></i>
+                        <span>工作流管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/workflow" class="active">
+                        <i class="fas fa-play"></i>
+                        <span>工作流执行</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <div class="content-container">
+                <div class="content-header">
+                    <h1 class="mb-0">
+                        <i class="fas fa-cogs text-primary me-2"></i>
+                        工作流管理
+                    </h1>
+                    <p class="text-muted mt-2">选择并执行不同的工作流程，处理产品数据和生成内容</p>
+                </div>
+                
+                <!-- 工作流卡片网格 -->
+                <div class="workflow-grid">
+                    <!-- 图片合成工作流 -->
+                    <div class="workflow-card">
+                        <div class="workflow-card-header">
+                            <div class="workflow-icon image-composition">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h3 class="workflow-title">图片合成工作流</h3>
+                            <p class="workflow-description">将产品图片与模特图片进行智能合成</p>
+                        </div>
+                        <div class="workflow-card-body">
+                            <ul class="workflow-features">
+                                <li><i class="fas fa-check"></i> 自动获取飞书表格数据</li>
+                                <li><i class="fas fa-check"></i> 产品图与模特图智能合成</li>
+                                <li><i class="fas fa-check"></i> 支持批量处理</li>
+                                <li><i class="fas fa-check"></i> 实时进度反馈</li>
+                            </ul>
+                            <button class="workflow-button primary" onclick="executeWorkflow('image_compose')">
+                                <i class="fas fa-spinner fa-spin spinner"></i>
+                                <span class="button-text">开始合成</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 图生视频工作流 -->
+                    <div class="workflow-card">
+                        <div class="workflow-card-header">
+                            <div class="workflow-icon image-to-video">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h3 class="workflow-title">图生视频工作流</h3>
+                            <p class="workflow-description">基于合成图片生成动态视频内容</p>
+                        </div>
+                        <div class="workflow-card-body">
+                            <ul class="workflow-features">
+                                <li><i class="fas fa-check"></i> 基于合成图生成视频</li>
+                                <li><i class="fas fa-check"></i> 多种视频效果选择</li>
+                                <li><i class="fas fa-check"></i> 高质量视频输出</li>
+                                <li><i class="fas fa-check"></i> 自动上传到飞书</li>
+                            </ul>
+                            <button class="workflow-button success" onclick="executeWorkflow('image_to_video')">
+                                <i class="fas fa-spinner fa-spin spinner"></i>
+                                <span class="button-text">生成视频</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 完整工作流 -->
+                    <div class="workflow-card">
+                        <div class="workflow-card-header">
+                            <div class="workflow-icon full-workflow">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 class="workflow-title">完整工作流</h3>
+                            <p class="workflow-description">执行完整流程：图片合成 + 视频生成</p>
+                        </div>
+                        <div class="workflow-card-body">
+                            <ul class="workflow-features">
+                                <li><i class="fas fa-check"></i> 图片合成 + 图生视频</li>
+                                <li><i class="fas fa-check"></i> 自动化完整流程</li>
+                                <li><i class="fas fa-check"></i> 分阶段执行和报告</li>
+                                <li><i class="fas fa-check"></i> 最大化处理效率</li>
+                            </ul>
+                            <button class="workflow-button info" onclick="executeWorkflow('full_workflow')">
+                                <i class="fas fa-spinner fa-spin spinner"></i>
+                                <span class="button-text">执行完整流程</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 图片去背景处理 -->
+                    <div class="workflow-card">
+                        <div class="workflow-card-header">
+                            <div class="workflow-icon background-removal">
+                                <i class="fas fa-cut"></i>
+                            </div>
+                            <h3 class="workflow-title">图片去背景处理</h3>
+                            <p class="workflow-description">使用AI模型批量移除图片背景</p>
+                        </div>
+                        <div class="workflow-card-body">
+                            <ul class="workflow-features">
+                                <li><i class="fas fa-check"></i> AI智能背景移除</li>
+                                <li><i class="fas fa-check"></i> 多种模型可选</li>
+                                <li><i class="fas fa-check"></i> 批量处理支持</li>
+                                <li><i class="fas fa-check"></i> 高质量输出</li>
+                            </ul>
+                            <button class="workflow-button warning" onclick="executeWorkflow('background_removal')">
+                                <i class="fas fa-spinner fa-spin spinner"></i>
+                                <span class="button-text">去除背景</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 状态显示区域 -->
+                <div class="status-container" id="statusContainer">
+                    <div class="status-header">
+                        <div class="status-icon running" id="statusIcon">
+                            <i class="fas fa-cog fa-spin"></i>
+                        </div>
+                        <div class="status-title" id="statusTitle">工作流执行中...</div>
+                    </div>
+                    <div class="status-content" id="statusContent"></div>
+                </div>
+                
+                <!-- 日志显示区域 -->
+                <div class="logs-card" style="margin-top: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                    <div class="logs-header" style="padding: 20px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0; color: #2c3e50;"><i class="fas fa-terminal me-2"></i>执行日志</h4>
+                        <button id="clear-logs" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-trash me-1"></i>清空
+                        </button>
+                    </div>
+                    <div class="logs-content" style="padding: 20px;">
+                        <div id="logs-container" class="logs-container" style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-family: 'Courier New', monospace; font-size: 0.9rem; max-height: 300px; overflow-y: auto; white-space: pre-wrap;">
+                            <div class="log-item info" style="color: #6c757d;">等待工作流执行...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                <strong class="me-auto">系统通知</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                消息内容
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 侧边栏折叠/展开功能
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            // 保存状态到localStorage
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+        
+        // 页面加载时恢复侧边栏状态
+        document.addEventListener('DOMContentLoaded', function() {
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            const sidebar = document.getElementById('sidebar');
+            
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+            } else {
+                sidebar.classList.remove('collapsed');
+            }
+            
+            // 移动端默认折叠
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('collapsed');
+            }
+        });
+        
+        // 响应式处理
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('collapsed');
+            }
+        });
+        
+        // 工作流执行函数
+        async function executeWorkflow(workflowType) {
+            const button = event.target.closest('.workflow-button');
+            const statusContainer = document.getElementById('statusContainer');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusContent = document.getElementById('statusContent');
+            
+            // 禁用所有按钮
+            const allButtons = document.querySelectorAll('.workflow-button');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('loading');
+            });
+            
+            // 清空日志并添加开始信息
+            clearLogs();
+            addLogMessage('开始执行工作流: ' + getWorkflowName(workflowType), 'info');
+            
+            // 显示状态容器
+            statusContainer.classList.add('show');
+            statusIcon.className = 'status-icon running';
+            statusIcon.innerHTML = '<i class="fas fa-cog fa-spin"></i>';
+            
+            // 设置状态标题
+            const workflowNames = {
+                'image_compose': '图片合成工作流',
+                'image_to_video': '图生视频工作流',
+                'full_workflow': '完整工作流',
+                'background_removal': '图片去背景处理'
+            };
+            statusTitle.textContent = `${workflowNames[workflowType]} 执行中...`;
+            statusContent.textContent = '正在初始化工作流...\n';
+            
+            try {
+                // 发送执行请求
+                const response = await fetch('/api/workflow/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: workflowType
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 开始轮询状态
+                    addLogMessage('工作流已启动，正在执行...', 'info');
+                    pollWorkflowStatus(workflowType, workflowNames, statusIcon, statusTitle, statusContent, allButtons);
+                } else {
+                    // 启动失败
+                    statusIcon.className = 'status-icon error';
+                    statusIcon.innerHTML = '<i class="fas fa-times"></i>';
+                    statusTitle.textContent = `${workflowNames[workflowType]} 启动失败`;
+                    statusContent.textContent += `\n\n❌ 工作流启动失败：\n${result.message || '未知错误'}`;
+                    
+                    addLogMessage('工作流启动失败: ' + (result.message || '未知错误'), 'error');
+                    showToast('工作流启动失败！', 'error');
+                    
+                    // 恢复按钮状态
+                    allButtons.forEach(btn => {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                    });
+                }
+            } catch (error) {
+                // 错误状态
+                statusIcon.className = 'status-icon error';
+                statusIcon.innerHTML = '<i class="fas fa-times"></i>';
+                statusTitle.textContent = `${workflowNames[workflowType]} 启动失败`;
+                statusContent.textContent += `\n\n❌ 请求失败：\n${error.message}`;
+                
+                addLogMessage('请求失败: ' + error.message, 'error');
+                showToast('请求失败！', 'error');
+                
+                // 恢复按钮状态
+                allButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                });
+            }
+        }
+        
+        // 获取工作流名称
+        function getWorkflowName(workflowType) {
+            const workflowNames = {
+                'image_compose': '图片合成工作流',
+                'image_to_video': '图生视频工作流',
+                'full_workflow': '完整工作流',
+                'background_removal': '图片去背景处理'
+            };
+            return workflowNames[workflowType] || workflowType;
+        }
+        
+        // 添加日志消息
+        function addLogMessage(message, type = 'info') {
+            const logsContainer = document.getElementById('logs-container');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logItem = document.createElement('div');
+            logItem.className = `log-item ${type}`;
+            
+            let icon = '';
+            let color = '';
+            switch (type) {
+                case 'success':
+                    icon = '✅';
+                    color = '#28a745';
+                    break;
+                case 'error':
+                    icon = '❌';
+                    color = '#dc3545';
+                    break;
+                case 'warning':
+                    icon = '⚠️';
+                    color = '#ffc107';
+                    break;
+                default:
+                    icon = 'ℹ️';
+                    color = '#17a2b8';
+            }
+            
+            logItem.style.color = color;
+            logItem.style.marginBottom = '5px';
+            logItem.innerHTML = `[${timestamp}] ${icon} ${message}`;
+            
+            logsContainer.appendChild(logItem);
+            
+            // 自动滚动到底部
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+        
+        // 清空日志
+        function clearLogs() {
+            const logsContainer = document.getElementById('logs-container');
+            logsContainer.innerHTML = '';
+        }
+        
+        // 清空日志按钮事件
+        document.getElementById('clear-logs').addEventListener('click', function() {
+            clearLogs();
+            addLogMessage('日志已清空', 'info');
+        });
+        
+        // 显示Toast通知
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = toast.querySelector('.toast-header i');
+            
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            if (type === 'success') {
+                toastIcon.className = 'fas fa-check-circle text-success me-2';
+            } else if (type === 'error') {
+                toastIcon.className = 'fas fa-exclamation-circle text-danger me-2';
+            } else {
+                toastIcon.className = 'fas fa-info-circle text-primary me-2';
+            }
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+        
+        // 轮询工作流状态
+        function pollWorkflowStatus(workflowType, workflowNames, statusIcon, statusTitle, statusContent, allButtons) {
+            const pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/workflow/status');
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const status = await response.json();
+                    
+                    // 更新状态显示
+                    if (status.running) {
+                        statusTitle.textContent = `${workflowNames[workflowType]} 执行中... (${status.progress}%)`;
+                        statusContent.textContent = `当前任务: ${status.current_task || ''}\n状态: ${status.message || ''}\n进度: ${status.progress}%`;
+                        
+                        // 更新日志 - 直接显示所有main.py原始日志
+                        if (status.logs && status.logs.length > 0) {
+                            const logContainer = document.getElementById('logs-container');
+                            if (logContainer) {
+                                // 直接显示所有日志，保持原始格式
+                                const allLogs = status.logs.join('\n');
+                                if (logContainer.textContent !== allLogs) {
+                                    logContainer.textContent = allLogs;
+                                    logContainer.scrollTop = logContainer.scrollHeight;
+                                }
+                            }
+                        }
+                    } else {
+                        // 工作流已完成
+                        clearInterval(pollInterval);
+                        
+                        // 检查最终状态
+                        const logs_text = status.logs ? status.logs.join('\n') : '';
+                        const hasSkippedData = logs_text.includes('成功: 0') && logs_text.includes('跳过:');
+                        const hasError = logs_text.includes('❌') || logs_text.includes('执行失败');
+                        
+                        if (hasError) {
+                            // 执行失败
+                            statusIcon.className = 'status-icon error';
+                            statusIcon.innerHTML = '<i class="fas fa-times"></i>';
+                            statusTitle.textContent = `${workflowNames[workflowType]} 执行失败`;
+                            statusContent.textContent += `\n\n❌ 工作流执行失败\n${status.message || ''}`;
+                            addLogMessage('工作流执行失败: ' + (status.message || ''), 'error');
+                            showToast('工作流执行失败！', 'error');
+                        } else if (hasSkippedData) {
+                            // 完成但数据被跳过
+                            statusIcon.className = 'status-icon warning';
+                            statusIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                            statusTitle.textContent = `${workflowNames[workflowType]} 完成（数据被跳过）`;
+                            statusContent.textContent += `\n\n⚠️ 工作流完成，但所有数据都被跳过\n${status.message || ''}`;
+                            addLogMessage('工作流完成，但数据被跳过: ' + (status.message || ''), 'warning');
+                            showToast('工作流完成，但数据被跳过！', 'warning');
+                        } else {
+                            // 执行成功
+                            statusIcon.className = 'status-icon success';
+                            statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+                            statusTitle.textContent = `${workflowNames[workflowType]} 执行完成`;
+                            statusContent.textContent += `\n\n✅ 工作流执行成功！\n${status.message || ''}`;
+                            addLogMessage('工作流执行成功', 'success');
+                            showToast('工作流执行成功！', 'success');
+                        }
+                        
+                        // 恢复按钮状态
+                        allButtons.forEach(btn => {
+                            btn.disabled = false;
+                            btn.classList.remove('loading');
+                        });
+                    }
+                } catch (error) {
+                    clearInterval(pollInterval);
+                    statusIcon.className = 'status-icon error';
+                    statusIcon.innerHTML = '<i class="fas fa-times"></i>';
+                    statusTitle.textContent = `${workflowNames[workflowType]} 状态检查失败`;
+                    statusContent.textContent += `\n\n❌ 状态检查失败：\n${error.message}`;
+                    addLogMessage('状态检查失败: ' + error.message, 'error');
+                    showToast('状态检查失败！', 'error');
+                    
+                    // 恢复按钮状态
+                    allButtons.forEach(btn => {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                    });
+                }
+            }, 1000); // 每秒轮询一次
+        }
+    </script>
+</body>
+</html>

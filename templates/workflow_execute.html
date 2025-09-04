@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作流执行</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+        
+        .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.2);
+            border-left-color: white;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            padding: 0;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .content-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .content-body {
+            padding: 30px;
+        }
+        
+        /* 工作流信息卡片 */
+        .workflow-info {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .workflow-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .workflow-description {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .workflow-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        /* 节点输入表单 */
+        .node-form {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .node-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .node-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .node-icon.text { background: #e8f5e8; color: #2e7d32; }
+        .node-icon.image { background: #fff3e0; color: #f57c00; }
+        .node-icon.video { background: #fce4ec; color: #c2185b; }
+        .node-icon.audio { background: #e1f5fe; color: #0277bd; }
+        .node-icon.number { background: #f3e5f5; color: #7b1fa2; }
+        
+        .node-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .node-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 5px 0 0 0;
+        }
+        
+        .required-indicator {
+            color: #dc3545;
+            margin-left: 5px;
+        }
+        
+        /* 文件上传区域 */
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background-color: #f0f4ff;
+        }
+        
+        .file-upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-text {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .file-preview {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .file-preview.show {
+            display: block;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .file-size {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* 执行状态 */
+        .execution-status {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid #e9ecef;
+            display: none;
+        }
+        
+        .execution-status.show {
+            display: block;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .status-icon.running {
+            background: #e3f2fd;
+            color: #1976d2;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-icon.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status-icon.error {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .logs-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px 0;
+        }
+        
+        .log-timestamp {
+            color: #6c757d;
+            margin-right: 10px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-header {
+                padding: 15px 20px;
+            }
+            
+            .content-body {
+                padding: 20px;
+            }
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="sidebar-title">
+                <i class="fas fa-play me-2"></i>
+                工作流执行
+            </h4>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" data-page="products">
+                        <i class="fas fa-box me-2"></i>
+                        <span class="nav-text">商品选择页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/workflow" data-page="workflow">
+                        <i class="fas fa-cogs me-2"></i>
+                        <span class="nav-text">工作流执行</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/workflow-management" data-page="workflow-management">
+                        <i class="fas fa-project-diagram me-2"></i>
+                        <span class="nav-text">工作流管理</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="main-content" id="mainContent">
+        <!-- 头部工具栏 -->
+        <div class="content-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-play me-2"></i>
+                    工作流执行
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left me-1"></i>返回
+                    </button>
+                    <button class="btn btn-primary" id="executeBtn" onclick="executeWorkflow()">
+                        <i class="fas fa-play me-1"></i>执行工作流
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体内容 -->
+        <div class="content-body">
+            <!-- 加载状态 -->
+            <div class="loading text-center" id="loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+                <p class="mt-2">正在加载工作流...</p>
+            </div>
+
+            <!-- 工作流信息 -->
+            <div class="workflow-info" id="workflowInfo" style="display: none;">
+                <h2 class="workflow-title" id="workflowTitle">工作流名称</h2>
+                <p class="workflow-description" id="workflowDescription">工作流描述</p>
+                <div class="workflow-meta">
+                    <span id="nodeCount"><i class="fas fa-sitemap me-1"></i>0 个节点</span>
+                    <span id="createdAt"><i class="fas fa-calendar me-1"></i>创建时间</span>
+                </div>
+            </div>
+
+            <!-- 节点输入表单 -->
+            <div id="nodeFormsContainer">
+                <!-- 节点表单将在这里动态生成 -->
+            </div>
+
+            <!-- 执行状态 -->
+            <div class="execution-status" id="executionStatus">
+                <div class="status-header">
+                    <div class="status-icon running" id="statusIcon">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1" id="statusTitle">正在执行工作流...</h5>
+                        <p class="mb-0 text-muted" id="statusMessage">请稍候</p>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress">
+                        <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="logs-container" id="logsContainer">
+                    <!-- 执行日志将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 工作流执行 JavaScript -->
+    <script>
+        let workflowId = null;
+        let workflow = null;
+        let executionId = null;
+        let statusCheckInterval = null;
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL获取工作流ID
+            const pathParts = window.location.pathname.split('/');
+            workflowId = pathParts[pathParts.length - 1];
+            
+            if (workflowId) {
+                loadWorkflow();
+            } else {
+                showError('未指定工作流ID');
+            }
+            
+            initializeEventListeners();
+        });
+        
+        // 初始化事件监听器
+        function initializeEventListeners() {
+            // 侧边栏切换
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('show');
+            });
+        }
+        
+        // 加载工作流信息
+        async function loadWorkflow() {
+            try {
+                showLoading(true);
+                const response = await fetch(`/api/workflows/${workflowId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    workflow = result.data;
+                    renderWorkflowInfo(workflow);
+                    renderNodeForms(workflow.nodes || []);
+                } else {
+                    showError('加载工作流失败: ' + result.error);
+                }
+            } catch (error) {
+                showError('加载工作流失败: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // 渲染工作流信息
+        function renderWorkflowInfo(workflow) {
+            document.getElementById('workflowTitle').textContent = workflow.name;
+            document.getElementById('workflowDescription').textContent = workflow.description || '暂无描述';
+            document.getElementById('nodeCount').innerHTML = `<i class="fas fa-sitemap me-1"></i>${workflow.nodes?.length || 0} 个节点`;
+            document.getElementById('createdAt').innerHTML = `<i class="fas fa-calendar me-1"></i>${formatDate(workflow.created_at)}`;
+            
+            document.getElementById('workflowInfo').style.display = 'block';
+        }
+        
+        // 渲染节点输入表单
+        function renderNodeForms(nodes) {
+            const container = document.getElementById('nodeFormsContainer');
+            
+            if (nodes.length === 0) {
+                container.innerHTML = '<div class="alert alert-warning">此工作流没有配置任何节点</div>';
+                document.getElementById('executeBtn').disabled = true;
+                return;
+            }
+            
+            const html = nodes.map(node => {
+                const iconClass = getNodeIconClass(node.type);
+                const inputHtml = generateNodeInput(node);
+                
+                return `
+                    <div class="node-form" data-node-id="${node.id}">
+                        <div class="node-header">
+                            <div class="node-icon ${node.type}">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div>
+                                <h5 class="node-title">
+                                    ${escapeHtml(node.name)}
+                                    ${node.required ? '<span class="required-indicator">*</span>' : ''}
+                                </h5>
+                                ${node.description ? `<p class="node-description">${escapeHtml(node.description)}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="node-input">
+                            ${inputHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+            
+            // 初始化文件上传
+            initializeFileUploads();
+        }
+        
+        // 生成节点输入HTML
+        function generateNodeInput(node) {
+            const defaultValue = node.default_value || '';
+            const required = node.required ? 'required' : '';
+            
+            switch (node.type) {
+                case 'text':
+                    return `
+                        <textarea class="form-control" id="node_${node.id}" rows="3" 
+                                placeholder="请输入文本内容..." ${required}>${escapeHtml(defaultValue)}</textarea>
+                    `;
+                    
+                case 'number':
+                    return `
+                        <input type="number" class="form-control" id="node_${node.id}" 
+                               placeholder="请输入数字..." value="${escapeHtml(defaultValue)}" ${required}>
+                    `;
+                    
+                case 'image':
+                case 'video':
+                case 'audio':
+                    const acceptTypes = {
+                        'image': 'image/*',
+                        'video': 'video/*',
+                        'audio': 'audio/*'
+                    };
+                    
+                    return `
+                        <div class="file-upload-area" onclick="document.getElementById('file_${node.id}').click()">
+                            <div class="file-upload-icon">
+                                <i class="${getNodeIconClass(node.type)}"></i>
+                            </div>
+                            <div class="file-upload-text">
+                                点击选择${getNodeTypeLabel(node.type)}文件，或拖拽文件到此处
+                            </div>
+                            <small class="text-muted">支持的格式: ${acceptTypes[node.type]}</small>
+                        </div>
+                        <input type="file" id="file_${node.id}" accept="${acceptTypes[node.type]}" 
+                               style="display: none;" ${required}>
+                        <div class="file-preview" id="preview_${node.id}">
+                            <div class="file-info">
+                                <span class="file-name" id="filename_${node.id}"></span>
+                                <span class="file-size" id="filesize_${node.id}"></span>
+                            </div>
+                        </div>
+                    `;
+                    
+                default:
+                    return `
+                        <input type="text" class="form-control" id="node_${node.id}" 
+                               placeholder="请输入内容..." value="${escapeHtml(defaultValue)}" ${required}>
+                    `;
+            }
+        }
+        
+        // 初始化文件上传
+        function initializeFileUploads() {
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                const nodeId = input.id.replace('file_', '');
+                const uploadArea = input.parentElement.querySelector('.file-upload-area');
+                const preview = document.getElementById(`preview_${nodeId}`);
+                
+                input.addEventListener('change', function(e) {
+                    handleFileSelect(e.target.files[0], nodeId);
+                });
+                
+                // 拖拽上传
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFileSelect(files[0], nodeId);
+                        input.files = files;
+                    }
+                });
+            });
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(file, nodeId) {
+            if (!file) return;
+            
+            const preview = document.getElementById(`preview_${nodeId}`);
+            const filename = document.getElementById(`filename_${nodeId}`);
+            const filesize = document.getElementById(`filesize_${nodeId}`);
+            
+            if (filename) filename.textContent = file.name;
+            if (filesize) filesize.textContent = formatFileSize(file.size);
+            if (preview) preview.classList.add('show');
+            
+            console.log(`文件已选择: ${file.name}, 大小: ${formatFileSize(file.size)}`);
+        }
+        
+        // 执行工作流
+        async function executeWorkflow() {
+            try {
+                // 收集所有节点的输入数据
+                const inputData = {};
+                let hasError = false;
+                
+                for (const node of workflow.nodes || []) {
+                    const value = getNodeValue(node);
+                    
+                    if (node.required && (!value || value === '')) {
+                        showError(`请填写必填字段: ${node.name}`);
+                        hasError = true;
+                        break;
+                    }
+                    
+                    inputData[node.id] = value;
+                }
+                
+                if (hasError) return;
+                
+                // 显示执行状态
+                showExecutionStatus('running', '正在执行工作流...', '请稍候');
+                document.getElementById('executeBtn').disabled = true;
+                
+                // 构建节点信息列表
+                const nodeInfoList = [];
+                for (const node of workflow.nodes || []) {
+                    const value = inputData[node.id];
+                    nodeInfoList.push({
+                        nodeId: node.id,
+                        nodeName: node.name,
+                        nodeType: node.type,
+                        value: value
+                    });
+                }
+                
+                // 发送执行请求（调用通用工作流接口）
+                const response = await fetch('/api/workflows/generic/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        webappId: workflowId,
+                        nodeInfoList: nodeInfoList
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    executionId = result.data ? result.data.execution_id : result.execution_id;
+                    console.log('获取到执行ID:', executionId);
+                    startStatusCheck();
+                } else {
+                    showExecutionStatus('error', '执行失败', result.error);
+                    document.getElementById('executeBtn').disabled = false;
+                }
+            } catch (error) {
+                showExecutionStatus('error', '执行失败', error.message);
+                document.getElementById('executeBtn').disabled = false;
+            }
+        }
+        
+        // 获取节点值
+        function getNodeValue(node) {
+            const element = document.getElementById(`node_${node.id}`) || document.getElementById(`file_${node.id}`);
+            
+            if (!element) {
+                console.log(`未找到节点元素: ${node.id}`);
+                return null;
+            }
+            
+            if (element.type === 'file') {
+                const file = element.files[0] || null;
+                if (file) {
+                    console.log(`获取文件节点值: ${node.id}, 文件: ${file.name}`);
+                    // 对于文件类型，返回文件名而不是文件对象
+                    return file.name;
+                } else {
+                    console.log(`文件节点 ${node.id} 没有选择文件`);
+                    return null;
+                }
+            } else {
+                const value = element.value;
+                console.log(`获取节点值: ${node.id} = ${value}`);
+                return value;
+            }
+        }
+        
+        // 开始状态检查
+        function startStatusCheck() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+            
+            statusCheckInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/executions/${executionId}`);
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const execution = result.data;
+                        updateExecutionStatus(execution);
+                        
+                        if (execution.status === 'completed' || execution.status === 'failed') {
+                            clearInterval(statusCheckInterval);
+                            document.getElementById('executeBtn').disabled = false;
+                        }
+                    }
+                } catch (error) {
+                    console.error('状态检查失败:', error);
+                }
+            }, 2000);
+        }
+        
+        // 更新执行状态
+        function updateExecutionStatus(execution) {
+            const progress = execution.progress || 0;
+            const status = execution.status;
+            
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            if (status === 'completed') {
+                showExecutionStatus('success', '执行完成', '工作流已成功执行');
+            } else if (status === 'failed') {
+                showExecutionStatus('error', '执行失败', execution.error_message || '未知错误');
+            } else {
+                showExecutionStatus('running', '正在执行...', `进度: ${progress}%`);
+            }
+            
+            // 更新日志
+            if (execution.logs) {
+                updateLogs(execution.logs);
+            }
+        }
+        
+        // 显示执行状态
+        function showExecutionStatus(type, title, message) {
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+            const executionStatus = document.getElementById('executionStatus');
+            
+            // 重置图标类
+            statusIcon.className = `status-icon ${type}`;
+            
+            // 设置图标
+            let iconClass = '';
+            switch (type) {
+                case 'running':
+                    iconClass = 'fas fa-spinner fa-spin';
+                    break;
+                case 'success':
+                    iconClass = 'fas fa-check';
+                    break;
+                case 'error':
+                    iconClass = 'fas fa-times';
+                    break;
+            }
+            
+            statusIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            statusTitle.textContent = title;
+            statusMessage.textContent = message;
+            
+            executionStatus.classList.add('show');
+        }
+        
+        // 更新日志
+        function updateLogs(logs) {
+            const container = document.getElementById('logsContainer');
+            
+            const html = logs.map(log => `
+                <div class="log-entry">
+                    <span class="log-timestamp">${formatTime(log.timestamp)}</span>
+                    <span class="log-message">${escapeHtml(log.message)}</span>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+        
+        // 显示/隐藏加载状态
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (show) {
+                loading.classList.add('show');
+            } else {
+                loading.classList.remove('show');
+            }
+        }
+        
+        // 获取节点图标类
+        function getNodeIconClass(type) {
+            const icons = {
+                'text': 'fas fa-font',
+                'image': 'fas fa-image',
+                'video': 'fas fa-video',
+                'audio': 'fas fa-microphone',
+                'number': 'fas fa-hashtag'
+            };
+            return icons[type] || 'fas fa-question';
+        }
+        
+        // 获取节点类型标签
+        function getNodeTypeLabel(type) {
+            const labels = {
+                'text': '文本',
+                'image': '图片',
+                'video': '视频',
+                'audio': '语音',
+                'number': '数字'
+            };
+            return labels[type] || type;
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 格式化日期
+        function formatDate(timestamp) {
+            if (!timestamp) return '未知';
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleString('zh-CN');
+        }
+        
+        // 格式化时间
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleTimeString('zh-CN');
+        }
+        
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 显示错误消息
+        function showError(message) {
+            alert('错误: ' + message);
+        }
+        
+        // 页面卸载时清理定时器
+        window.addEventListener('beforeunload', function() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+        });
+    </script>
+</body>
+</html>

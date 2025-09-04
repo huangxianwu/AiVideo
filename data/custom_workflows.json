@@ -1,0 +1,35 @@
+{
+  "workflows": {},
+  "statistics": {},
+  "metadata": {
+    "last_updated": "2025-09-04T21:41:58.555270"
+  },
+  "custom_workflows": {
+    "ID01": {
+      "name": "ID01",
+      "description": "",
+      "created_at": "2025-09-04T20:06:01.324025",
+      "updated_at": "2025-09-04T21:34:21.501654",
+      "nodes": [
+        {
+          "node_id": "node_1",
+          "name": "n01",
+          "type": "text",
+          "description": "",
+          "required": true,
+          "default_value": null,
+          "created_at": "2025-09-04T21:34:21.500686"
+        },
+        {
+          "node_id": "node_22",
+          "name": "sss",
+          "type": "text",
+          "description": "",
+          "required": true,
+          "default_value": null,
+          "created_at": "2025-09-04T21:34:21.501640"
+        }
+      ]
+    }
+  }
+}

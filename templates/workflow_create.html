@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新建工作流</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-title {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            color: white;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .card-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 20px 24px;
+            border-radius: 8px 8px 0 0;
+        }
+        .card-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .card-body {
+            padding: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            padding: 10px 12px;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .node-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .node-title {
+            font-weight: 600;
+            color: #495057;
+            margin: 0;
+        }
+        .btn-remove-node {
+            padding: 4px 8px;
+            font-size: 0.875rem;
+        }
+        .row {
+            margin-left: -8px;
+            margin-right: -8px;
+        }
+        .col-md-6 {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+        .alert {
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .required {
+            color: #dc3545;
+        }
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        .nodes-section {
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .nodes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .nodes-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
+            margin: 0;
+        }
+        .empty-nodes {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 2px dashed #dee2e6;
+        }
+        .empty-nodes-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="header">
+            <h1 class="page-title">新建工作流</h1>
+            <button class="btn btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> 返回列表
+            </button>
+        </div>
+
+        <!-- 消息提示 -->
+        <div id="alertContainer"></div>
+
+        <!-- 工作流表单 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">工作流信息</h2>
+            </div>
+            <div class="card-body">
+                <form id="workflowForm">
+                    <div class="form-group">
+                        <label for="workflowId" class="form-label">
+                            工作流ID <span class="required">*</span>
+                        </label>
+                        <input type="text" id="workflowId" class="form-control" required 
+                               placeholder="请输入唯一的工作流ID，如：WF001">
+                        <div class="form-text">工作流的唯一标识符，只能包含字母、数字和下划线</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workflowName" class="form-label">
+                            工作流名称 <span class="required">*</span>
+                        </label>
+                        <input type="text" id="workflowName" class="form-control" required 
+                               placeholder="请输入工作流名称">
+                        <div class="form-text">工作流的显示名称，用于界面展示</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workflowDescription" class="form-label">描述</label>
+                        <textarea id="workflowDescription" class="form-control" rows="3" 
+                                  placeholder="请输入工作流描述（可选）"></textarea>
+                        <div class="form-text">工作流的详细描述，帮助其他用户理解工作流的用途</div>
+                    </div>
+                    
+                    <!-- 节点管理部分 -->
+                    <div class="nodes-section">
+                        <div class="nodes-header">
+                            <h3 class="nodes-title">工作流节点</h3>
+                            <button type="button" class="btn btn-success" onclick="addNode()">
+                                <i class="fas fa-plus"></i> 新增节点
+                            </button>
+                        </div>
+                        
+                        <div id="nodesContainer">
+                            <div id="emptyNodes" class="empty-nodes">
+                                <div class="empty-nodes-icon">🔗</div>
+                                <p>暂无节点</p>
+                                <p class="text-muted">点击上方按钮添加工作流节点</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i> 保存工作流
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-times"></i> 取消
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let nodeCounter = 0;
+        let nodes = [];
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFormSubmission();
+        });
+
+        // 设置表单提交
+        function setupFormSubmission() {
+            document.getElementById('workflowForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await saveWorkflow();
+            });
+        }
+
+        // 添加节点
+        function addNode() {
+            nodeCounter++;
+            const nodeId = `node_${nodeCounter}`;
+            
+            const nodeData = {
+                id: nodeId,
+                name: '',
+                node_id: '',
+                type: 'text'
+            };
+            
+            nodes.push(nodeData);
+            renderNodes();
+        }
+
+        // 移除节点
+        function removeNode(nodeId) {
+            nodes = nodes.filter(node => node.id !== nodeId);
+            renderNodes();
+        }
+
+        // 渲染节点列表
+        function renderNodes() {
+            const container = document.getElementById('nodesContainer');
+            const emptyNodes = document.getElementById('emptyNodes');
+            
+            if (nodes.length === 0) {
+                emptyNodes.classList.remove('hidden');
+                container.innerHTML = '';
+                container.appendChild(emptyNodes);
+                return;
+            }
+            
+            emptyNodes.classList.add('hidden');
+            container.innerHTML = '';
+            
+            nodes.forEach(node => {
+                const nodeElement = createNodeElement(node);
+                container.appendChild(nodeElement);
+            });
+        }
+
+        // 创建节点元素
+        function createNodeElement(node) {
+            const div = document.createElement('div');
+            div.className = 'node-item';
+            div.innerHTML = `
+                <div class="node-header">
+                    <h4 class="node-title">节点 ${node.id.replace('node_', '')}</h4>
+                    <button type="button" class="btn btn-danger btn-remove-node" onclick="removeNode('${node.id}')">
+                        <i class="fas fa-trash"></i> 删除
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">节点名称 <span class="required">*</span></label>
+                            <input type="text" class="form-control" 
+                                   value="${node.name}" 
+                                   onchange="updateNodeData('${node.id}', 'name', this.value)"
+                                   placeholder="请输入节点名称" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">节点ID <span class="required">*</span></label>
+                            <input type="text" class="form-control" 
+                                   value="${node.node_id}" 
+                                   onchange="updateNodeData('${node.id}', 'node_id', this.value)"
+                                   placeholder="请输入节点ID" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">节点类型 <span class="required">*</span></label>
+                    <select class="form-control" onchange="updateNodeData('${node.id}', 'type', this.value)">
+                        <option value="text" ${node.type === 'text' ? 'selected' : ''}>文字</option>
+                        <option value="number" ${node.type === 'number' ? 'selected' : ''}>数字</option>
+                        <option value="image" ${node.type === 'image' ? 'selected' : ''}>图片</option>
+                        <option value="video" ${node.type === 'video' ? 'selected' : ''}>视频</option>
+                    </select>
+                </div>
+                
+                <div id="nodeTypeContent_${node.id}">
+                    ${renderNodeTypeContent(node)}
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // 渲染节点类型特定内容
+        function renderNodeTypeContent(node) {
+            switch (node.type) {
+                case 'image':
+                    return `
+                        <div class="form-group">
+                            <label class="form-label">图片上传</label>
+                            <input type="file" class="form-control" accept="image/*" 
+                                   onchange="handleFileUpload('${node.id}', this)">
+                            <div class="form-text">支持 JPG、PNG、GIF 格式</div>
+                        </div>
+                    `;
+                case 'video':
+                    return `
+                        <div class="form-group">
+                            <label class="form-label">视频上传</label>
+                            <input type="file" class="form-control" accept="video/*" 
+                                   onchange="handleFileUpload('${node.id}', this)">
+                            <div class="form-text">支持 MP4、AVI、MOV 格式</div>
+                        </div>
+                    `;
+                case 'text':
+                    return `
+                        <div class="form-group">
+                            <label class="form-label">文本内容</label>
+                            <textarea class="form-control" rows="3" 
+                                      placeholder="请输入文本内容"
+                                      onchange="updateNodeData('${node.id}', 'content', this.value)"></textarea>
+                        </div>
+                    `;
+                case 'number':
+                    return `
+                        <div class="form-group">
+                            <label class="form-label">数值</label>
+                            <input type="number" class="form-control" 
+                                   placeholder="请输入数值"
+                                   onchange="updateNodeData('${node.id}', 'content', this.value)">
+                        </div>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        // 更新节点数据
+        function updateNodeData(nodeId, field, value) {
+            const node = nodes.find(n => n.id === nodeId);
+            if (node) {
+                node[field] = value;
+                
+                // 如果更新的是类型，需要重新渲染节点内容
+                if (field === 'type') {
+                    const contentContainer = document.getElementById(`nodeTypeContent_${nodeId}`);
+                    if (contentContainer) {
+                        contentContainer.innerHTML = renderNodeTypeContent(node);
+                    }
+                }
+            }
+        }
+
+        // 处理文件上传
+        function handleFileUpload(nodeId, input) {
+            const file = input.files[0];
+            if (file) {
+                // 这里可以添加文件上传逻辑
+                console.log(`节点 ${nodeId} 上传文件:`, file.name);
+                updateNodeData(nodeId, 'file', file);
+            }
+        }
+
+        // 保存工作流
+        async function saveWorkflow() {
+            const workflowId = document.getElementById('workflowId').value.trim();
+            const workflowName = document.getElementById('workflowName').value.trim();
+            const description = document.getElementById('workflowDescription').value.trim();
+            
+            // 验证基本信息
+            if (!workflowId || !workflowName) {
+                showAlert('error', '请填写工作流ID和名称');
+                return;
+            }
+            
+            // 验证工作流ID格式
+            if (!/^[a-zA-Z0-9_]+$/.test(workflowId)) {
+                showAlert('error', '工作流ID只能包含字母、数字和下划线');
+                return;
+            }
+            
+            // 验证节点信息
+            for (const node of nodes) {
+                if (!node.name || !node.node_id) {
+                    showAlert('error', '请填写所有节点的名称和ID');
+                    return;
+                }
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+                
+                // 创建工作流
+                const response = await fetch('/api/workflows', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        workflow_id: workflowId,
+                        workflow_name: workflowName,
+                        description: description
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 添加节点
+                    for (const node of nodes) {
+                        await addNodeToWorkflow(workflowId, node);
+                    }
+                    
+                    showAlert('success', '工作流创建成功');
+                    
+                    // 延迟跳转
+                    setTimeout(() => {
+                        window.location.href = '/workflow';
+                    }, 1500);
+                } else {
+                    showAlert('error', result.message || '创建工作流失败');
+                }
+            } catch (error) {
+                console.error('保存工作流失败:', error);
+                showAlert('error', '网络错误，请稍后重试');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        // 添加节点到工作流
+        async function addNodeToWorkflow(workflowId, node) {
+            try {
+                const response = await fetch(`/api/workflows/${workflowId}/nodes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        node_name: node.name,
+                        node_id: node.node_id,
+                        node_type: node.type
+                    })
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('添加节点失败:', result.message);
+                }
+            } catch (error) {
+                console.error('添加节点失败:', error);
+            }
+        }
+
+        // 返回列表页
+        function goBack() {
+            if (nodes.length > 0 || document.getElementById('workflowName').value.trim()) {
+                if (confirm('确定要离开吗？未保存的更改将丢失。')) {
+                    window.location.href = '/workflow';
+                }
+            } else {
+                window.location.href = '/workflow';
+            }
+        }
+
+        // 显示提示消息
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            
+            const alertHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    <i class="fas ${iconClass}"></i> ${escapeHtml(message)}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHtml;
+            
+            // 滚动到顶部显示消息
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // 5秒后自动隐藏
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000);
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

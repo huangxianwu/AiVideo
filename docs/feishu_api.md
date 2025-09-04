@@ -85,7 +85,114 @@ PUT https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{spreadsheet_token}/
 
 ## 文件上传API
 
-### 上传图片到飞书云空间
+### 电子表格图片上传专门流程
+
+**重要说明：** 若需要在电子表格中添加图片，必须使用以下专门流程，不能使用普通的文件上传接口。
+
+#### 步骤1：上传图片素材到飞书云空间
+
+**接口地址：**
+```
+POST https://open.feishu.cn/open-apis/drive/v1/medias/upload_all
+```
+
+**请求方式：** multipart/form-data
+
+**必需参数：**
+- `file_name`: 要上传的素材的名称（如 "demo.jpeg"）
+- `parent_type`: 上传点类型，电子表格图片必须设为 `"sheet_image"`
+- `parent_node`: 电子表格的 `spreadsheet_token`
+- `size`: 文件大小（字节）
+- `file`: 文件的二进制内容
+
+**可选参数：**
+- `checksum`: 文件的 Adler-32 校验和
+- `extra`: 特殊场景下的额外参数
+
+**Python实现示例：**
+```python
+def upload_image_to_feishu(self, image_path: str) -> str:
+    """上传图片素材到飞书云空间，用于电子表格"""
+    import os
+    from requests_toolbelt import MultipartEncoder
+    
+    file_size = os.path.getsize(image_path)
+    url = "https://open.feishu.cn/open-apis/drive/v1/medias/upload_all"
+    
+    form = {
+        'file_name': os.path.basename(image_path),
+        'parent_type': 'sheet_image',
+        'parent_node': self.config.spreadsheet_token,
+        'size': str(file_size),
+        'file': (open(image_path, 'rb'))
+    }
+    
+    multi_form = MultipartEncoder(form)
+    headers = {
+        'Authorization': f'Bearer {self.get_tenant_access_token()}',
+        'Content-Type': multi_form.content_type
+    }
+    
+    response = requests.post(url, headers=headers, data=multi_form)
+    
+    if response.status_code == 200:
+        result = response.json()
+        return result['data']['file_token']
+    else:
+        raise Exception(f"上传失败: {response.text}")
+```
+
+#### 步骤2：写入图片到电子表格单元格
+
+**接口地址：**
+```
+POST https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{spreadsheet_token}/values_image
+```
+
+**请求头：**
+```python
+headers = {
+    "Authorization": f"Bearer {access_token}",
+    "Content-Type": "application/json"
+}
+```
+
+**请求体参数：**
+- `range`: 指定写入图片的单元格，格式为 `<sheetId>!<开始单元格>:<结束单元格>`
+- `image`: 图片的二进制流数组
+- `name`: 写入的图片名称（需加后缀名）
+
+**Python实现示例：**
+```python
+def write_image_to_cell(self, image_path: str, sheet_id: str, cell: str) -> bool:
+    """直接写入图片文件到电子表格单元格"""
+    url = f"https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/{self.config.spreadsheet_token}/values_image"
+    
+    # 读取图片二进制数据
+    with open(image_path, 'rb') as f:
+        image_data = list(f.read())
+    
+    payload = {
+        "range": f"{sheet_id}!{cell}:{cell}",
+        "image": image_data,
+        "name": os.path.basename(image_path)
+    }
+    
+    headers = {
+        "Authorization": f"Bearer {self.get_tenant_access_token()}",
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 200:
+        return True
+    else:
+        print(f"写入图片失败: {response.text}")
+        return False
+```
+
+### 普通文件上传（非电子表格）
 
 **接口地址：**
 ```
@@ -99,30 +206,7 @@ POST https://open.feishu.cn/open-apis/im/v1/files
 - `file_name`: 文件名
 - `file`: 文件二进制数据
 
-**Python实现示例：**
-```python
-def upload_image_to_feishu(self, image_path: str) -> str:
-    url = "https://open.feishu.cn/open-apis/im/v1/files"
-    
-    with open(image_path, 'rb') as f:
-        files = {
-            'file_type': (None, 'image'),
-            'file_name': (None, os.path.basename(image_path)),
-            'file': (os.path.basename(image_path), f, 'image/png')
-        }
-        
-        headers = {
-            "Authorization": f"Bearer {self.get_tenant_access_token()}"
-        }
-        
-        response = requests.post(url, files=files, headers=headers)
-        
-    if response.status_code == 200:
-        result = response.json()
-        return result['data']['file_key']
-    else:
-        raise Exception(f"上传失败: {response.text}")
-```
+**注意：** 此接口仅用于聊天消息等场景，不适用于电子表格图片上传。
 
 ## 错误处理
 
@@ -156,4 +240,6 @@ def retry_request(func, max_retries=3, delay=1):
 
 - [飞书开放平台文档](https://open.feishu.cn/document/)
 - [表格API文档](https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN)
-- [文件上传API文档](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/create)
+- [上传素材API文档](https://open.feishu.cn/document/server-docs/docs/drive-v1/media/upload_all)
+- [写入图片到电子表格API文档](https://open.feishu.cn/document/server-docs/docs/sheets-v3/data-operation/write-images)
+- [普通文件上传API文档](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/create)
