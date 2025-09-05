@@ -224,7 +224,7 @@ class FeishuClient:
             # 解析行数据
             
             row_data = RowData(
-                row_number=data_start_index + i + 2,  # +2 因为表格行号从1开始，且要跳过表头
+                row_number=data_start_index + i + 1,  # +1 因为表格行号从1开始
                 product_image=self._parse_cell_data(row[product_image_idx] if len(row) > product_image_idx else None),
                 model_image=self._parse_cell_data(row[model_image_idx] if len(row) > model_image_idx else None),
                 prompt=str(row[prompt_idx]).strip() if len(row) > prompt_idx and row[prompt_idx] else "",
@@ -374,7 +374,7 @@ class FeishuClient:
             
             connector = aiohttp.TCPConnector(ssl=self.ssl_context)
             async with aiohttp.ClientSession(connector=connector) as session:
-                async with session.post(url, json=payload, headers=headers) as response:
+                async with session.put(url, json=payload, headers=headers) as response:
                     if response.status != 200:
                         response_text = await response.text()
                         self.logger.error(f"更新状态失败: HTTP {response.status}, 响应: {response_text}")
@@ -477,7 +477,8 @@ class FeishuClient:
                 "name": os.path.basename(image_path)
             }
             
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, json=payload, headers=headers) as response:
                     data = await response.json()
                     

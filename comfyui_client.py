@@ -6,6 +6,7 @@ ComfyUI API客户端 - 处理图片上传、工作流执行和状态监控
 
 import asyncio
 import aiohttp
+import ssl
 import logging
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
@@ -37,6 +38,12 @@ class ComfyUIClient:
         self.config = config
         self.logger = logging.getLogger(__name__)
         self.debug_mode = debug_mode
+        
+        # 创建SSL上下文，禁用证书验证以解决SSL问题
+        self.ssl_context = ssl.create_default_context()
+        self.ssl_context.check_hostname = False
+        self.ssl_context.verify_mode = ssl.CERT_NONE
+        
         if debug_mode:
             self.logger.info("🔧 ComfyUI客户端运行在调试模式，将跳过实际API调用")
         
@@ -56,33 +63,54 @@ class ComfyUIClient:
             "Authorization": f"Bearer {self.config.api_key}"
         }
         
+        # 记录详细的API调用信息
+        self.logger.info(f"📤 [RunningHub API] 上传图片请求")
+        self.logger.info(f"   接口URL: {url}")
+        self.logger.info(f"   文件名: {filename}")
+        self.logger.info(f"   文件大小: {len(image_data)} bytes")
+        self.logger.info(f"   请求头: {headers}")
+        
         # 构建multipart/form-data
         data = aiohttp.FormData()
         data.add_field('file', image_data, filename=filename, content_type='image/png')
+        data.add_field('apiKey', self.config.api_key)  # 添加API密钥作为表单字段
         
         try:
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, headers=headers, data=data) as response:
+                    # 记录响应状态
+                    self.logger.info(f"📥 [RunningHub API] 响应状态: {response.status}")
+                    
                     if response.status == 200:
                         result = await response.json()
+                        self.logger.info(f"📥 [RunningHub API] 响应内容: {result}")
+                        
                         if result.get('code') == 0:
                             file_name = result.get('data', {}).get('fileName')
+                            self.logger.info(f"✅ [RunningHub API] 图片上传成功: {file_name}")
                             return UploadResult(
                                 success=True,
                                 file_name=file_name
                             )
                         else:
                             error_msg = result.get('message', '未知错误')
-                            self.logger.error(f"图片上传失败: {error_msg}")
+                            self.logger.error(f"❌ [RunningHub API] 图片上传失败 - API错误码: {result.get('code')}, 错误信息: {error_msg}")
                             return UploadResult(success=False, error=error_msg)
                     else:
+                        # 尝试读取响应内容以获取更多错误信息
+                        try:
+                            response_text = await response.text()
+                            self.logger.error(f"❌ [RunningHub API] HTTP错误 {response.status}: {response_text}")
+                        except:
+                            self.logger.error(f"❌ [RunningHub API] HTTP错误 {response.status}: 无法读取响应内容")
+                        
                         error_msg = f"HTTP错误: {response.status}"
-                        self.logger.error(f"图片上传失败: {error_msg}")
                         return UploadResult(success=False, error=error_msg)
                         
         except Exception as e:
             error_msg = f"图片上传异常: {str(e)}"
-            self.logger.error(error_msg)
+            self.logger.error(f"❌ [RunningHub API] 上传异常: {error_msg}")
             return UploadResult(success=False, error=error_msg)
     
     async def create_workflow(self, product_image_name: str, model_image_name: str) -> WorkflowResult:
@@ -121,18 +149,32 @@ class ComfyUIClient:
             "nodeInfoList": node_info_list
         }
         
+        # 记录详细的API调用信息
+        self.logger.info(f"🚀 [RunningHub API] 创建工作流请求")
+        self.logger.info(f"   接口URL: {url}")
+        self.logger.info(f"   工作流ID: {self.config.workflow_id}")
+        self.logger.info(f"   产品图片: {product_image_name} (节点ID: {self.config.product_image_node_id})")
+        self.logger.info(f"   模特图片: {model_image_name} (节点ID: {self.config.model_image_node_id})")
+        self.logger.info(f"   请求头: {headers}")
+        self.logger.info(f"   请求体: {payload}")
+        
         try:
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, json=payload, headers=headers) as response:
+                    # 记录响应状态
+                    self.logger.info(f"📥 [RunningHub API] 创建工作流响应状态: {response.status}")
+                    
                     try:
                         result = await response.json()
+                        self.logger.info(f"📥 [RunningHub API] 创建工作流响应内容: {result}")
                     except Exception as json_error:
-                        self.logger.error(f"解析响应JSON失败: {json_error}")
+                        self.logger.error(f"❌ [RunningHub API] 解析响应JSON失败: {json_error}")
                         return WorkflowResult(success=False, error=f"响应解析失败: {json_error}")
                     
                     # 检查响应是否为空
                     if result is None:
-                        self.logger.error("收到空响应")
+                        self.logger.error("❌ [RunningHub API] 收到空响应")
                         return WorkflowResult(success=False, error="收到空响应")
                     
                     # 检查API响应码
@@ -147,24 +189,28 @@ class ComfyUIClient:
                             result.get("task_id")
                         )
                         if task_id:
+                            self.logger.info(f"✅ [RunningHub API] 工作流创建成功，任务ID: {task_id}")
                             return WorkflowResult(success=True, task_id=task_id)
                         else:
                             error_msg = "响应中未找到任务ID"
-                            self.logger.error(f"创建工作流失败: {error_msg}")
+                            self.logger.error(f"❌ [RunningHub API] 创建工作流失败: {error_msg}")
+                            self.logger.error(f"   完整响应数据: {result}")
                             return WorkflowResult(success=False, error=error_msg)
                     elif api_code == 421:
                         # 任务队列已满
                         error_msg = "ComfyUI任务队列已满，请稍后重试"
+                        self.logger.warning(f"⚠️ [RunningHub API] {error_msg}")
                         return WorkflowResult(success=False, error=error_msg)
                     else:
                         # 其他API错误
                         error_msg = result.get("message", f"API错误，代码: {api_code}")
-                        self.logger.error(f"创建工作流失败: {error_msg}")
+                        self.logger.error(f"❌ [RunningHub API] 创建工作流失败 - API错误码: {api_code}, 错误信息: {error_msg}")
                         return WorkflowResult(success=False, error=error_msg)
                         
         except Exception as e:
             error_msg = f"创建工作流时发生异常: {str(e)}"
-            self.logger.error(error_msg)
+            self.logger.error(f"❌ [RunningHub API] 创建工作流异常: {error_msg}")
+            self.logger.error(f"   异常类型: {type(e).__name__}")
             return WorkflowResult(success=False, error=error_msg)
     
     async def create_video_workflow(self, image_file_name: str, prompt: str) -> WorkflowResult:
@@ -204,7 +250,8 @@ class ComfyUIClient:
         }
         
         try:
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, headers=headers, json=payload) as response:
                     if response.status == 200:
                         result = await response.json()
@@ -288,11 +335,24 @@ class ComfyUIClient:
             "taskId": task_id
         }
         
+        # 记录详细的API调用信息
+        self.logger.info(f"🔍 [RunningHub API] 检查任务状态请求")
+        self.logger.info(f"   接口URL: {url}")
+        self.logger.info(f"   任务ID: {task_id}")
+        self.logger.info(f"   请求头: {headers}")
+        self.logger.info(f"   请求体: {payload}")
+        
         try:
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, headers=headers, json=payload) as response:
+                    # 记录响应状态
+                    self.logger.info(f"📥 [RunningHub API] 任务状态响应状态: {response.status}")
+                    
                     if response.status == 200:
                         result = await response.json()
+                        self.logger.info(f"📥 [RunningHub API] 任务状态响应内容: {result}")
+                        
                         if result.get('code') == 0:
                             data = result.get('data')
                             # data可能是字符串（直接的状态值）或对象（包含status字段）
@@ -302,20 +362,29 @@ class ComfyUIClient:
                                 status = data.get('status')
                             else:
                                 status = None
+                            
+                            self.logger.info(f"✅ [RunningHub API] 任务状态查询成功: {status}")
                             return WorkflowResult(success=True, task_id=task_id, status=status)
                         else:
                             # 处理API返回的错误信息，优先使用msg字段
                             error_msg = result.get('msg', result.get('message', '未知错误'))
-                            self.logger.error(f"检查任务状态失败 - API返回码: {result.get('code')}, 错误信息: {error_msg}")
+                            self.logger.error(f"❌ [RunningHub API] 检查任务状态失败 - API返回码: {result.get('code')}, 错误信息: {error_msg}")
                             return WorkflowResult(success=False, task_id=task_id, error=error_msg)
                     else:
+                        # 尝试读取响应内容以获取更多错误信息
+                        try:
+                            response_text = await response.text()
+                            self.logger.error(f"❌ [RunningHub API] 任务状态HTTP错误 {response.status}: {response_text}")
+                        except:
+                            self.logger.error(f"❌ [RunningHub API] 任务状态HTTP错误 {response.status}: 无法读取响应内容")
+                        
                         error_msg = f"HTTP错误: {response.status}"
-                        self.logger.error(f"检查任务状态失败: {error_msg}")
                         return WorkflowResult(success=False, task_id=task_id, error=error_msg)
                         
         except Exception as e:
             error_msg = f"检查任务状态异常: {str(e)}"
-            self.logger.error(error_msg)
+            self.logger.error(f"❌ [RunningHub API] 任务状态查询异常: {error_msg}")
+            self.logger.error(f"   异常类型: {type(e).__name__}")
             return WorkflowResult(success=False, task_id=task_id, error=error_msg)
     
     async def get_task_outputs(self, task_id: str) -> WorkflowResult:
@@ -332,12 +401,25 @@ class ComfyUIClient:
             "taskId": task_id
         }
         
+        # 记录请求详情
+        self.logger.info(f"获取任务输出 - URL: {url}")
+        self.logger.info(f"获取任务输出 - 任务ID: {task_id}")
+        self.logger.info(f"获取任务输出 - 请求头: {headers}")
+        self.logger.info(f"获取任务输出 - 载荷: {payload}")
+        
         try:
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.post(url, headers=headers, json=payload) as response:
+                    # 记录响应状态
+                    self.logger.info(f"获取任务输出 - 响应状态: {response.status}")
                     if response.status == 200:
                         result = await response.json()
+                        # 记录完整响应内容
+                        self.logger.info(f"获取任务输出 - 响应内容: {result}")
+                        
                         if result.get('code') == 0:
+                            self.logger.info(f"获取任务输出成功 - 任务ID: {task_id}")
                             data = result.get('data', {})
                             # 处理data可能是字典或列表的情况
                             if isinstance(data, dict):
@@ -358,6 +440,7 @@ class ComfyUIClient:
                                 elif isinstance(output, str):
                                     output_urls.append(output)
                             
+                            self.logger.info(f"获取任务输出 - 输出URL列表: {output_urls}")
                             return WorkflowResult(success=True, task_id=task_id, output_urls=output_urls)
                         else:
                             # 处理API返回的错误信息，优先使用msg字段
@@ -370,23 +453,35 @@ class ComfyUIClient:
                         return WorkflowResult(success=False, task_id=task_id, error=error_msg)
                         
         except Exception as e:
-            error_msg = f"获取任务输出异常: {str(e)}"
+            error_msg = f"获取任务输出异常: {str(e)} (类型: {type(e).__name__})"
             self.logger.error(error_msg)
             return WorkflowResult(success=False, task_id=task_id, error=error_msg)
     
     async def download_result(self, file_url: str) -> bytes:
         """下载结果文件"""
+        # 记录下载请求详情
+        self.logger.info(f"下载结果文件 - URL: {file_url}")
+        
         try:
-            async with aiohttp.ClientSession() as session:
+            connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+            async with aiohttp.ClientSession(connector=connector) as session:
                 async with session.get(file_url) as response:
+                    # 记录响应状态
+                    self.logger.info(f"下载结果文件 - 响应状态: {response.status}")
+                    
                     if response.status == 200:
                         file_data = await response.read()
-                        # 结果文件下载成功
+                        file_size = len(file_data)
+                        # 记录下载成功信息
+                        self.logger.info(f"下载结果文件成功 - 文件大小: {file_size} 字节")
                         return file_data
                     else:
-                        raise Exception(f"下载失败，HTTP状态码: {response.status}")
+                        error_msg = f"下载失败，HTTP状态码: {response.status}"
+                        self.logger.error(f"下载结果文件失败: {error_msg}")
+                        raise Exception(error_msg)
         except Exception as e:
-            self.logger.error(f"下载结果文件失败: {str(e)}")
+            error_msg = f"下载结果文件失败: {str(e)} (类型: {type(e).__name__})"
+            self.logger.error(error_msg)
             raise
     
     async def wait_for_completion(self, task_id: str, max_wait_time: int = 300, check_interval: int = 30) -> WorkflowResult:

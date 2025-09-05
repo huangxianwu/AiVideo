@@ -14,9 +14,17 @@ from png_processor import WhiteBackgroundRemover
 from feishu_client import FeishuClient
 from config import FeishuConfig
 from data.workflow_manager import WorkflowManager, NodeType
+import subprocess
+import uuid
+from queue import Queue
+from flask import Response
 
 
 app = Flask(__name__, static_folder='static')
+
+# 全局变量用于管理工作流任务
+running_tasks = {}
+task_logs = {}
 
 class ProductManager:
     def __init__(self):
@@ -144,12 +152,9 @@ workflow_manager = WorkflowManager()
 
 @app.route('/')
 def index():
-    """主页"""
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 50, type=int)
-    
-    data = product_manager.get_paginated_data(page, per_page)
-    return render_template('index.html', **data)
+    """主页 - 重定向到ERP页面"""
+    from flask import redirect, url_for
+    return redirect(url_for('erp_index'))
 
 @app.route('/erp')
 def erp_index():
@@ -695,6 +700,169 @@ def api_delete_node(workflow_id, node_id):
             'message': f'删除节点失败: {str(e)}'
         }), 500
 
+
+# POD工作流相关路由
+@app.route('/pod-workflow')
+def pod_workflow():
+    """POD工作流页面"""
+    return render_template('pod_workflow.html')
+
+@app.route('/api/workflow/execute', methods=['POST'])
+def api_execute_workflow():
+    """执行POD工作流"""
+    try:
+        data = request.get_json()
+        workflow_type = data.get('workflow_type')
+        
+        if not workflow_type:
+            return jsonify({'success': False, 'error': '缺少工作流类型参数'})
+        
+        # 映射工作流类型到main.py的参数
+        workflow_mapping = {
+            'image_composition': '图片合成工作流',
+            'image_to_video': '图生视频工作流', 
+            'full_workflow': '完整工作流'
+        }
+        
+        if workflow_type not in workflow_mapping:
+            return jsonify({'success': False, 'error': '不支持的工作流类型'})
+        
+        # 生成任务ID
+        task_id = str(uuid.uuid4())
+        
+        # 初始化任务日志
+        task_logs[task_id] = Queue()
+        
+        # 构建命令 - 使用workflow_runner.py来避免交互式输入
+        cmd = ['python3', 'workflow_runner.py', '--workflow', workflow_type]
+        
+        # 启动子进程
+        def run_workflow():
+            try:
+                # 添加开始日志
+                timestamp = datetime.now().strftime('%H:%M:%S')
+                start_message = f"[{timestamp}] 🚀 开始执行{workflow_mapping[workflow_type]}"
+                task_logs[task_id].put({'type': 'log', 'message': start_message})
+                
+                process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    universal_newlines=True,
+                    bufsize=1,
+                    cwd=os.getcwd()  # 确保在正确的工作目录中执行
+                )
+                
+                running_tasks[task_id] = process
+                
+                # 实时读取输出
+                for line in iter(process.stdout.readline, ''):
+                    if line:
+                        # 保持原始日志格式，不添加额外的时间戳
+                        log_message = line.strip()
+                        if log_message:  # 只记录非空行
+                            task_logs[task_id].put({'type': 'log', 'message': log_message})
+                
+                # 等待进程结束
+                process.wait()
+                
+                # 发送完成信号
+                timestamp = datetime.now().strftime('%H:%M:%S')
+                if process.returncode == 0:
+                    complete_message = f"[{timestamp}] ✅ 工作流执行成功"
+                    task_logs[task_id].put({'type': 'log', 'message': complete_message})
+                    task_logs[task_id].put({'type': 'complete', 'message': '工作流执行完成'})
+                else:
+                    error_message = f"[{timestamp}] ❌ 工作流执行失败，退出码: {process.returncode}"
+                    task_logs[task_id].put({'type': 'log', 'message': error_message})
+                    task_logs[task_id].put({'type': 'error', 'message': f'工作流执行失败，退出码: {process.returncode}'})
+                
+                # 清理任务
+                if task_id in running_tasks:
+                    del running_tasks[task_id]
+                    
+            except Exception as e:
+                timestamp = datetime.now().strftime('%H:%M:%S')
+                error_message = f"[{timestamp}] ❌ 执行异常: {str(e)}"
+                task_logs[task_id].put({'type': 'log', 'message': error_message})
+                task_logs[task_id].put({'type': 'error', 'message': f'执行异常: {str(e)}'})
+                if task_id in running_tasks:
+                    del running_tasks[task_id]
+        
+        # 在后台线程中运行
+        thread = threading.Thread(target=run_workflow)
+        thread.daemon = True
+        thread.start()
+        
+        return jsonify({
+            'success': True, 
+            'task_id': task_id,
+            'message': f'工作流 {workflow_mapping[workflow_type]} 已启动'
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/workflow/logs/<task_id>')
+def api_workflow_logs(task_id):
+    """获取工作流实时日志 (Server-Sent Events)"""
+    def generate_logs():
+        if task_id not in task_logs:
+            yield f"data: {json.dumps({'type': 'error', 'message': '任务不存在'})}\n\n"
+            return
+        
+        log_queue = task_logs[task_id]
+        
+        while True:
+            try:
+                # 等待日志消息，超时时间为1秒
+                if not log_queue.empty():
+                    log_data = log_queue.get_nowait()
+                    yield f"data: {json.dumps(log_data)}\n\n"
+                    
+                    # 如果是完成或错误消息，结束流
+                    if log_data['type'] in ['complete', 'error']:
+                        # 清理日志队列
+                        if task_id in task_logs:
+                            del task_logs[task_id]
+                        break
+                else:
+                    # 发送心跳
+                    time.sleep(0.5)
+                    yield f"data: {json.dumps({'type': 'heartbeat'})}\n\n"
+                    
+            except Exception as e:
+                yield f"data: {json.dumps({'type': 'error', 'message': f'日志流异常: {str(e)}'})}\n\n"
+                break
+    
+    return Response(
+        generate_logs(),
+        mimetype='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'Access-Control-Allow-Origin': '*'
+        }
+    )
+
+@app.route('/api/workflow/stop/<task_id>', methods=['POST'])
+def api_stop_workflow(task_id):
+    """停止运行中的工作流"""
+    try:
+        if task_id in running_tasks:
+            process = running_tasks[task_id]
+            process.terminate()
+            del running_tasks[task_id]
+            
+            # 发送停止消息
+            if task_id in task_logs:
+                task_logs[task_id].put({'type': 'error', 'message': '工作流已被用户停止'})
+            
+            return jsonify({'success': True, 'message': '工作流已停止'})
+        else:
+            return jsonify({'success': False, 'error': '任务不存在或已结束'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)

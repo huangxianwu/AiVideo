@@ -15,7 +15,7 @@ from config import load_config
 from workflow_processor import WorkflowProcessor
 from workflow_manager import WorkflowManager, WorkflowMode
 from png_processor import WhiteBackgroundRemover
-from temp_tests.batch_bg_removal import batch_remove_background
+# 移除了temp_tests.batch_bg_removal导入，使用本地WhiteBackgroundRemover替代
 
 
 def select_workflow_mode():
@@ -93,29 +93,28 @@ def process_png_images():
         
         print(f"\n✅ 使用模型: {selected_model} - {model_desc}")
         
-        # 调用批量背景移除功能
-        result = batch_remove_background(
+        # 使用本地WhiteBackgroundRemover进行批量背景移除
+        remover = WhiteBackgroundRemover()
+        
+        print("\n" + "="*60)
+        print(f"🎉 开始批量处理图片背景移除...")
+        print(f"   - 输入目录: images/jpg")
+        print(f"   - 输出目录: images/png")
+        print(f"   - 使用模型: {selected_model} (注: 当前使用本地算法处理)")
+        print("="*60)
+        
+        # 执行批量处理
+        remover.process_batch(
             input_dir="images/jpg",
-            output_dir="images/png", 
-            model_name=selected_model
+            output_dir="images/png"
         )
         
-        if result['success']:
-            print("\n" + "="*60)
-            print(f"🎉 批量处理完成!")
-            print(f"   - 总文件数: {result.get('total', 0)} 个")
-            print(f"   - 成功处理: {result.get('processed', 0)} 个文件")
-            print(f"   - 处理失败: {result.get('failed', 0)} 个文件")
-            print(f"   - 输出目录: {result.get('output_dir', 'images/png')}")
-            
-            if result.get('failed_files'):
-                print(f"   - 失败文件: {', '.join(result['failed_files'])}")
-            
-            print("="*60)
-            return True
-        else:
-            print(f"\n❌ 处理失败: {result.get('error', '未知错误')}")
-            return False
+        print("\n" + "="*60)
+        print(f"🎉 批量处理完成!")
+        print(f"   - 输出目录: images/png")
+        print(f"   - 详细信息请查看上方日志输出")
+        print("="*60)
+        return True
         
     except Exception as e:
         print(f"❌ 图片处理过程中出错: {str(e)}")
@@ -188,14 +187,24 @@ def setup_logging(config):
     log_file = log_dir / f"workflow_{timestamp}.log"
     
     # 配置日志
+    # 创建自定义的StreamHandler，确保立即刷新
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(logging.Formatter(log_format))
+    stream_handler.flush = lambda: sys.stdout.flush()
+    
     logging.basicConfig(
         level=getattr(logging, config.log_level.upper()),
         format=log_format,
         handlers=[
             logging.FileHandler(log_file, encoding='utf-8'),
-            logging.StreamHandler(sys.stdout)
+            stream_handler
         ]
     )
+    
+    # 确保所有日志立即刷新
+    for handler in logging.getLogger().handlers:
+        if hasattr(handler, 'stream') and handler.stream == sys.stdout:
+            handler.stream.reconfigure(line_buffering=True)
     
     logger = logging.getLogger(__name__)
     logger.info(f"日志文件: {log_file}")

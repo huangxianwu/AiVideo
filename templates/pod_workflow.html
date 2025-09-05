@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP系统 - POD工作流</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="/static/css/fontawesome.css" rel="stylesheet">
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e293b',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50" x-data="podWorkflow()">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="bg-secondary text-white transition-all duration-300 ease-in-out" 
+             :class="sidebarOpen ? 'w-64' : 'w-16'">
+            <!-- 侧边栏头部 -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                <h1 class="text-xl font-bold" x-show="sidebarOpen" x-transition>ERP系统</h1>
+                <button @click="sidebarOpen = !sidebarOpen" 
+                        class="p-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="mt-6">
+                <div class="px-3">
+                    <a href="/" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-shopping-cart w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>POD产品选择</span>
+                    </a>
+                    <a href="/workflow/list" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-list w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>工作流列表</span>
+                    </a>
+                    <a href="/pod-workflow" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg bg-primary text-white">
+                        <i class="fas fa-cogs w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>POD工作流</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-cog w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>系统设置</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm border-b border-gray-200">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">POD工作流</h1>
+                        <p class="text-sm text-gray-500 mt-1">执行和监控POD工作流程</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 text-gray-600">
+                            <i class="fas fa-user-circle text-xl"></i>
+                            <span class="text-sm font-medium">管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 面包屑导航 -->
+            <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li>
+                            <a href="/" class="text-gray-500 hover:text-gray-700 text-sm">首页</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                        </li>
+                        <li>
+                            <span class="text-gray-900 text-sm font-medium">POD工作流</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- 主内容区域 -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- 工作流执行卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <!-- 图片合成工作流 -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-image text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900">图片合成工作流</h3>
+                                <p class="text-sm text-gray-500">执行图片合成处理</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <button @click="executeWorkflow('image_composition')" 
+                                    :disabled="isRunning"
+                                    :class="isRunning ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:bg-blue-700'"
+                                    class="w-full px-4 py-2 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                <span x-show="!isRunning || currentWorkflow !== 'image_composition'">开始执行</span>
+                                <span x-show="isRunning && currentWorkflow === 'image_composition'" class="flex items-center justify-center">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    执行中...
+                                </span>
+                            </button>
+                            <button x-show="isRunning && currentWorkflow === 'image_composition'" 
+                                    @click="stopWorkflow()"
+                                    class="w-full px-4 py-2 bg-danger hover:bg-red-700 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-stop mr-2"></i>
+                                停止执行
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 图生视频工作流 -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-video text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900">图生视频工作流</h3>
+                                <p class="text-sm text-gray-500">执行图片转视频处理</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <button @click="executeWorkflow('image_to_video')" 
+                                    :disabled="isRunning"
+                                    :class="isRunning ? 'bg-gray-400 cursor-not-allowed' : 'bg-success hover:bg-green-700'"
+                                    class="w-full px-4 py-2 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                                <span x-show="!isRunning || currentWorkflow !== 'image_to_video'">开始执行</span>
+                                <span x-show="isRunning && currentWorkflow === 'image_to_video'" class="flex items-center justify-center">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    执行中...
+                                </span>
+                            </button>
+                            <button x-show="isRunning && currentWorkflow === 'image_to_video'" 
+                                    @click="stopWorkflow()"
+                                    class="w-full px-4 py-2 bg-danger hover:bg-red-700 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-stop mr-2"></i>
+                                停止执行
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 完整工作流 -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-cogs text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900">完整工作流</h3>
+                                <p class="text-sm text-gray-500">执行完整的POD流程</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <button @click="executeWorkflow('full_workflow')" 
+                                    :disabled="isRunning"
+                                    :class="isRunning ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'"
+                                    class="w-full px-4 py-2 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors">
+                                <span x-show="!isRunning || currentWorkflow !== 'full_workflow'">开始执行</span>
+                                <span x-show="isRunning && currentWorkflow === 'full_workflow'" class="flex items-center justify-center">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    执行中...
+                                </span>
+                            </button>
+                            <button x-show="isRunning && currentWorkflow === 'full_workflow'" 
+                                    @click="stopWorkflow()"
+                                    class="w-full px-4 py-2 bg-danger hover:bg-red-700 text-white text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                                <i class="fas fa-stop mr-2"></i>
+                                停止执行
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 实时日志显示区域 -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-gray-900">实时日志</h2>
+                            <div class="flex items-center space-x-2">
+                                <button @click="clearLogs()" 
+                                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-trash mr-1"></i>
+                                    清空日志
+                                </button>
+                                <div class="flex items-center space-x-1 text-sm text-gray-500">
+                                    <div class="w-2 h-2 rounded-full" :class="isRunning ? 'bg-green-500' : 'bg-gray-400'"></div>
+                                    <span x-text="isRunning ? '运行中' : '空闲'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm h-96 overflow-y-auto" 
+                             id="logContainer" x-ref="logContainer">
+                            <template x-for="(log, index) in logs" :key="index">
+                                <div class="mb-1" x-html="log"></div>
+                            </template>
+                            <div x-show="logs.length === 0" class="text-gray-500 text-center py-8">
+                                暂无日志信息
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function podWorkflow() {
+            return {
+                sidebarOpen: true,
+                isRunning: false,
+                currentWorkflow: null,
+                currentTaskId: null,
+                logs: [],
+                eventSource: null,
+
+                executeWorkflow(workflowType) {
+                    if (this.isRunning) return;
+                    
+                    this.isRunning = true;
+                    this.currentWorkflow = workflowType;
+                    this.logs = [];
+                    
+                    // 添加开始日志
+                    this.addLog(`[${new Date().toLocaleTimeString()}] 开始执行${this.getWorkflowName(workflowType)}...`);
+                    
+                    // 发送执行请求
+                    fetch('/api/workflow/execute', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            workflow_type: workflowType
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.currentTaskId = data.task_id;
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 工作流启动成功，任务ID: ${data.task_id}`);
+                            this.startLogStream(data.task_id);
+                        } else {
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 启动失败: ${data.error}`);
+                            this.isRunning = false;
+                            this.currentWorkflow = null;
+                        }
+                    })
+                    .catch(error => {
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 请求失败: ${error.message}`);
+                        this.isRunning = false;
+                        this.currentWorkflow = null;
+                    });
+                },
+
+                startLogStream(taskId) {
+                    // 使用Server-Sent Events接收实时日志
+                    this.eventSource = new EventSource(`/api/workflow/logs/${taskId}`);
+                    
+                    this.eventSource.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'log') {
+                            this.addLog(data.message);
+                        } else if (data.type === 'complete') {
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 工作流执行完成`);
+                            this.resetWorkflowState();
+                        } else if (data.type === 'error') {
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 执行错误: ${data.message}`);
+                            this.resetWorkflowState();
+                        }
+                    };
+                    
+                    this.eventSource.onerror = () => {
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 日志连接中断`);
+                        this.resetWorkflowState();
+                    };
+                },
+
+                addLog(message) {
+                    this.logs.push(message);
+                    this.$nextTick(() => {
+                        this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight;
+                    });
+                },
+
+                clearLogs() {
+                    this.logs = [];
+                },
+
+                getWorkflowName(workflowType) {
+                    const names = {
+                        'image_composition': '图片合成工作流',
+                        'image_to_video': '图生视频工作流',
+                        'full_workflow': '完整工作流'
+                    };
+                    return names[workflowType] || workflowType;
+                },
+
+                stopWorkflow() {
+                    if (!this.currentTaskId) return;
+                    
+                    fetch(`/api/workflow/stop/${this.currentTaskId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 工作流已停止`);
+                        } else {
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 停止失败: ${data.error}`);
+                        }
+                        this.resetWorkflowState();
+                    })
+                    .catch(error => {
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 停止请求失败: ${error.message}`);
+                        this.resetWorkflowState();
+                    });
+                },
+
+                resetWorkflowState() {
+                    this.isRunning = false;
+                    this.currentWorkflow = null;
+                    this.currentTaskId = null;
+                    if (this.eventSource) {
+                        this.eventSource.close();
+                        this.eventSource = null;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

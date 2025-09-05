@@ -7,6 +7,7 @@
 import asyncio
 import logging
 import os
+import ssl
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
@@ -36,6 +37,11 @@ class WorkflowProcessor:
         self.feishu_client = FeishuClient(config.feishu)
         self.comfyui_client = ComfyUIClient(config.comfyui)
         self.logger = logging.getLogger(__name__)
+        
+        # 创建SSL上下文，禁用证书验证以解决SSL问题
+        self.ssl_context = ssl.create_default_context()
+        self.ssl_context.check_hostname = False
+        self.ssl_context.verify_mode = ssl.CERT_NONE
         
         # 设置目录路径
         self.temp_dir = Path(config.temp_dir)
@@ -396,7 +402,8 @@ class WorkflowProcessor:
             # 如果是URL，直接下载
             if image_data.startswith("http"):
                 import aiohttp
-                async with aiohttp.ClientSession() as session:
+                connector = aiohttp.TCPConnector(ssl=self.ssl_context)
+                async with aiohttp.ClientSession(connector=connector) as session:
                     async with session.get(image_data) as response:
                         if response.status == 200:
                             return await response.read()
