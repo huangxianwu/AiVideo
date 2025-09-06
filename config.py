@@ -86,7 +86,7 @@ def load_config() -> AppConfig:
         range=os.getenv("FEISHU_RANGE", "A2:I1000")
     )
     
-    # ComfyUI配置
+    # runninghub的ComfyUI配置
     comfyui_config = ComfyUIConfig(
         api_key=os.getenv("COMFYUI_API_KEY", "d4b17e6ea9474695965f3f3c9dd53c1d"),
         workflow_id=os.getenv("COMFYUI_WORKFLOW_ID", "1956307610033160194"),

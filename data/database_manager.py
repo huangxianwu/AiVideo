@@ -9,6 +9,7 @@ import os
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
 from .workflow_database import WorkflowDatabase, WorkflowStatus, WorkflowType
+from .file_index_manager import FileIndexManager
 
 
 class DatabaseManager:
@@ -22,6 +23,7 @@ class DatabaseManager:
             db_file: 数据库文件路径
         """
         self.db = WorkflowDatabase(db_file)
+        self.file_index = FileIndexManager()
     
     def start_image_generation(self, task_id: str, row_index: int, 
                               product_name: str = "", metadata: Dict = None) -> bool:
@@ -70,7 +72,8 @@ class DatabaseManager:
         return self.db.update_task_status(task_id, WorkflowStatus.VIDEO_GENERATING)
     
     def complete_video_generation(self, task_id: str, video_path: str) -> bool:
-        """完成视频生成
+        """
+        完成视频生成
         
         Args:
             task_id: 任务ID
@@ -79,11 +82,17 @@ class DatabaseManager:
         Returns:
             bool: 是否成功
         """
-        return self.db.update_task_status(
+        result = self.db.update_task_status(
             task_id, 
             WorkflowStatus.COMPLETED, 
             video_path=video_path
         )
+        
+        # 任务完成后，自动索引生成的文件
+        if result:
+            self._index_task_files(task_id)
+        
+        return result
     
     def mark_task_failed(self, task_id: str, error_message: str) -> bool:
         """标记任务失败
@@ -410,7 +419,8 @@ class DatabaseManager:
         return task.get('comfyui_task_id') if task else None
     
     def delete_task(self, task_id: str) -> bool:
-        """删除任务
+        """
+        删除任务
         
         Args:
             task_id: 任务ID
@@ -419,3 +429,157 @@ class DatabaseManager:
             bool: 是否删除成功
         """
         return self.db.delete_task(task_id)
+    
+    # ===== 文件索引相关方法 =====
+    
+    def _index_task_files(self, task_id: str) -> bool:
+        """
+        索引任务相关的文件
+        
+        Args:
+            task_id: 任务ID
+            
+        Returns:
+            bool: 是否索引成功
+        """
+        try:
+            task = self.get_task_info(task_id)
+            if not task:
+                return False
+            
+            files_to_index = []
+            
+            # 添加图片文件
+            if task.get('image_path'):
+                files_to_index.append(task['image_path'])
+            
+            # 添加视频文件
+            if task.get('video_path'):
+                files_to_index.append(task['video_path'])
+            
+            # 添加输出文件列表中的文件
+            if task.get('output_files'):
+                files_to_index.extend(task['output_files'])
+            
+            # 为每个文件创建索引
+            for file_path in files_to_index:
+                if os.path.exists(file_path):
+                    self.file_index.add_file(
+                        file_path=file_path,
+                        task_id=task_id,
+                        product_name=task.get('product_name', ''),
+                        workflow_type=task.get('workflow_type', ''),
+                        metadata={
+                            'row_index': task.get('row_index'),
+                            'created_at': task.get('created_at'),
+                            'status': task.get('status')
+                        }
+                    )
+            
+            return True
+            
+        except Exception as e:
+            print(f"索引任务文件失败: {e}")
+            return False
+    
+    def rebuild_file_index(self) -> bool:
+        """
+        重建文件索引（扫描所有已完成的任务）
+        
+        Returns:
+            bool: 是否重建成功
+        """
+        try:
+            # 清空现有索引
+            self.file_index.clear_index()
+            
+            # 获取所有已完成的任务
+            completed_tasks = self.get_completed_tasks()
+            
+            success_count = 0
+            for task in completed_tasks:
+                if self._index_task_files(task['task_id']):
+                    success_count += 1
+            
+            print(f"重建文件索引完成，成功索引 {success_count}/{len(completed_tasks)} 个任务")
+            return True
+            
+        except Exception as e:
+            print(f"重建文件索引失败: {e}")
+            return False
+    
+    def search_files(self, query: str = "", file_type: str = "", 
+                    date_from: str = "", date_to: str = "", 
+                    workflow_type: str = "", limit: int = 50) -> List[Dict]:
+        """
+        搜索文件
+        
+        Args:
+            query: 搜索关键词
+            file_type: 文件类型 (image/video)
+            date_from: 开始日期 (YYYY-MM-DD)
+            date_to: 结束日期 (YYYY-MM-DD)
+            workflow_type: 工作流类型
+            limit: 返回结果数量限制
+            
+        Returns:
+            List[Dict]: 搜索结果
+        """
+        # 构建filters参数
+        filters = {}
+        
+        if query:
+            filters['keyword'] = query
+        if file_type:
+            filters['file_type'] = file_type
+        if workflow_type:
+            filters['workflow_type'] = workflow_type
+        if date_from or date_to:
+            filters['date_range'] = {
+                'start': date_from if date_from else '1900-01-01',
+                'end': date_to if date_to else '2099-12-31'
+            }
+        if limit:
+            filters['per_page'] = limit
+            
+        results = self.file_index.search_files(filters)
+        
+        # 返回格式化结果
+        return {
+            'files': results,
+            'total': len(results)
+        }
+    
+    def get_file_statistics(self) -> Dict:
+        """
+        获取文件统计信息
+        
+        Returns:
+            Dict: 统计信息
+        """
+        return self.file_index.get_statistics()
+    
+    def get_recent_files(self, days: int = 7, limit: int = 20) -> List[Dict]:
+        """
+        获取最近的文件
+        
+        Args:
+            days: 天数
+            limit: 数量限制
+            
+        Returns:
+            List[Dict]: 最近文件列表
+        """
+        return self.file_index.get_recent_files(limit=limit)
+    
+    def get_files_by_date(self, date: str) -> List[Dict]:
+        """
+        按日期获取文件
+        
+        Args:
+            date: 日期 (YYYY-MM-DD)
+            
+        Returns:
+            List[Dict]: 文件列表
+        """
+        return self.file_index.get_files_by_date(date)

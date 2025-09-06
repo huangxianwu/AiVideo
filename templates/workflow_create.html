@@ -298,7 +298,8 @@
                 id: nodeId,
                 name: '',
                 node_id: '',
-                type: 'text'
+                type: 'text',
+                description: ''
             };
             
             nodes.push(nodeData);
@@ -317,15 +318,20 @@
             const emptyNodes = document.getElementById('emptyNodes');
             
             if (nodes.length === 0) {
-                emptyNodes.classList.remove('hidden');
-                container.innerHTML = '';
-                container.appendChild(emptyNodes);
+                emptyNodes.style.display = 'block';
+                // 清空容器但保留空状态元素
+                const nodeItems = container.querySelectorAll('.node-item');
+                nodeItems.forEach(item => item.remove());
                 return;
             }
             
-            emptyNodes.classList.add('hidden');
-            container.innerHTML = '';
+            emptyNodes.style.display = 'none';
             
+            // 清空现有节点
+            const nodeItems = container.querySelectorAll('.node-item');
+            nodeItems.forEach(item => item.remove());
+            
+            // 添加新节点
             nodes.forEach(node => {
                 const nodeElement = createNodeElement(node);
                 container.appendChild(nodeElement);
@@ -336,9 +342,14 @@
         function createNodeElement(node) {
             const div = document.createElement('div');
             div.className = 'node-item';
+            
+            const nodeNumber = node.id.replace('node_', '');
+            const escapedNodeName = escapeHtml(node.name || '');
+            const escapedNodeId = escapeHtml(node.node_id || '');
+            
             div.innerHTML = `
                 <div class="node-header">
-                    <h4 class="node-title">节点 ${node.id.replace('node_', '')}</h4>
+                    <h4 class="node-title">节点 ${nodeNumber}</h4>
                     <button type="button" class="btn btn-danger btn-remove-node" onclick="removeNode('${node.id}')">
                         <i class="fas fa-trash"></i> 删除
                     </button>
@@ -349,7 +360,7 @@
                         <div class="form-group">
                             <label class="form-label">节点名称 <span class="required">*</span></label>
                             <input type="text" class="form-control" 
-                                   value="${node.name}" 
+                                   value="${escapedNodeName}" 
                                    onchange="updateNodeData('${node.id}', 'name', this.value)"
                                    placeholder="请输入节点名称" required>
                         </div>
@@ -358,7 +369,7 @@
                         <div class="form-group">
                             <label class="form-label">节点ID <span class="required">*</span></label>
                             <input type="text" class="form-control" 
-                                   value="${node.node_id}" 
+                                   value="${escapedNodeId}" 
                                    onchange="updateNodeData('${node.id}', 'node_id', this.value)"
                                    placeholder="请输入节点ID" required>
                         </div>
@@ -389,37 +400,41 @@
                 case 'image':
                     return `
                         <div class="form-group">
-                            <label class="form-label">图片上传</label>
-                            <input type="file" class="form-control" accept="image/*" 
-                                   onchange="handleFileUpload('${node.id}', this)">
-                            <div class="form-text">支持 JPG、PNG、GIF 格式</div>
+                            <label class="form-label">图片字段说明</label>
+                            <textarea class="form-control" rows="2" 
+                                      placeholder="请输入图片字段的说明或要求"
+                                      onchange="updateNodeData('${node.id}', 'description', this.value)"></textarea>
+                            <div class="form-text">此字段用于收集图片，在工作流执行时用户将上传图片</div>
                         </div>
                     `;
                 case 'video':
                     return `
                         <div class="form-group">
-                            <label class="form-label">视频上传</label>
-                            <input type="file" class="form-control" accept="video/*" 
-                                   onchange="handleFileUpload('${node.id}', this)">
-                            <div class="form-text">支持 MP4、AVI、MOV 格式</div>
+                            <label class="form-label">视频字段说明</label>
+                            <textarea class="form-control" rows="2" 
+                                      placeholder="请输入视频字段的说明或要求"
+                                      onchange="updateNodeData('${node.id}', 'description', this.value)"></textarea>
+                            <div class="form-text">此字段用于收集视频，在工作流执行时用户将上传视频</div>
                         </div>
                     `;
                 case 'text':
                     return `
                         <div class="form-group">
-                            <label class="form-label">文本内容</label>
-                            <textarea class="form-control" rows="3" 
-                                      placeholder="请输入文本内容"
-                                      onchange="updateNodeData('${node.id}', 'content', this.value)"></textarea>
+                            <label class="form-label">文本字段说明</label>
+                            <textarea class="form-control" rows="2" 
+                                      placeholder="请输入文本字段的说明或要求"
+                                      onchange="updateNodeData('${node.id}', 'description', this.value)"></textarea>
+                            <div class="form-text">此字段用于收集文本，在工作流执行时用户将输入文本</div>
                         </div>
                     `;
                 case 'number':
                     return `
                         <div class="form-group">
-                            <label class="form-label">数值</label>
-                            <input type="number" class="form-control" 
-                                   placeholder="请输入数值"
-                                   onchange="updateNodeData('${node.id}', 'content', this.value)">
+                            <label class="form-label">数值字段说明</label>
+                            <textarea class="form-control" rows="2" 
+                                      placeholder="请输入数值字段的说明或要求"
+                                      onchange="updateNodeData('${node.id}', 'description', this.value)"></textarea>
+                            <div class="form-text">此字段用于收集数值，在工作流执行时用户将输入数字</div>
                         </div>
                     `;
                 default:
@@ -494,19 +509,15 @@
                     },
                     body: JSON.stringify({
                         workflow_id: workflowId,
-                        workflow_name: workflowName,
-                        description: description
+                        name: workflowName,
+                        description: description,
+                        nodes: nodes
                     })
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    // 添加节点
-                    for (const node of nodes) {
-                        await addNodeToWorkflow(workflowId, node);
-                    }
-                    
                     showAlert('success', '工作流创建成功');
                     
                     // 延迟跳转

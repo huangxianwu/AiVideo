@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, Response
+from werkzeug.utils import secure_filename
 import pandas as pd
 import os
 import requests
@@ -9,22 +10,80 @@ import time
 import asyncio
 import json
 import cv2
+import aiohttp
 from csv_processor import CSVProcessor
 from png_processor import WhiteBackgroundRemover
 from feishu_client import FeishuClient
 from config import FeishuConfig
 from data.workflow_manager import WorkflowManager, NodeType
+from data.database_manager import DatabaseManager
 import subprocess
 import uuid
+import queue
 from queue import Queue
-from flask import Response
+import mimetypes
 
 
 app = Flask(__name__, static_folder='static')
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
+# 确保上传目录存在
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # 全局变量用于管理工作流任务
 running_tasks = {}
 task_logs = {}
+
+# 全局日志队列，用于实时日志推送
+log_queues = {}
+log_lock = threading.Lock()
+
+# 日志推送函数
+def push_log(session_id, message, log_type='info'):
+    """推送日志到指定会话"""
+    with log_lock:
+        if session_id in log_queues:
+            timestamp = datetime.now().strftime('%H:%M:%S')
+            log_entry = {
+                'timestamp': timestamp,
+                'message': message,
+                'type': log_type
+            }
+            try:
+                log_queues[session_id].put_nowait(log_entry)
+            except:
+                pass  # 队列满时忽略
+
+@app.route('/api/logs/<session_id>')
+def stream_logs(session_id):
+    """Server-Sent Events端点，用于实时推送日志"""
+    def generate():
+        # 为当前会话创建日志队列
+        with log_lock:
+            if session_id not in log_queues:
+                log_queues[session_id] = queue.Queue(maxsize=100)
+        
+        log_queue = log_queues[session_id]
+        
+        try:
+            while True:
+                try:
+                    # 等待日志消息
+                    log_entry = log_queue.get(timeout=30)
+                    yield f"data: {json.dumps(log_entry)}\n\n"
+                except queue.Empty:
+                    # 发送心跳
+                    yield f"data: {{\"type\": \"heartbeat\"}}\n\n"
+                except:
+                    break
+        finally:
+            # 清理队列
+            with log_lock:
+                if session_id in log_queues:
+                    del log_queues[session_id]
+    
+    return Response(generate(), mimetype='text/event-stream')
 
 class ProductManager:
     def __init__(self):
@@ -149,6 +208,7 @@ class ProductManager:
 # 全局产品管理器
 product_manager = ProductManager()
 workflow_manager = WorkflowManager()
+database_manager = DatabaseManager()
 
 @app.route('/')
 def index():
@@ -510,17 +570,37 @@ def api_create_workflow():
     try:
         data = request.get_json()
         workflow_id = data.get('workflow_id')
-        workflow_name = data.get('workflow_name')
+        name = data.get('name') or data.get('workflow_name')  # 兼容两种参数名
         description = data.get('description', '')
+        nodes = data.get('nodes', [])
         
-        if not workflow_id or not workflow_name:
+        if not workflow_id or not name:
             return jsonify({
                 'success': False,
                 'message': '工作流ID和名称不能为空'
             }), 400
         
         # 创建工作流
-        created_id = workflow_manager.create_workflow(workflow_id, description)
+        created_id = workflow_manager.create_workflow_with_name(workflow_id, name, description)
+        
+        # 添加节点
+        for node in nodes:
+            node_id = node.get('node_id')
+            node_name = node.get('name')
+            node_type = node.get('type')
+            node_description = node.get('description', '')
+            
+            if node_id and node_name and node_type:
+                try:
+                    workflow_manager.add_node_with_id(
+                        workflow_id=workflow_id,
+                        node_id=node_id,
+                        name=node_name,
+                        node_type=node_type,
+                        description=node_description
+                    )
+                except Exception as e:
+                    print(f"添加节点失败: {e}")
         
         return jsonify({
             'success': True,
@@ -863,6 +943,518 @@ def api_stop_workflow(task_id):
             return jsonify({'success': False, 'error': '任务不存在或已结束'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+# 历史记录相关路由
+@app.route('/history')
+def history_page():
+    """历史记录页面"""
+    return render_template('history.html')
+
+@app.route('/api/files/search')
+def api_search_files():
+    """搜索文件API"""
+    try:
+        # 获取查询参数
+        query = request.args.get('query', '')
+        file_type = request.args.get('file_type', '')
+        workflow_type = request.args.get('workflow_type', '')
+        date_from = request.args.get('date_from', '')
+        date_to = request.args.get('date_to', '')
+        sort_by = request.args.get('sort_by', 'created_at_desc')
+        page = int(request.args.get('page', 1))
+        page_size = int(request.args.get('page_size', 20))
+        
+        # 构建搜索条件（只传递DatabaseManager支持的参数）
+        search_params = {
+            'query': query,
+            'file_type': file_type,
+            'workflow_type': workflow_type,
+            'date_from': date_from,
+            'date_to': date_to,
+            'limit': page_size
+        }
+        
+        # 调用数据库管理器的搜索方法
+        results = database_manager.search_files(**search_params)
+        
+        return jsonify({
+            'success': True,
+            'files': results['files'],
+            'total': results['total'],
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (results['total'] - 1) // page_size + 1 if results['total'] > 0 else 0
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'files': [],
+            'total': 0
+        })
+
+@app.route('/api/files/serve/<path:file_path>')
+def api_serve_file(file_path):
+    """文件服务API"""
+    try:
+        # 解码文件路径
+        import urllib.parse
+        file_path = urllib.parse.unquote(file_path)
+        
+        # 检查文件是否存在
+        if not os.path.exists(file_path):
+            return jsonify({'error': '文件不存在'}), 404
+        
+        # 检查文件是否在允许的目录中（安全检查）
+        allowed_dirs = ['output', 'images']
+        is_allowed = False
+        for allowed_dir in allowed_dirs:
+            if os.path.abspath(file_path).startswith(os.path.abspath(allowed_dir)):
+                is_allowed = True
+                break
+        
+        if not is_allowed:
+            return jsonify({'error': '访问被拒绝'}), 403
+        
+        # 获取文件的MIME类型
+        mime_type, _ = mimetypes.guess_type(file_path)
+        if mime_type is None:
+            mime_type = 'application/octet-stream'
+        
+        return send_file(file_path, mimetype=mime_type)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/files/statistics')
+def api_file_statistics():
+    """获取文件统计信息API"""
+    try:
+        stats = database_manager.get_file_statistics()
+        return jsonify({
+            'success': True,
+            'statistics': stats
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
+
+@app.route('/api/files/recent')
+def api_recent_files():
+    """获取最近文件API"""
+    try:
+        limit = int(request.args.get('limit', 10))
+        files = database_manager.get_recent_files(limit)
+        return jsonify({
+            'success': True,
+            'files': files
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'files': []
+        })
+
+@app.route('/api/files/by-date')
+def api_files_by_date():
+    """按日期获取文件API"""
+    try:
+        date = request.args.get('date')
+        if not date:
+            return jsonify({
+                'success': False,
+                'error': '缺少日期参数'
+            })
+        
+        files = database_manager.get_files_by_date(date)
+        return jsonify({
+            'success': True,
+            'files': files
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'files': []
+        })
+
+@app.route('/api/workflow/files/<task_id>')
+def api_workflow_files(task_id):
+    """获取指定工作流任务的生成文件"""
+    try:
+        # 从数据库管理器获取任务相关文件
+        files = database_manager.search_files(task_id=task_id)
+        
+        return jsonify({
+            'success': True,
+            'files': files['files']
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'files': []
+        })
+
+# ===== RunningHub API相关路由 =====
+
+@app.route('/api/upload', methods=['POST'])
+def api_upload_file():
+    """文件上传到RunningHub服务器API"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'error': '没有文件'}), 400
+        
+        file = request.files['file']
+        node_id = request.form.get('nodeId', '')
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'error': '没有选择文件'}), 400
+        
+        # 检查文件大小限制 (30MB)
+        file.seek(0, 2)  # 移动到文件末尾
+        file_size = file.tell()
+        file.seek(0)  # 重置到文件开头
+        
+        if file_size > 30 * 1024 * 1024:  # 30MB
+            return jsonify({'success': False, 'error': '文件大小超过30MB限制'}), 400
+        
+        # 检查文件类型
+        allowed_extensions = {
+            'image': ['.jpg', '.jpeg', '.png', '.webp'],
+            'video': ['.mp4', '.avi', '.mov', '.mkv'],
+            'audio': ['.mp3', '.wav', '.flac'],
+            'zip': ['.zip']
+        }
+        
+        file_ext = os.path.splitext(file.filename)[1].lower()
+        is_valid_file = False
+        for file_type, extensions in allowed_extensions.items():
+            if file_ext in extensions:
+                is_valid_file = True
+                break
+        
+        if not is_valid_file:
+            return jsonify({'success': False, 'error': f'不支持的文件格式: {file_ext}'}), 400
+        
+        # 上传到RunningHub服务器
+        runninghub_url = "https://www.runninghub.cn/task/openapi/upload"
+        api_key = os.getenv("COMFYUI_API_KEY")
+        
+        print(f"[DEBUG] 开始上传文件: {file.filename}")
+        print(f"[DEBUG] 文件大小: {file_size / 1024 / 1024:.1f}MB")
+        print(f"[DEBUG] API Key: {api_key[:10]}...{api_key[-10:] if api_key else 'None'}")
+        
+        # 准备上传数据和头部
+        files = {'file': (file.filename, file.stream, file.content_type)}
+        data = {'apiKey': api_key}  # 添加apiKey作为表单字段
+        headers = {
+            'Host': 'www.runninghub.cn',
+            'Authorization': f'Bearer {api_key}'
+        }
+        
+        # 发送请求到RunningHub
+        print(f"[DEBUG] 发送请求到: {runninghub_url}")
+        try:
+            response = requests.post(runninghub_url, files=files, data=data, headers=headers, timeout=60)
+            print(f"[DEBUG] 响应状态码: {response.status_code}")
+            print(f"[DEBUG] 响应内容: {response.text[:500]}...")
+        except requests.exceptions.Timeout as e:
+            print(f"[DEBUG] 请求超时: {str(e)}")
+            return jsonify({'success': False, 'error': f'请求超时: {str(e)}'}), 500
+        except requests.exceptions.ConnectionError as e:
+            print(f"[DEBUG] 连接错误: {str(e)}")
+            return jsonify({'success': False, 'error': f'连接错误: {str(e)}'}), 500
+        except requests.exceptions.RequestException as e:
+            print(f"[DEBUG] 请求异常: {str(e)}")
+            return jsonify({'success': False, 'error': f'请求异常: {str(e)}'}), 500
+        
+        if response.status_code != 200:
+            return jsonify({
+                'success': False, 
+                'error': f'RunningHub上传失败: HTTP {response.status_code}'
+            }), 500
+        
+        result = response.json()
+        
+        if result.get('code') != 0:
+            return jsonify({
+                'success': False,
+                'error': f'RunningHub上传失败: {result.get("msg", "未知错误")}'
+            }), 500
+        
+        # 返回RunningHub的fileName
+        return jsonify({
+            'success': True,
+            'filename': result['data']['fileName'],
+            'fileType': result['data']['fileType']
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/runninghub/create-task', methods=['POST'])
+def api_create_runninghub_task():
+    """创建RunningHub任务"""
+    try:
+        data = request.get_json()
+        workflow_id = data.get('workflowId')
+        node_info_list = data.get('nodeInfoList', [])
+        session_id = data.get('sessionId', str(uuid.uuid4()))
+        
+        print("[LOG] 开始创建RunningHub任务")
+        push_log(session_id, "开始创建RunningHub任务", "info")
+        
+        print(f"[LOG] 工作流ID: {workflow_id}")
+        print(f"[LOG] 节点信息列表: {node_info_list}")
+        push_log(session_id, f"工作流ID: {workflow_id}", "info")
+        push_log(session_id, f"收到 {len(node_info_list)} 个节点的信息", "info")
+        
+        # 使用ComfyUI客户端创建任务
+        from comfyui_client import ComfyUIClient
+        from config import load_config
+        
+        print("[LOG] 加载配置文件")
+        push_log(session_id, "正在加载配置文件", "info")
+        config = load_config()
+        client = ComfyUIClient(config.comfyui)
+        
+        # 构建API调用参数
+        api_payload = {
+            "apiKey": config.comfyui.api_key,
+            "workflowId": workflow_id,
+            "nodeInfoList": node_info_list
+        }
+        
+        print(f"[LOG] API调用参数: {api_payload}")
+        print(f"[LOG] RunningHub基础URL: {config.comfyui.base_url}")
+        push_log(session_id, f"准备调用RunningHub API: {config.comfyui.base_url}", "info")
+        
+        # 调用RunningHub API
+        import aiohttp
+        import asyncio
+        
+        async def create_task():
+              url = f"{config.comfyui.base_url}/task/openapi/create"
+              headers = {
+                  "Host": "www.runninghub.cn",
+                  "Content-Type": "application/json"
+              }
+              
+              print(f"[LOG] 请求URL: {url}")
+              print(f"[LOG] 请求头: {headers}")
+              push_log(session_id, f"正在连接到: {url}", "info")
+              
+              # 创建SSL上下文，跳过证书验证
+              import ssl
+              ssl_context = ssl.create_default_context()
+              ssl_context.check_hostname = False
+              ssl_context.verify_mode = ssl.CERT_NONE
+              
+              connector = aiohttp.TCPConnector(ssl=ssl_context)
+              async with aiohttp.ClientSession(connector=connector) as session:
+                  print("[LOG] 发送HTTP请求到RunningHub")
+                  push_log(session_id, "正在发送HTTP请求到RunningHub", "info")
+                  async with session.post(url, headers=headers, json=api_payload) as response:
+                     print(f"[LOG] HTTP响应状态: {response.status}")
+                     response_text = await response.text()
+                     print(f"[LOG] HTTP响应内容: {response_text}")
+                     push_log(session_id, f"收到HTTP响应，状态码: {response.status}", "info")
+                     
+                     if response.status == 200:
+                         result = await response.json()
+                         print(f"[LOG] 解析后的响应: {result}")
+                         if result.get('code') == 0:
+                             data = result.get('data', {})
+                             task_id = data.get('taskId') or data.get('task_id')
+                             print(f"[LOG] 任务创建成功，任务ID: {task_id}")
+                             return {'success': True, 'taskId': task_id}
+                         else:
+                             error_msg = result.get('message', '创建任务失败')
+                             print(f"[LOG] 任务创建失败: {error_msg}")
+                             return {'success': False, 'error': error_msg}
+                     else:
+                         error_msg = f'HTTP错误: {response.status}'
+                         print(f"[LOG] HTTP请求失败: {error_msg}")
+                         return {'success': False, 'error': error_msg}
+        
+        # 运行异步任务
+        print("[LOG] 开始执行异步任务")
+        result = asyncio.run(create_task())
+        
+        print(f"[LOG] 任务执行结果: {result}")
+        if result['success']:
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"[LOG] 创建任务异常: {str(e)}")
+        print(f"[LOG] 异常类型: {type(e).__name__}")
+        import traceback
+        print(f"[LOG] 异常堆栈: {traceback.format_exc()}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/runninghub/check-status', methods=['POST'])
+def api_check_runninghub_status():
+    """检查RunningHub任务状态"""
+    try:
+        data = request.get_json()
+        task_id = data.get('taskId')
+        
+        if not task_id:
+            return jsonify({'success': False, 'error': '缺少任务ID'}), 400
+        
+        # 使用ComfyUI客户端检查状态
+        from config import load_config
+        import aiohttp
+        import asyncio
+        
+        config = load_config()
+        
+        async def check_status():
+             url = f"{config.comfyui.base_url}/task/openapi/status"
+             headers = {
+                 "Host": "www.runninghub.cn",
+                 "Content-Type": "application/json"
+             }
+             
+             payload = {
+                 "apiKey": config.comfyui.api_key,
+                 "taskId": task_id
+             }
+             
+             # 创建SSL上下文，跳过证书验证
+             import ssl
+             ssl_context = ssl.create_default_context()
+             ssl_context.check_hostname = False
+             ssl_context.verify_mode = ssl.CERT_NONE
+             
+             connector = aiohttp.TCPConnector(ssl=ssl_context)
+             async with aiohttp.ClientSession(connector=connector) as session:
+                 async with session.post(url, headers=headers, json=payload) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        if result.get('code') == 0:
+                            data = result.get('data')
+                            status = data if isinstance(data, str) else data.get('status') if isinstance(data, dict) else 'UNKNOWN'
+                            return {'success': True, 'status': status, 'message': f'任务状态: {status}'}
+                        else:
+                            return {'success': False, 'error': result.get('message', '查询状态失败')}
+                    else:
+                        return {'success': False, 'error': f'HTTP错误: {response.status}'}
+        
+        result = asyncio.run(check_status())
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/runninghub/get-results', methods=['POST'])
+def api_get_runninghub_results():
+    """获取RunningHub任务结果"""
+    try:
+        data = request.get_json()
+        task_id = data.get('taskId')
+        
+        if not task_id:
+            return jsonify({'success': False, 'error': '缺少任务ID'}), 400
+        
+        from config import load_config
+        import aiohttp
+        import asyncio
+        import os
+        from datetime import datetime
+        
+        config = load_config()
+        
+        async def get_results():
+             url = f"{config.comfyui.base_url}/task/openapi/outputs"
+             headers = {
+                 "Host": "www.runninghub.cn",
+                 "Content-Type": "application/json"
+             }
+             
+             payload = {
+                 "apiKey": config.comfyui.api_key,
+                 "taskId": task_id
+             }
+             
+             # 创建SSL上下文，跳过证书验证
+             import ssl
+             ssl_context = ssl.create_default_context()
+             ssl_context.check_hostname = False
+             ssl_context.verify_mode = ssl.CERT_NONE
+             
+             connector = aiohttp.TCPConnector(ssl=ssl_context)
+             async with aiohttp.ClientSession(connector=connector) as session:
+                 async with session.post(url, headers=headers, json=payload) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        if result.get('code') == 0:
+                            data = result.get('data', {})
+                            
+                            # 创建输出目录
+                            today = datetime.now().strftime('%m%d')
+                            output_dir = os.path.join('output', today)
+                            os.makedirs(output_dir, exist_ok=True)
+                            
+                            # 处理输出文件
+                            files = []
+                            downloaded_files = []
+                            if isinstance(data, dict):
+                                for key, value in data.items():
+                                    if isinstance(value, list):
+                                        for item in value:
+                                            if isinstance(item, dict) and 'url' in item:
+                                                file_info = {
+                                                    'name': item.get('filename', f'{key}_{len(files)}.png'),
+                                                    'url': item['url']
+                                                }
+                                                files.append(file_info)
+                                                
+                                                # 下载文件到本地
+                                                try:
+                                                    file_url = item['url']
+                                                    filename = file_info['name']
+                                                    local_path = os.path.join(output_dir, filename)
+                                                    
+                                                    async with session.get(file_url) as file_response:
+                                                        if file_response.status == 200:
+                                                            with open(local_path, 'wb') as f:
+                                                                f.write(await file_response.read())
+                                                            downloaded_files.append({
+                                                                'name': filename,
+                                                                'path': local_path,
+                                                                'url': file_url
+                                                            })
+                                                            print(f"[DEBUG] 文件已保存到: {local_path}")
+                                                        else:
+                                                            print(f"[DEBUG] 下载文件失败: {file_url}, 状态码: {file_response.status}")
+                                                except Exception as download_error:
+                                                    print(f"[DEBUG] 下载文件异常: {str(download_error)}")
+                            
+                            return {
+                                'success': True, 
+                                'outputPath': output_dir,
+                                'files': files,
+                                'downloadedFiles': downloaded_files,
+                                'data': data
+                            }
+                        else:
+                            return {'success': False, 'error': result.get('message', '获取结果失败')}
+                    else:
+                        return {'success': False, 'error': f'HTTP错误: {response.status}'}
+        
+        result = asyncio.run(get_results())
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)

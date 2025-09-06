@@ -127,8 +127,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // CSV导入功能
-    const importCsvBtn = document.getElementById('import-csv');
-    const csvFileInput = document.getElementById('csv-file-input');
+    const importCsvBtn = document.getElementById('importCsvBtn');
+    const csvFileInput = document.getElementById('csvFileInput');
     
     if (importCsvBtn && csvFileInput) {
         importCsvBtn.addEventListener('click', function() {

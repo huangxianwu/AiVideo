@@ -44,21 +44,17 @@
             <!-- 导航菜单 -->
             <nav class="mt-6">
                 <div class="px-3">
-                    <a href="/" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                    <a href="/erp" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
                         <i class="fas fa-shopping-cart w-5 h-5"></i>
                         <span class="ml-3" x-show="sidebarOpen" x-transition>POD产品选择</span>
-                    </a>
-                    <a href="/workflow/list" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
-                        <i class="fas fa-list w-5 h-5"></i>
-                        <span class="ml-3" x-show="sidebarOpen" x-transition>工作流列表</span>
                     </a>
                     <a href="/pod-workflow" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg bg-primary text-white">
                         <i class="fas fa-cogs w-5 h-5"></i>
                         <span class="ml-3" x-show="sidebarOpen" x-transition>POD工作流</span>
                     </a>
-                    <a href="#" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
-                        <i class="fas fa-cog w-5 h-5"></i>
-                        <span class="ml-3" x-show="sidebarOpen" x-transition>系统设置</span>
+                    <a href="/workflow/list" class="flex items-center px-3 py-3 mb-2 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                        <i class="fas fa-list w-5 h-5"></i>
+                        <span class="ml-3" x-show="sidebarOpen" x-transition>工作流列表</span>
                     </a>
                 </div>
             </nav>
@@ -198,7 +194,7 @@
                 </div>
 
                 <!-- 实时日志显示区域 -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <div class="flex items-center justify-between">
                             <h2 class="text-lg font-semibold text-gray-900">实时日志</h2>
@@ -227,7 +223,147 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 文件展示区域 -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200" x-show="generatedFiles.length > 0">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-gray-900">生成的文件</h2>
+                            <div class="flex items-center space-x-2">
+                                <button @click="refreshFiles()" 
+                                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-refresh mr-1"></i>
+                                    刷新
+                                </button>
+                                <button @click="viewMoreFiles()" 
+                                        class="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 border border-blue-300 rounded hover:bg-blue-50 transition-colors">
+                                    <i class="fas fa-folder-open mr-1"></i>
+                                    查看更多文件
+                                </button>
+                                <span class="text-sm text-gray-500" x-text="`共 ${generatedFiles.length} 个文件`"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid gap-4" style="grid-template-columns: repeat(auto-fit, minmax(123px, 1fr));">
+                            <template x-for="(file, index) in generatedFiles" :key="index">
+                                <div class="bg-gray-50 rounded-lg p-2 border border-gray-200 hover:shadow-md transition-shadow" style="width: 123px;">
+                                    <!-- 文件预览 -->
+                                    <div class="mb-2">
+                                        <template x-if="file.type === 'image'">
+                                            <div class="relative group" style="width: 107px; height: 200px;">
+                                                <img :src="file.url" :alt="file.name" 
+                                                     class="w-full h-full object-cover rounded cursor-pointer"
+                                                     @click="openFileModal(file)">
+                                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded flex items-center justify-center">
+                                                    <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs"></i>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template x-if="file.type === 'video'">
+                                            <div class="relative group" style="width: 107px; height: 200px;">
+                                                <video :src="file.url" 
+                                                       class="w-full h-full object-cover rounded cursor-pointer"
+                                                       @click="openFileModal(file)"
+                                                       muted>
+                                                    <source :src="file.url" type="video/mp4">
+                                                </video>
+                                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded flex items-center justify-center">
+                                                    <i class="fas fa-play text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs"></i>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    
+                                    <!-- 文件信息 -->
+                                    <div class="space-y-1">
+                                        <h3 class="text-xs font-medium text-gray-900 truncate" :title="file.name" x-text="file.name"></h3>
+                                        <div class="text-xs text-gray-500">
+                                            <div x-text="file.size"></div>
+                                            <div x-text="file.created_at"></div>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <button @click="downloadFile(file)" 
+                                                    class="flex-1 px-1 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors" 
+                                                    title="下载">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button @click="copyFileUrl(file)" 
+                                                    class="flex-1 px-1 py-1 text-xs bg-gray-50 text-gray-600 rounded hover:bg-gray-100 transition-colors" 
+                                                    title="复制链接">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+
             </main>
+        </div>
+    </div>
+
+    <!-- 文件预览模态框 -->
+    <div x-show="showFileModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         @click="closeFileModal()" 
+         style="display: none;">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full"
+                 @click.stop>
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-gray-900" x-text="selectedFile?.name"></h3>
+                        <button @click="closeFileModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="text-center">
+                        <template x-if="selectedFile?.type === 'image'">
+                            <img :src="selectedFile?.url" :alt="selectedFile?.name" 
+                                 class="max-w-full max-h-96 mx-auto rounded">
+                        </template>
+                        <template x-if="selectedFile?.type === 'video'">
+                            <video :src="selectedFile?.url" 
+                                   class="max-w-full max-h-96 mx-auto rounded"
+                                   controls>
+                                <source :src="selectedFile?.url" type="video/mp4">
+                            </video>
+                        </template>
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-gray-500 space-y-1">
+                        <div>文件大小: <span x-text="selectedFile?.size"></span></div>
+                        <div>创建时间: <span x-text="selectedFile?.created_at"></span></div>
+                        <div>文件路径: <span x-text="selectedFile?.path" class="font-mono text-xs"></span></div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button @click="downloadFile(selectedFile)" 
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        <i class="fas fa-download mr-2"></i>
+                        下载文件
+                    </button>
+                    <button @click="copyFileUrl(selectedFile)" 
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        <i class="fas fa-copy mr-2"></i>
+                        复制链接
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -240,6 +376,9 @@
                 currentTaskId: null,
                 logs: [],
                 eventSource: null,
+                generatedFiles: [],
+                showFileModal: false,
+                selectedFile: null,
 
                 executeWorkflow(workflowType) {
                     if (this.isRunning) return;
@@ -290,7 +429,7 @@
                             this.addLog(data.message);
                         } else if (data.type === 'complete') {
                             this.addLog(`[${new Date().toLocaleTimeString()}] 工作流执行完成`);
-                            this.resetWorkflowState();
+                            this.getTaskResults(taskId);
                         } else if (data.type === 'error') {
                             this.addLog(`[${new Date().toLocaleTimeString()}] 执行错误: ${data.message}`);
                             this.resetWorkflowState();
@@ -347,6 +486,41 @@
                     });
                 },
 
+                async getTaskResults(taskId) {
+                    try {
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 正在获取任务结果...`);
+                        
+                        const response = await fetch('/api/runninghub/get-results', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                taskId: taskId
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            const downloadedCount = data.downloadedFiles ? data.downloadedFiles.length : 0;
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 任务结果获取成功，已下载 ${downloadedCount} 个文件到 ${data.outputPath}`);
+                            
+                            if (data.downloadedFiles && data.downloadedFiles.length > 0) {
+                                data.downloadedFiles.forEach(file => {
+                                    this.addLog(`[${new Date().toLocaleTimeString()}] 文件已保存: ${file.name}`);
+                                });
+                            }
+                        } else {
+                            this.addLog(`[${new Date().toLocaleTimeString()}] 获取任务结果失败: ${data.error}`);
+                        }
+                    } catch (error) {
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 获取任务结果请求失败: ${error.message}`);
+                    } finally {
+                        this.resetWorkflowState();
+                    }
+                },
+
                 resetWorkflowState() {
                     this.isRunning = false;
                     this.currentWorkflow = null;
@@ -355,6 +529,91 @@
                         this.eventSource.close();
                         this.eventSource = null;
                     }
+                    // 工作流完成后刷新文件列表
+                    this.refreshFiles();
+                },
+
+                // 文件相关方法
+                refreshFiles() {
+                    // 获取output目录下的所有文件
+                    fetch('/api/files/recent?limit=50')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.generatedFiles = data.files.map(file => ({
+                                    ...file,
+                                    url: `/api/files/serve/${encodeURIComponent(file.path)}`,
+                                    thumbnail_url: file.thumbnail ? `/api/files/serve/${encodeURIComponent(file.thumbnail)}` : null,
+                                    size: this.formatFileSize(file.size),
+                                    created_at: this.formatDate(file.modified_time)
+                                }));
+                            } else {
+                                console.error('获取文件列表失败:', data.error);
+                                this.generatedFiles = [];
+                            }
+                        })
+                        .catch(error => {
+                            console.error('获取文件列表请求失败:', error);
+                            this.generatedFiles = [];
+                        });
+                },
+
+                openFileModal(file) {
+                    this.selectedFile = file;
+                    this.showFileModal = true;
+                },
+
+                closeFileModal() {
+                    this.showFileModal = false;
+                    this.selectedFile = null;
+                },
+
+                downloadFile(file) {
+                    const link = document.createElement('a');
+                    link.href = file.url;
+                    link.download = file.name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+
+                copyFileUrl(file) {
+                    const fullUrl = window.location.origin + file.url;
+                    navigator.clipboard.writeText(fullUrl).then(() => {
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 文件链接已复制到剪贴板`);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        this.addLog(`[${new Date().toLocaleTimeString()}] 复制链接失败`);
+                    });
+                },
+
+                viewMoreFiles() {
+                    // 跳转到历史记录页面查看更多文件
+                    window.open('/history', '_blank');
+                },
+
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                },
+
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                },
+
+                // 初始化时加载文件
+                init() {
+                    this.refreshFiles();
                 }
             }
         }

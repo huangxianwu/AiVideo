@@ -884,47 +884,59 @@
     "composition_task_5_570145": {
       "task_id": "composition_task_5_570145",
       "workflow_type": "图片合成",
-      "status": "视频生成中",
+      "status": "已完成",
       "created_at": "2025-09-04T11:29:56.127723",
-      "updated_at": "2025-09-05T15:50:36.903481",
+      "updated_at": "2025-09-05T22:33:44.458778",
       "row_index": 5,
       "product_name": "0902_funny_black_graffiti",
       "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
       "video_prompt": "",
-      "image_path": null,
-      "video_path": null,
+      "image_path": "./output/0905/video/0902_fashion_designer_guatemala_白人-男-32-咖啡墨镜3_20250905_223344.mp4",
+      "video_path": "./output/0905/video/0902_fashion_designer_guatemala_白人-男-32-咖啡墨镜3_20250905_223344.mp4",
       "error_message": "产品图片上传失败: 未知错误",
-      "metadata": {}
+      "metadata": {},
+      "comfyui_task_id": "1963973161425510402",
+      "output_files": [
+        "./output/0905/video/0902_fashion_designer_guatemala_白人-男-32-咖啡墨镜3_20250905_223344.mp4"
+      ]
     },
     "composition_task_6_570148": {
       "task_id": "composition_task_6_570148",
       "workflow_type": "图片合成",
-      "status": "失败",
+      "status": "已完成",
       "created_at": "2025-09-04T11:29:59.005435",
-      "updated_at": "2025-09-04T11:30:01.816429",
+      "updated_at": "2025-09-05T22:35:56.702829",
       "row_index": 6,
       "product_name": "0902_fashion_designer_guatemala",
       "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
       "video_prompt": "",
-      "image_path": null,
-      "video_path": null,
+      "image_path": "./output/0905/video/0902_slogan_outdoor_fishing_黑人-男-32-咖啡墨镜2_20250905_223556.mp4",
+      "video_path": "./output/0905/video/0902_slogan_outdoor_fishing_黑人-男-32-咖啡墨镜2_20250905_223556.mp4",
       "error_message": "产品图片上传失败: 未知错误",
-      "metadata": {}
+      "metadata": {},
+      "comfyui_task_id": "1963973849140346882",
+      "output_files": [
+        "./output/0905/video/0902_slogan_outdoor_fishing_黑人-男-32-咖啡墨镜2_20250905_223556.mp4"
+      ]
     },
     "composition_task_7_570151": {
       "task_id": "composition_task_7_570151",
       "workflow_type": "图片合成",
-      "status": "失败",
+      "status": "已完成",
       "created_at": "2025-09-04T11:30:01.821763",
-      "updated_at": "2025-09-04T22:44:53.401751",
+      "updated_at": "2025-09-05T22:38:12.512064",
       "row_index": 7,
       "product_name": "0902_slogan_outdoor_fishing",
       "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
       "video_prompt": "",
-      "image_path": null,
-      "video_path": null,
+      "image_path": "./output/0905/video/0902_funny_quote_sarcastic_白人-男-32-咖啡墨镜3_20250905_223812.mp4",
+      "video_path": "./output/0905/video/0902_funny_quote_sarcastic_白人-男-32-咖啡墨镜3_20250905_223812.mp4",
       "error_message": "恢复失败: RowData.__init__() got an unexpected keyword argument 'video_prompt'",
-      "metadata": {}
+      "metadata": {},
+      "comfyui_task_id": "1963974420081614850",
+      "output_files": [
+        "./output/0905/video/0902_funny_quote_sarcastic_白人-男-32-咖啡墨镜3_20250905_223812.mp4"
+      ]
     },
     "composition_task_2_610640": {
       "task_id": "composition_task_2_610640",
@@ -1230,17 +1242,21 @@
     "composition_task_8_614282": {
       "task_id": "composition_task_8_614282",
       "workflow_type": "图片合成",
-      "status": "失败",
+      "status": "已完成",
       "created_at": "2025-09-04T23:45:35.847495",
-      "updated_at": "2025-09-04T23:45:38.596508",
+      "updated_at": "2025-09-05T22:41:08.539575",
       "row_index": 8,
       "product_name": "0902_funny_emotional_support",
       "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
       "video_prompt": "",
-      "image_path": null,
-      "video_path": null,
+      "image_path": "./output/0905/video/0902_pumpkin_leopard_coquette_黑人-男-32-咖啡墨镜2_20250905_224108.mp4",
+      "video_path": "./output/0905/video/0902_pumpkin_leopard_coquette_黑人-男-32-咖啡墨镜2_20250905_224108.mp4",
       "error_message": "产品图片上传失败: 图片上传异常: Cannot connect to host www.runninghub.cn:443 ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1006)')]",
-      "metadata": {}
+      "metadata": {},
+      "comfyui_task_id": "1963975011541368833",
+      "output_files": [
+        "./output/0905/video/0902_pumpkin_leopard_coquette_黑人-男-32-咖啡墨镜2_20250905_224108.mp4"
+      ]
     },
     "composition_task_9_614285": {
       "task_id": "composition_task_9_614285",
@@ -3177,19 +3193,53 @@
       "output_files": [
         "./output/0905/img/0902_pumpkin_leopard_coquette_黑人-男-32-咖啡墨镜2_09-05-15-21.png"
       ]
+    },
+    "composition_task_8_713450": {
+      "task_id": "composition_task_8_713450",
+      "workflow_type": "图片合成",
+      "status": "视频生成中",
+      "created_at": "2025-09-06T10:30:55.719504",
+      "updated_at": "2025-09-06T10:32:59.666885",
+      "row_index": 8,
+      "product_name": "0902_funny_cat_flower",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": "./output/0906/img/0902_funny_cat_flower_白人-男-32-咖啡墨镜3_09-06-10-32.png",
+      "video_path": null,
+      "error_message": null,
+      "metadata": {},
+      "comfyui_task_id": "1964154326560194561",
+      "output_files": [
+        "./output/0906/img/0902_funny_cat_flower_白人-男-32-咖啡墨镜3_09-06-10-32.png"
+      ]
+    },
+    "composition_task_9_713580": {
+      "task_id": "composition_task_9_713580",
+      "workflow_type": "图片合成",
+      "status": "等待中",
+      "created_at": "2025-09-06T10:33:05.529895",
+      "updated_at": "2025-09-06T10:33:05.529907",
+      "row_index": 9,
+      "product_name": "0902_funny_emotional_support",
+      "image_prompt": "镜头平行缓移跟拍，模特自然走路，双手轻摆，清晰呈现 T 恤彩色印花 。",
+      "video_prompt": "",
+      "image_path": null,
+      "video_path": null,
+      "error_message": null,
+      "metadata": {}
     }
   },
   "statistics": {
-    "total_tasks": 197,
-    "completed": 27,
+    "total_tasks": 199,
+    "completed": 31,
     "image_generating": 1,
     "video_generating": 45,
-    "failed": 124,
-    "pending": 0
+    "failed": 121,
+    "pending": 1
   },
   "metadata": {
     "created_at": "2025-08-28T17:34:44.456866",
-    "last_updated": "2025-09-05T15:50:36.903502",
+    "last_updated": "2025-09-06T10:33:05.529924",
     "version": "1.0"
   }
 }

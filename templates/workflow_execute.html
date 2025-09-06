@@ -170,6 +170,11 @@
                     <div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-sm" id="logsContainer">
                         <!-- 执行日志将在这里显示 -->
                     </div>
+                    
+                    <!-- 执行结果 -->
+                    <div id="executionResults">
+                        <!-- 执行结果将在这里显示 -->
+                    </div>
                 </div>
             </main>
         </div>
@@ -184,6 +189,9 @@
         let workflow = null;
         let executionId = null;
         let statusCheckInterval = null;
+        let eventSource = null;
+        let sessionId = null;
+        let currentTaskId = null;
         
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -203,9 +211,14 @@
         // 初始化事件监听器
         function initializeEventListeners() {
             // 侧边栏切换
-            document.getElementById('sidebarToggle').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('-translate-x-full');
-            });
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+            }
         }
         
         // 加载工作流信息
@@ -254,7 +267,7 @@
                 const inputHtml = generateNodeInput(node);
                 
                 return `
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-node-id="${node.id}">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6" data-node-id="${node.node_id}">
                         <div class="flex items-start space-x-4 mb-4">
                             <div class="flex-shrink-0">
                                 <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -291,14 +304,14 @@
                 case 'text':
                     return `
                         <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
-                                id="node_${node.id}" rows="3" 
+                                id="node_${node.node_id}" rows="3" 
                                 placeholder="请输入文本内容..." ${required}>${escapeHtml(defaultValue)}</textarea>
                     `;
                     
                 case 'number':
                     return `
                         <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
-                               id="node_${node.id}" placeholder="请输入数字..." value="${escapeHtml(defaultValue)}" ${required}>
+                               id="node_${node.node_id}" placeholder="请输入数字..." value="${escapeHtml(defaultValue)}" ${required}>
                     `;
                     
                 case 'image':
@@ -312,7 +325,7 @@
                     
                     return `
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors" 
-                             onclick="document.getElementById('file_${node.id}').click()">
+                             onclick="document.getElementById('file_${node.node_id}').click()">
                             <div class="text-gray-400 mb-2">
                                 <i class="${getNodeIconClass(node.type)} text-3xl"></i>
                             </div>
@@ -321,13 +334,13 @@
                             </div>
                             <div class="text-sm text-gray-500">支持的格式: ${acceptTypes[node.type]}</div>
                         </div>
-                        <input type="file" id="file_${node.id}" accept="${acceptTypes[node.type]}" 
+                        <input type="file" id="file_${node.node_id}" accept="${acceptTypes[node.type]}" 
                                style="display: none;" ${required}>
-                        <div class="mt-3 hidden" id="preview_${node.id}">
+                        <div class="mt-3 hidden" id="preview_${node.node_id}">
                             <div class="bg-gray-50 rounded-lg p-3">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium text-gray-900" id="filename_${node.id}"></span>
-                                    <span class="text-sm text-gray-500" id="filesize_${node.id}"></span>
+                                    <span class="text-sm font-medium text-gray-900" id="filename_${node.node_id}"></span>
+                                    <span class="text-sm text-gray-500" id="filesize_${node.node_id}"></span>
                                 </div>
                             </div>
                         </div>
@@ -336,8 +349,64 @@
                 default:
                     return `
                         <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
-                               id="node_${node.id}" placeholder="请输入内容..." value="${escapeHtml(defaultValue)}" ${required}>
+                               id="node_${node.node_id}" placeholder="请输入内容..." value="${escapeHtml(defaultValue)}" ${required}>
                     `;
+            }
+        }
+        
+        // 处理文件选择和预览
+        function handleFileSelect(nodeId, files) {
+            const file = files[0];
+            if (!file) return;
+            
+            const preview = document.getElementById(`preview_${nodeId}`);
+            const filename = document.getElementById(`filename_${nodeId}`);
+            const filesize = document.getElementById(`filesize_${nodeId}`);
+            
+            if (filename) {
+                filename.textContent = file.name;
+            }
+            if (filesize) {
+                filesize.textContent = formatFileSize(file.size);
+            }
+            
+            if (preview) {
+                preview.classList.remove('hidden');
+                
+                // 根据文件类型创建预览
+                const fileType = file.type;
+                const fileUrl = URL.createObjectURL(file);
+                
+                // 清空现有预览内容
+                const existingPreview = preview.querySelector('.file-preview');
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+                
+                if (fileType.startsWith('image/')) {
+                    // 图片预览
+                    const img = document.createElement('img');
+                    img.src = fileUrl;
+                    img.className = 'file-preview mt-2 max-w-full max-h-48 object-contain rounded-lg';
+                    img.onload = () => URL.revokeObjectURL(fileUrl);
+                    preview.appendChild(img);
+                } else if (fileType.startsWith('video/')) {
+                    // 视频预览
+                    const video = document.createElement('video');
+                    video.src = fileUrl;
+                    video.controls = true;
+                    video.className = 'file-preview mt-2 max-w-full max-h-48 rounded-lg';
+                    video.onloadeddata = () => URL.revokeObjectURL(fileUrl);
+                    preview.appendChild(video);
+                } else if (fileType.startsWith('audio/')) {
+                    // 音频预览
+                    const audio = document.createElement('audio');
+                    audio.src = fileUrl;
+                    audio.controls = true;
+                    audio.className = 'file-preview mt-2 w-full';
+                    audio.onloadeddata = () => URL.revokeObjectURL(fileUrl);
+                    preview.appendChild(audio);
+                }
             }
         }
         
@@ -345,187 +414,393 @@
         function initializeFileUploads() {
             document.querySelectorAll('input[type="file"]').forEach(input => {
                 const nodeId = input.id.replace('file_', '');
+                
                 const uploadArea = input.parentElement.querySelector('.border-dashed');
                 const preview = document.getElementById(`preview_${nodeId}`);
                 
                 input.addEventListener('change', function(e) {
-                    handleFileSelect(e.target.files[0], nodeId);
+                    handleFileSelect(nodeId, e.target.files);
                 });
                 
                 // 拖拽上传
-                uploadArea.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    uploadArea.classList.add('border-primary', 'bg-blue-50');
-                });
-                
-                uploadArea.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    uploadArea.classList.remove('border-primary', 'bg-blue-50');
-                });
-                
-                uploadArea.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    uploadArea.classList.remove('border-primary', 'bg-blue-50');
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        handleFileSelect(files[0], nodeId);
-                        input.files = files;
-                    }
-                });
+                if (uploadArea) {
+                    uploadArea.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        uploadArea.classList.add('border-primary', 'bg-blue-50');
+                    });
+                    
+                    uploadArea.addEventListener('dragleave', function(e) {
+                        e.preventDefault();
+                        uploadArea.classList.remove('border-primary', 'bg-blue-50');
+                    });
+                    
+                    uploadArea.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        uploadArea.classList.remove('border-primary', 'bg-blue-50');
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            handleFileSelect(nodeId, files);
+                            input.files = files;
+                        }
+                    });
+                }
             });
         }
         
-        // 处理文件选择
-        function handleFileSelect(file, nodeId) {
-            if (!file) return;
-            
-            const preview = document.getElementById(`preview_${nodeId}`);
-            const filename = document.getElementById(`filename_${nodeId}`);
-            const filesize = document.getElementById(`filesize_${nodeId}`);
-            
-            if (filename) filename.textContent = file.name;
-            if (filesize) filesize.textContent = formatFileSize(file.size);
-            if (preview) preview.classList.remove('hidden');
-            
-            console.log(`文件已选择: ${file.name}, 大小: ${formatFileSize(file.size)}`);
+
+        
+        // 根据节点类型获取字段名
+        function getFieldNameForNodeType(nodeType) {
+            switch (nodeType) {
+                case 'image':
+                case 'video':
+                case 'audio':
+                    return 'image'; // RunningHub API统一使用'image'字段名
+                case 'text':
+                    return 'text';
+                default:
+                    return 'value';
+            }
         }
+        
+        // 上传文件到服务器
+        async function uploadFile(file, nodeId) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('nodeId', nodeId);
+            
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`文件上传失败: ${response.statusText}`);
+            }
+            
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error || '文件上传失败');
+            }
+            
+            // 返回RunningHub的fileName，这是工作流节点需要的路径
+            return result.filename;
+        }
+        
+        // 添加日志到执行日志控件
+        // 连接到日志流
+        function connectToLogStream(sessionId) {
+            if (eventSource) {
+                eventSource.close();
+            }
+            
+            eventSource = new EventSource(`/api/logs/${sessionId}`);
+            
+            eventSource.onmessage = function(event) {
+                try {
+                    const logData = JSON.parse(event.data);
+                    if (logData.type === 'log') {
+                        addExecutionLog(logData.message, logData.log_type);
+                    }
+                } catch (e) {
+                    console.error('解析日志数据失败:', e);
+                }
+            };
+            
+            eventSource.onerror = function(event) {
+                console.error('SSE连接错误:', event);
+            };
+        }
+        
+        // 添加日志到执行日志控件
+          function addExecutionLog(message, type = 'info') {
+              const logsContainer = document.getElementById('logsContainer');
+              if (!logsContainer) {
+                  console.error('日志容器未找到');
+                  return;
+              }
+              
+              const timestamp = new Date().toLocaleTimeString();
+              const logClass = type === 'error' ? 'text-red-600' : type === 'success' ? 'text-green-600' : 'text-gray-800';
+              
+              const logEntry = document.createElement('div');
+              logEntry.className = 'mb-2';
+              logEntry.innerHTML = `<span class="text-gray-500 text-xs mr-2">[${timestamp}]</span><span class="${logClass}">${message}</span>`;
+              
+              logsContainer.appendChild(logEntry);
+              logsContainer.scrollTop = logsContainer.scrollHeight;
+          }
         
         // 执行工作流
         async function executeWorkflow() {
             try {
+                // 生成会话ID
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                // 建立SSE连接接收实时日志
+                connectToLogStream(sessionId);
+                
                 // 收集所有节点的输入数据
                 const inputData = {};
+                const fileUploads = [];
                 let hasError = false;
                 
+                // 显示执行状态
+                showExecutionStatus('running', '正在准备执行...', '正在处理文件上传');
+                addExecutionLog('开始执行工作流', 'info');
+                document.getElementById('executeBtn').disabled = true;
+                
+                // 处理每个节点的数据
+                addExecutionLog('开始收集节点数据', 'info');
                 for (const node of workflow.nodes || []) {
-                    const value = getNodeValue(node);
+                    let value = getNodeValue(node);
                     
+                    // 检查必填字段
                     if (node.required && (!value || value === '')) {
                         showError(`请填写必填字段: ${node.name}`);
+                        addExecutionLog(`验证失败: ${node.name} 为必填字段`, 'error');
                         hasError = true;
                         break;
                     }
                     
-                    inputData[node.id] = value;
+                    // 处理文件上传
+                    if (['image', 'video', 'audio'].includes(node.type)) {
+                        const fileInput = document.getElementById(`file_${node.node_id}`);
+                        if (fileInput && fileInput.files.length > 0) {
+                            try {
+                                showExecutionStatus('running', '正在上传文件...', `上传 ${fileInput.files[0].name}`);
+                                addExecutionLog(`正在上传文件: ${fileInput.files[0].name}`, 'info');
+                                const filename = await uploadFile(fileInput.files[0], node.node_id);
+                                value = filename;
+                                addExecutionLog(`文件上传成功: ${filename}`, 'success');
+                            } catch (error) {
+                                showError(`文件上传失败: ${error.message}`);
+                                addExecutionLog(`文件上传失败: ${error.message}`, 'error');
+                                hasError = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    inputData[node.node_id] = value;
                 }
                 
-                if (hasError) return;
+                addExecutionLog(`收集到 ${workflow.nodes?.length || 0} 个节点的数据`, 'info');
+                
+                if (hasError) {
+                    document.getElementById('executeBtn').disabled = false;
+                    return;
+                }
                 
                 // 显示执行状态
-                showExecutionStatus('running', '正在执行工作流...', '请稍候');
-                document.getElementById('executeBtn').disabled = true;
+                showExecutionStatus('running', '正在创建任务...', '调用RunningHub API');
+                addExecutionLog('正在创建RunningHub任务...', 'info');
                 
-                // 构建节点信息列表
+                // 构建RunningHub API的节点信息列表
                 const nodeInfoList = [];
                 for (const node of workflow.nodes || []) {
-                    const value = inputData[node.id];
-                    nodeInfoList.push({
-                        nodeId: node.id,
-                        nodeName: node.name,
-                        nodeType: node.type,
-                        value: value
-                    });
+                    const value = inputData[node.node_id];
+                    if (value) {
+                        nodeInfoList.push({
+                            nodeId: node.node_id,
+                            fieldName: getFieldNameForNodeType(node.type),
+                            fieldValue: value
+                        });
+                    }
                 }
                 
-                // 发送执行请求（调用通用工作流接口）
-                const response = await fetch('/api/workflows/generic/execute', {
+                addExecutionLog(`构建节点信息列表，包含 ${nodeInfoList.length} 个有效节点`, 'info');
+                
+                // 调用后端API创建RunningHub任务
+                const response = await fetch('/api/runninghub/create-task', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ 
-                        webappId: workflowId,
-                        nodeInfoList: nodeInfoList
+                        workflowId: workflowId,
+                        nodeInfoList: nodeInfoList,
+                        sessionId: sessionId
                     })
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    executionId = result.data ? result.data.execution_id : result.execution_id;
-                    console.log('获取到执行ID:', executionId);
+                    currentTaskId = result.taskId;
+                    showExecutionStatus('running', '任务已创建', `任务ID: ${currentTaskId}`);
+                    addExecutionLog(`任务创建成功，任务ID: ${currentTaskId}`, 'success');
+                    addExecutionLog('开始监控任务状态...', 'info');
                     startStatusCheck();
                 } else {
-                    showExecutionStatus('error', '执行失败', result.error);
+                    showExecutionStatus('error', '创建任务失败', result.error);
+                    addExecutionLog(`任务创建失败: ${result.error}`, 'error');
                     document.getElementById('executeBtn').disabled = false;
                 }
             } catch (error) {
                 showExecutionStatus('error', '执行失败', error.message);
+                addExecutionLog(`执行异常: ${error.message}`, 'error');
                 document.getElementById('executeBtn').disabled = false;
             }
         }
         
         // 获取节点值
         function getNodeValue(node) {
-            const element = document.getElementById(`node_${node.id}`) || document.getElementById(`file_${node.id}`);
+            const element = document.getElementById(`node_${node.node_id}`) || document.getElementById(`file_${node.node_id}`);
             
             if (!element) {
-                console.log(`未找到节点元素: ${node.id}`);
                 return null;
             }
             
             if (element.type === 'file') {
                 const file = element.files[0] || null;
                 if (file) {
-                    console.log(`获取文件节点值: ${node.id}, 文件: ${file.name}`);
                     // 对于文件类型，返回文件名而不是文件对象
                     return file.name;
                 } else {
-                    console.log(`文件节点 ${node.id} 没有选择文件`);
                     return null;
                 }
             } else {
                 const value = element.value;
-                console.log(`获取节点值: ${node.id} = ${value}`);
                 return value;
             }
         }
         
-        // 开始状态检查
+        // 开始状态检查 - 每30秒检查一次RunningHub任务状态
         function startStatusCheck() {
             if (statusCheckInterval) {
                 clearInterval(statusCheckInterval);
             }
             
-            statusCheckInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`/api/executions/${executionId}`);
-                    const result = await response.json();
+            // 立即检查一次状态
+            checkTaskStatus();
+            
+            // 每30秒检查一次状态
+            statusCheckInterval = setInterval(checkTaskStatus, 30000);
+        }
+        
+        // 检查任务状态
+        async function checkTaskStatus() {
+            if (!currentTaskId) return;
+            
+            try {
+                const response = await fetch('/api/runninghub/check-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ taskId: currentTaskId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateExecutionStatus(result.status, result.message);
+                    addExecutionLog(`任务状态: ${result.status} - ${result.message || ''}`, 'info');
                     
-                    if (result.success) {
-                        const execution = result.data;
-                        updateExecutionStatus(execution);
-                        
-                        if (execution.status === 'completed' || execution.status === 'failed') {
-                            clearInterval(statusCheckInterval);
-                            document.getElementById('executeBtn').disabled = false;
-                        }
+                    // 如果任务完成，获取结果
+                    if (result.status === 'SUCCESS') {
+                        clearInterval(statusCheckInterval);
+                        addExecutionLog('任务执行成功，正在获取结果...', 'success');
+                        await getTaskResults();
+                        document.getElementById('executeBtn').disabled = false;
+                    } else if (result.status === 'FAILED') {
+                        clearInterval(statusCheckInterval);
+                        showExecutionStatus('error', '任务失败', result.message || '任务执行失败');
+                        addExecutionLog(`任务执行失败: ${result.message || '未知错误'}`, 'error');
+                        document.getElementById('executeBtn').disabled = false;
                     }
-                } catch (error) {
-                    console.error('状态检查失败:', error);
+                } else {
+                    console.error('状态检查失败:', result.error);
+                    addExecutionLog(`状态检查失败: ${result.error}`, 'error');
                 }
-            }, 2000);
+            } catch (error) {
+                console.error('状态检查异常:', error);
+            }
+        }
+        
+        // 获取任务结果
+        async function getTaskResults() {
+            try {
+                showExecutionStatus('running', '获取结果中...', '正在下载生成的文件');
+                
+                const response = await fetch('/api/runninghub/get-results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ taskId: currentTaskId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showExecutionStatus('success', '执行完成', `文件已保存到: ${result.outputPath}`);
+                    addExecutionLog(`任务完成，输出路径: ${result.outputPath}`, 'success');
+                    if (result.files && result.files.length > 0) {
+                        addExecutionLog(`生成了 ${result.files.length} 个文件`, 'success');
+                    }
+                    
+                    // 显示结果文件列表
+                    displayResults(result.files, result.outputPath);
+                } else {
+                    showExecutionStatus('error', '获取结果失败', result.error);
+                    addExecutionLog(`获取结果失败: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showExecutionStatus('error', '获取结果异常', error.message);
+                addExecutionLog(`获取结果异常: ${error.message}`, 'error');
+            }
+        }
+        
+        // 显示结果文件
+        function displayResults(files, outputPath) {
+            const resultsContainer = document.getElementById('executionResults');
+            if (!resultsContainer) return;
+            
+            let resultHtml = '';
+            
+            if (outputPath) {
+                resultHtml += `
+                    <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <h4 class="text-lg font-semibold text-green-800 mb-2">输出路径:</h4>
+                        <p class="text-sm text-green-700">${outputPath}</p>
+                    </div>
+                `;
+            }
+            
+            if (files && files.length > 0) {
+                resultHtml += `
+                    <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <h4 class="text-lg font-semibold text-green-800 mb-2">生成的文件:</h4>
+                        <div class="space-y-2">
+                            ${files.map(file => `
+                                <div class="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span class="text-sm">${file.name}</span>
+                                    <a href="${file.url}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm">
+                                        查看文件
+                                    </a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsContainer.innerHTML = resultHtml;
         }
         
         // 更新执行状态
-        function updateExecutionStatus(execution) {
-            const progress = execution.progress || 0;
-            const status = execution.status;
+        function updateExecutionStatus(status, message) {
+            const statusMap = {
+                'PENDING': { type: 'running', title: '任务排队中', desc: '等待执行' },
+                'RUNNING': { type: 'running', title: '任务执行中', desc: '正在处理' },
+                'SUCCESS': { type: 'success', title: '任务完成', desc: '执行成功' },
+                'FAILED': { type: 'error', title: '任务失败', desc: '执行失败' }
+            };
             
-            document.getElementById('progressBar').style.width = `${progress}%`;
-            
-            if (status === 'completed') {
-                showExecutionStatus('success', '执行完成', '工作流已成功执行');
-            } else if (status === 'failed') {
-                showExecutionStatus('error', '执行失败', execution.error_message || '未知错误');
-            } else {
-                showExecutionStatus('running', '正在执行...', `进度: ${progress}%`);
-            }
-            
-            // 更新日志
-            if (execution.logs) {
-                updateLogs(execution.logs);
-            }
+            const statusInfo = statusMap[status] || { type: 'running', title: '未知状态', desc: message };
+            showExecutionStatus(statusInfo.type, statusInfo.title, message || statusInfo.desc);
         }
         
         // 显示执行状态
@@ -709,6 +984,9 @@
         window.addEventListener('beforeunload', function() {
             if (statusCheckInterval) {
                 clearInterval(statusCheckInterval);
+            }
+            if (eventSource) {
+                eventSource.close();
             }
         });
     </script>
